@@ -16,7 +16,9 @@
     "firebase:emulators:start": "firebase emulators:start",
     "astro": "astro",
     "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
+    "lint:fix": "eslint . --fix",
+    "db-pull-remote": "astro db pull --remote",
+    "db-push-remote": "astro db push --remote"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",
