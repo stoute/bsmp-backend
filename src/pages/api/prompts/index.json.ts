@@ -1,13 +1,13 @@
 // export const prerender = false;
 
 import { v4 as uuid } from "uuid";
-import { db, PromptTemplateTable } from "astro:db";
+import { db, PromptTemplate } from "astro:db";
 import type { IPromptTemplate } from "@lib/prompt-template/PromptTemplate";
 
 // GET /api/prompts: Retrieves all prompt templates.
 export async function GET() {
   try {
-    const prompts = await db.select().from(PromptTemplateTable).all();
+    const prompts = await db.select().from(PromptTemplate).all();
     // Return an empty array if no prompt templates exist.
     return new Response(JSON.stringify(prompts || []), {
       status: 200,
@@ -67,7 +67,7 @@ export async function POST({ request }: { request: Request }) {
     };
 
     // Create the new prompt template in the database.
-    await db.insert(PromptTemplateTable).values(newPrompt).run();
+    await db.insert(PromptTemplate).values(newPrompt).run();
 
     // Return a 201 status code upon successful creation, including the newly created prompt template in the response body.
     return new Response(JSON.stringify(newPrompt), {

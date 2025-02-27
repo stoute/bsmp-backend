@@ -2,7 +2,7 @@
 
 import { v4 as uuid } from "uuid";
 // import { PromptTemplateTable, type PromptTemplateModel } from "@db/models";
-import { PromptTemplateTable, db, eq, and } from "astro:db";
+import { PromptTemplate, db, eq, and } from "astro:db";
 import type { IPromptTemplate } from "@lib/prompt-template/PromptTemplate";
 
 // GET /api/prompts/[id]: Retrieves a specific prompt template by its id.
@@ -11,8 +11,8 @@ export async function GET({ params }: { params: { id: string } }) {
     const { id } = params;
     const prompt = await db
       .select()
-      .from(PromptTemplateTable)
-      .where(eq(PromptTemplateTable.id, id))
+      .from(PromptTemplate)
+      .where(eq(PromptTemplate.id, id))
       // .where(`${PromptTemplateTable.id} = ${id}`);
       .get();
     if (!prompt) {
@@ -86,9 +86,9 @@ export async function PUT({
 
     // Update the prompt template in the database.
     const result = await db
-      .update(PromptTemplateTable)
+      .update(PromptTemplate)
       .set(updatedPrompt)
-      .where(eq(PromptTemplateTable.id, id))
+      .where(eq(PromptTemplate.id, id))
       .run();
 
     if (result.changes === 0) {
@@ -106,8 +106,8 @@ export async function PUT({
     // Retrieve the updated prompt template from the database.
     const updatedPromptTemplate = await db
       .select()
-      .from(PromptTemplateTable)
-      .where(eq(PromptTemplateTable.id, id))
+      .from(PromptTemplate)
+      .where(eq(PromptTemplate.id, id))
       .get();
 
     // Return a 200 status code upon successful update, including the updated prompt template in the response body.
@@ -138,8 +138,8 @@ export async function DELETE({ params }: { params: { id: string } }) {
 
     // Delete the prompt template from the database.
     const result = await db
-      .delete(PromptTemplateTable)
-      .where(eq(PromptTemplateTable.id, id))
+      .delete(PromptTemplate)
+      .where(eq(PromptTemplate.id, id))
       .run();
 
     if (result.changes === 0) {
@@ -173,7 +173,7 @@ export async function DELETE({ params }: { params: { id: string } }) {
 }
 
 export async function getStaticPaths() {
-  const posts = await db.select().from(PromptTemplateTable);
+  const posts = await db.select().from(PromptTemplate);
   let arr = [];
   posts.map((post) => {
     arr.push({ params: { id: post.id } });

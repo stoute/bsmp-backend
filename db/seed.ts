@@ -1,4 +1,4 @@
-import { db, PromptTemplateTable, Comment, Author, Test } from "astro:db";
+import { db, PromptTemplate, Comment, Author, Test } from "astro:db";
 import { v4 as uuidv4 } from "uuid";
 
 export default async function () {
@@ -36,7 +36,7 @@ export default async function () {
       updated_at: new Date().toISOString(),
     },
   ];
-  await db.insert(PromptTemplateTable).values(promptTemplates);
+  await db.insert(PromptTemplate).values(promptTemplates);
 
   await db.insert(Author).values([
     { id: 1, name: "Kasim" },

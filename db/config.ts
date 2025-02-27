@@ -3,7 +3,7 @@ import { defineDb, defineTable, column } from "astro:db";
 /**
  * Define the database table schema for PromptTemplates.
  */
-const PromptTemplateTable = defineTable({
+const PromptTemplate = defineTable({
   columns: {
     id: column.text({ primaryKey: true }),
     name: column.text(),
@@ -39,5 +39,5 @@ const Author = defineTable({
 
 // https://astro.build/db/config
 export default defineDb({
-  tables: { PromptTemplateTable, Comment, Author },
+  tables: { PromptTemplate, Comment, Author },
 });
