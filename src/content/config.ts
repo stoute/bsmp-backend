@@ -1,14 +1,19 @@
 import { defineCollection, z } from "astro:content";
 
-const work = defineCollection({
-  type: "content",
-  schema: z.object({
-    company: z.string(),
-    role: z.string(),
-    dateStart: z.coerce.date(),
-    dateEnd: z.union([z.coerce.date(), z.string()]),
-  }),
-});
+// Define the PromptTemplates collection for content management
+// const promptTemplates = defineCollection({
+//   type: "content",
+//   schema: z.object({
+//     id: z.string(),
+//     name: z.string(),
+//     description: z.string(),
+//     systemPrompt: z.string(),
+//     template: z.string(),
+//     variables: z.array(z.string()),
+//     created_at: z.date(),
+//     updated_at: z.date(),
+//   }),
+// });
 
 const blog = defineCollection({
   type: "content",
@@ -42,24 +47,9 @@ const legal = defineCollection({
   }),
 });
 
-// Define the PromptTemplates collection for content management
-// const promptTemplates = defineCollection({
-//   type: "content",
-//   schema: z.object({
-//     id: z.string(),
-//     name: z.string(),
-//     description: z.string(),
-//     systemPrompt: z.string(),
-//     template: z.string(),
-//     variables: z.array(z.string()),
-//     created_at: z.date(),
-//     updated_at: z.date(),
-//   }),
-// });
 
 export const collections = {
   // promptTemplates,
-  work,
   blog,
   projects,
   legal,

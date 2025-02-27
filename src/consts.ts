@@ -3,14 +3,8 @@ import type { Site, Page, Links, Socials } from "@types";
 // Global
 export const SITE: Site = {
   TITLE: "BSMP",
-  DESCRIPTION: "Bob Stoute - Media Programming",
+  DESCRIPTION: "BSMP",
   AUTHOR: "Bob Stoute",
-};
-
-// Work Page
-export const WORK: Page = {
-  TITLE: "Work / Life History",
-  DESCRIPTION: "Places I have worked.",
 };
 
 // Blog Page
@@ -48,10 +42,6 @@ export const LINKS: Links = [
   {
     TEXT: "Contact",
     HREF: "/contact",
-  },
-  {
-    TEXT: "Music",
-    HREF: "/music",
   },
   {
     TEXT: "Projects",

@@ -13,21 +13,10 @@
   <component name="PhpCodeSniffer">
     <phpcs_settings>
       <PhpCSConfiguration standards="MySource;PEAR;PHPCS;PSR1;PSR2;Squiz;Zend" tool_path="$USER_HOME$/BillingHouse/esnl-suitecrm/include/vendor/bin/phpcs" />
-      <phpcs_by_interpreter asDefaultInterpreter="true" interpreter_id="4ea83da0-1aaf-4d85-8d10-2be34a4fe1ab" standards="MySource;PEAR;PHPCS;PSR1;PSR2;Squiz;Zend" tool_path="/Users/bobstoute/BillingHouse/esnl-suitecrm/include/vendor/bin/phpcs" timeout="30000" />
     </phpcs_settings>
-  </component>
-  <component name="PhpStan">
-    <PhpStan_settings>
-      <phpstan_by_interpreter asDefaultInterpreter="true" interpreter_id="4ea83da0-1aaf-4d85-8d10-2be34a4fe1ab" timeout="60000" />
-    </PhpStan_settings>
   </component>
   <component name="PhpStanOptionsConfiguration">
     <option name="transferred" value="true" />
-  </component>
-  <component name="Psalm">
-    <Psalm_settings>
-      <psalm_fixer_by_interpreter asDefaultInterpreter="true" interpreter_id="4ea83da0-1aaf-4d85-8d10-2be34a4fe1ab" timeout="60000" />
-    </Psalm_settings>
   </component>
   <component name="PsalmOptionsConfiguration">
     <option name="transferred" value="true" />
