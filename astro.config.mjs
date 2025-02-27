@@ -12,11 +12,9 @@ import netlify from "@astrojs/netlify";
 
 // https://astro.build/config
 export default defineConfig({
-  site: "https://bob-stoute.firebaseapp.com",
-
+  site: "https://bsmp.netlify.app",
   // Use 'server' for SSR, 'static' is default - for SSG
   output: "server",
-
   base: "/",
   adapter: netlify(),
   // fixme: add node adapter firebase
@@ -43,6 +41,4 @@ export default defineConfig({
   vite: {
     plugins: [tailwindcss()],
   },
-
-  adapter: netlify(),
 });
