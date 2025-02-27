@@ -8,16 +8,17 @@ import tailwindcss from "@tailwindcss/vite";
 import solidJs from "@astrojs/solid-js";
 import node from "@astrojs/node";
 import vercel from "@astrojs/vercel";
+import netlify from "@astrojs/netlify";
 
 // https://astro.build/config
 export default defineConfig({
   site: "https://bob-stoute.firebaseapp.com",
 
   // Use 'server' for SSR, 'static' is default - for SSG
-  output: "static",
+  output: "server",
 
   base: "/",
-
+  adapter: netlify(),
   // fixme: add node adapter firebase
   // adapter: node({
   //   mode: "middleware",
@@ -42,4 +43,6 @@ export default defineConfig({
   vite: {
     plugins: [tailwindcss()],
   },
+
+  adapter: netlify(),
 });

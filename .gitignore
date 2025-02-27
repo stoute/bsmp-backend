@@ -4,6 +4,7 @@ dist/
 # generated types
 .astro/
 .firebase/
+.netlify/
 .vercel/
 
 # dependencies
@@ -23,6 +24,3 @@ firebase-debug.log*
 
 # macOS-specific files
 .DS_Store
-
-
-.vercel

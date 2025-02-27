@@ -1,0 +1,27 @@
+---
+export const prerender = true;
+
+import PageLayout from "@layouts/PageLayout.astro";
+import TopLayout from "@layouts/TopLayout.astro";
+import BottomLayout from "@layouts/BottomLayout.astro";
+import PromptTemplates from "../../components/prompt-templates/PromptTemplates";
+---
+
+<script is:inline>
+  const url = window.location.origin + "/api/hello";
+  const result = await fetch(url)
+    .then((response) => response.json())
+    .catch((error) => console.error("Error:", error));
+  console.log(result);
+</script>
+
+<PageLayout title={"dev"} description={"dev"}>
+  <TopLayout>
+    <div class="animate page-heading">
+      {"DEV"}
+    </div>
+  </TopLayout>
+  <BottomLayout>
+    <PromptTemplates client:load initialTemplate={{}} />
+  </BottomLayout>
+</PageLayout>

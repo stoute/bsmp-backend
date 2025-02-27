@@ -5,31 +5,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6db5ad0e-5635-4336-a0ae-8b285de92988" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.name" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/AugmentWebviewStateStore.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/aws.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/bsmp-website.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
+      <change afterPath="$PROJECT_DIR$/.netlify/v1/config.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pages/prompts/index.astro" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/php.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/php.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/prettier.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/prettier.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/prettier.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/astro.config.mjs" beforeDir="false" afterPath="$PROJECT_DIR$/astro.config.mjs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pnpm-lock.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pnpm-lock.yaml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/consts.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/consts.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/content/config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/content/config.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/content/work/2025.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/content/work/achmea.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/content/work/appythings.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/content/work/beinformed.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/content/work/billinghouse.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/content/work/cipix.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/content/work/early-career.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/content/work/freelance.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/content/work/multimedia.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/content/work/sabbatical.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/index.astro" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/index.astro" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/music.astro" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/work/index-copy.astro" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/work/index.astro" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/about.astro" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -59,6 +45,9 @@
   "associatedIndex": 4
 }]]></component>
   <component name="ProjectId" id="2tcDtvUwuPimNa5QHBNWJsjn3Zj" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="autoscrollFromSource" value="true" />
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -69,11 +58,16 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
     "git-widget-placeholder": "main",
+    "last_opened_file_path": "/Users/bobstoute/Git/@bsmp/bsmp-backend/src/pages",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "pnpm",
+    "npm.dev.executor": "Run",
+    "npm.dev:network.executor": "Run",
+    "prettierjs.PrettierConfiguration.Package": "/Users/bobstoute/Git/@bsmp/bsmp-backend/node_modules/prettier",
+    "settings.editor.selected.configurable": "settings.javascript.prettier",
     "ts.external.directory.path": "/Users/bobstoute/Git/@bsmp/bsmp-backend/node_modules/typescript/lib",
     "vue.rearranger.settings.migration": "true"
   }
@@ -86,6 +80,11 @@
       </map>
     </option>
   </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/pages" />
+    </key>
+  </component>
   <component name="RunManager">
     <configuration name="dev" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
       <package-json value="$PROJECT_DIR$/package.json" />
@@ -97,8 +96,19 @@
       <envs />
       <method v="2" />
     </configuration>
+    <configuration name="dev:network" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="dev:network" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="npm.dev:network" />
         <item itemvalue="npm.dev" />
       </list>
     </recent_temporary>
@@ -119,11 +129,15 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1740642686598</updated>
-      <workItem from="1740642687856" duration="322000" />
+      <workItem from="1740642687856" duration="2781000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
   </component>
 </project>
