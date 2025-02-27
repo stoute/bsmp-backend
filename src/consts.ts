@@ -49,11 +49,11 @@ export const LINKS: Links = [
     HREF: "/projects",
     DISABLED: "production",
   },
-  {
-    TEXT: "Blog",
-    HREF: "/blog",
-    DISABLED: "production",
-  },
+  // {
+  //   TEXT: "Blog",
+  //   HREF: "/blog",
+  //   DISABLED: "production",
+  // },
 ];
 
 // Socials
