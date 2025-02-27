@@ -7,7 +7,7 @@
     "dev:network": "astro dev --host",
     "start": "astro dev",
     "-build": "astro check && astro build",
-    "build": "astro build",
+    "build": "astro build --remote",
     "edmulate-firebase": "firebase emulators:start",
     "deploy-firebase": "firebase deploy",
     "deploy-vercel": "npm run build && vercel deploy --prebuilt",
