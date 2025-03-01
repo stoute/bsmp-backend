@@ -18,13 +18,6 @@ const llm = new ChatOpenAI({
   // model: "mistralai/mistral-7b-instruct",
 });
 
-// const llm = new OpenAI({
-//   // defaultHeaders: {
-//   //   "HTTP-Referer": "<YOUR_SITE_URL>", // Optional. Site URL for rankings on openrouter.ai.
-//   //   "X-Title": "<YOUR_SITE_NAME>", // Optional. Site title for rankings on openrouter.ai.
-//   // },
-// });
-
 // Initialize the OpenRouter LLM
 // const llm = new OpenRouterApi({
 //   apiKey: import.meta.env.OPEN_ROUTER_API_KEY,
@@ -76,8 +69,6 @@ export async function POST({ request }: { request: Request }) {
 
     // Call the LLM
     const result = await llm.invoke(finalPrompt);
-
-    // console.log(result);
 
     // Return the response
     return new Response(
