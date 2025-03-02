@@ -1,10 +1,18 @@
 // src/pages/api/ai.js
-export async function POST({ request }) {
+
+export async function POST({
+  request,
+}: {
+  request: Request;
+}): Promise<Response> {
   try {
-    const requestData = await request.json();
+    const requestData: any = await request.json();
 
     let apiKey: string = import.meta.env.OPENAI_API_KEY;
+    apiKey = import.meta.env.OPEN_ROUTER_API_KEY;
+
     let url: string = "https://api.openai.com/v1/chat/completions";
+    url = "https://openrouter.ai/api/v1/chat/completions";
 
     // Make the actual API call with your secret key
     const response = await fetch(url, {
@@ -14,8 +22,8 @@ export async function POST({ request }) {
         Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: requestData.model || "o3-mini",
-        messages: requestData.messages,
+        model: requestData.data.model || "gpt-4o-mini",
+        messages: requestData.data.messages,
         // Include other parameters as needed
       }),
     });

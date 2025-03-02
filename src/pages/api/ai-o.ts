@@ -101,7 +101,7 @@ export async function POST({ request }: { request: Request }) {
 
 // Example usage:
 /*
-curl -X POST http://localhost:4321/api/ai \
+curl -X POST http://localhost:4321/api/ai-proxy \
 -H "Content-Type: application/json" \
 -H "user_name: John" \
 -H "topic: JavaScript" \

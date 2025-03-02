@@ -5,7 +5,6 @@ import sitemap from "@astrojs/sitemap";
 import icon from "astro-icon";
 import react from "@astrojs/react";
 import tailwindcss from "@tailwindcss/vite";
-import solidJs from "@astrojs/solid-js";
 import node from "@astrojs/node";
 import vercel from "@astrojs/vercel";
 import netlify from "@astrojs/netlify";
@@ -28,7 +27,7 @@ export default defineConfig({
     react({
       include: ["**/react/*"],
       experimentalReactChildren: true,
-    }), // solidJs(),
+    }),
     icon(),
     db(),
   ],

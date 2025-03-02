@@ -1,4 +1,4 @@
-// export const prerender = false;
+export const prerender = false;
 
 import { v4 as uuid } from "uuid";
 // import { PromptTemplateTable, type PromptTemplateModel } from "@db/models";
