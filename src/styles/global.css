@@ -20,6 +20,7 @@
 
   .shiki > code > .line {
     @apply block;
+    line-height: 0.1; /* Adjust this value to control spacing */
   }
 
   .shiki > code > .line::before {
