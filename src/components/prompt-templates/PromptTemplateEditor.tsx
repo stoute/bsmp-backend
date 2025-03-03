@@ -170,8 +170,6 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
         );
       }
 
-      setSuccess("Prompt template deleted successfully!");
-
       if (onDelete) {
         onDelete(promptTemplate.id);
       }

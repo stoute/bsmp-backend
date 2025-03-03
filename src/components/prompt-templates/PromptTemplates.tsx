@@ -34,20 +34,54 @@ const PromptTemplates: React.FC<PromptTemplatesProps> = ({
   const [selectedTemplate, setSelectedTemplate] = useState<
     IPromptTemplate | undefined
   >(initialTemplate);
-  const [selectedId, setSelectedId] = useState<string | undefined>(
-    initialTemplate?.id,
-  );
+  const [selectedId, setSelectedId] = useState<string | undefined>(() => {
+    // Only access localStorage in the browser
+    if (typeof window !== "undefined") {
+      const savedId = localStorage.getItem("selectedTemplateId");
+      return savedId || initialTemplate?.id;
+    }
+    return initialTemplate?.id;
+  });
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [templateToDelete, setTemplateToDelete] = useState<
     string | undefined
   >();
   const listRef = useRef<{ fetchPromptTemplates: () => Promise<void> }>();
 
+  // Fetch the selected template when component mounts or selectedId changes
   useEffect(() => {
-    if (!initialTemplate) {
-      handleNewTemplate();
+    const fetchSelectedTemplate = async () => {
+      if (!selectedId) {
+        handleNewTemplate();
+        return;
+      }
+
+      try {
+        const response = await fetch(`/api/prompts/${selectedId}.json`);
+        if (!response.ok) {
+          throw new Error("Failed to fetch template");
+        }
+        const template = await response.json();
+        setSelectedTemplate(template);
+      } catch (error) {
+        console.error("Error fetching selected template:", error);
+        handleNewTemplate();
+      }
+    };
+
+    fetchSelectedTemplate();
+  }, [selectedId]);
+
+  // Save selectedId to localStorage whenever it changes
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      if (selectedId) {
+        localStorage.setItem("selectedTemplateId", selectedId);
+      } else {
+        localStorage.removeItem("selectedTemplateId");
+      }
     }
-  }, []);
+  }, [selectedId]);
 
   const handleSelectTemplate = (template: IPromptTemplate) => {
     setSelectedTemplate(template);
@@ -60,12 +94,22 @@ const PromptTemplates: React.FC<PromptTemplatesProps> = ({
   };
 
   const handleSaveTemplate = async (template: IPromptTemplate) => {
-    console.log("Saving template:", template);
-    // Wait for next tick to ensure list has reloaded
-    setTimeout(() => {
+    try {
+      // First update the selected template and ID
       setSelectedTemplate(template);
       setSelectedId(template.id);
-    }, 0);
+
+      // Then refresh the list to show the updated/new item
+      if (listRef.current) {
+        await listRef.current.fetchPromptTemplates();
+      }
+
+      // After list refresh, ensure the template is still selected
+      setSelectedTemplate(template);
+      setSelectedId(template.id);
+    } catch (error) {
+      console.error("Error handling template save:", error);
+    }
   };
 
   const handleDeleteTemplate = (id: string) => {
@@ -109,6 +153,7 @@ const PromptTemplates: React.FC<PromptTemplatesProps> = ({
         <div className="w-full md:w-2/3">
           {selectedTemplate && (
             <PromptTemplateEditor
+              key={selectedTemplate.id || "new"}
               promptTemplate={selectedTemplate}
               onSave={handleSaveTemplate}
               onDelete={handleDeleteTemplate}

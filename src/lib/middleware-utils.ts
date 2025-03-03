@@ -46,7 +46,6 @@ export const securityHeaders = defineMiddleware(async (context, next) => {
 export const auth = defineMiddleware(async (context, next) => {
   const authToken = context.request.headers.get("Authorization");
   const CLIENT_AUTH_TOKEN = process.env.CLIENT_AUTH_TOKEN;
-
   if (!authToken || authToken !== `Bearer ${CLIENT_AUTH_TOKEN}`) {
     return new Response(JSON.stringify({ error: "Unauthorized" }), {
       status: 401,
