@@ -18,7 +18,6 @@ const hexToRgb = (hex) => {
 
 /** @type {import('tailwindcss').Config} */
 export default {
-  darkMode: ["class"],
   content: ["./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}"],
   theme: {
     extend: {
@@ -287,7 +286,7 @@ export default {
     },
     textColor: {
       foreground: "black",
-    }
+    },
   },
   plugins: [require("@tailwindcss/typography")],
 };

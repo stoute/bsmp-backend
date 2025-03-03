@@ -1,0 +1,25 @@
+.code-block {
+  margin: 1rem 0;
+}
+
+.code-block pre {
+  padding: 1rem;
+  border-radius: 0.5rem;
+  overflow-x: auto;
+}
+
+.code-block code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+/* Optional: Add a subtle border */
+.code-block pre {
+  border: 1px solid rgb(38 38 38);
+}
+
+/* Dark mode adjustments if needed */
+:global(.dark) .code-block pre {
+  border-color: rgb(64 64 64);
+}

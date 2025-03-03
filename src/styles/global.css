@@ -1,5 +1,34 @@
 
 @import 'tailwindcss';
+
+@layer components {
+  .shiki {
+    @apply p-4 rounded-lg overflow-x-auto my-4;
+    @apply bg-zinc-900 dark:bg-zinc-950;
+    @apply border border-zinc-200 dark:border-zinc-800;
+  }
+
+  .shiki code {
+    @apply font-mono text-sm leading-relaxed;
+    @apply block w-full;
+  }
+
+  /* Optional: Add line numbers */
+  .shiki {
+    counter-reset: line;
+  }
+
+  .shiki > code > .line {
+    @apply block;
+  }
+
+  .shiki > code > .line::before {
+    counter-increment: line;
+    content: counter(line);
+    @apply inline-block w-4 mr-4 text-zinc-500 text-right;
+  }
+}
+
 /*---break---*/
 @custom-variant dark (&:is(.dark *));
 @config '../../tailwind.config.mjs';
