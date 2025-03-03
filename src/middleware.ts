@@ -14,7 +14,7 @@ import {
 export const onRequest = sequence(
   // errorHandler, // 1. Catch all errors
   // logger, // 2. Log request and response
-  // cors, // 3. Handle CORS (including OPTIONS requests)
+  cors, // 3. Handle CORS (including OPTIONS requests)
   // securityHeaders, // 4. Set security headers on all responses
   // auth, // 5. Check authentication
   // rateLimit, // 6. Enforce rate limits
