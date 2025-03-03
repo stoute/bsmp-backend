@@ -40,6 +40,12 @@
     font-style: normal;
     font-display: swap;
   }
+  * {
+    @apply border-black/20 dark:border-white/20;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
 }
 
 @layer utilities {
@@ -207,22 +213,3 @@ article img {
 
 /*---break---*/
 
-@layer base {
-  * {
-    /*@apply border-border outline-ring/50;*/
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
-}
-
-/*---break---*/
-
-@layer base {
-  * {
-      /*@apply border-border outline-ring/50;*/
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
-}

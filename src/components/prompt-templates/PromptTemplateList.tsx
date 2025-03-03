@@ -14,6 +14,7 @@ import {
 } from "@components/ui/card.tsx";
 import { ScrollArea } from "@components/ui/scroll-area.tsx";
 import { Separator } from "@components/ui/separator.tsx";
+import { cn } from "@lib/utils";
 
 interface PromptTemplateListProps {
   onSelect: (promptTemplate: IPromptTemplate) => void;
@@ -109,16 +110,42 @@ const PromptTemplateList: React.FC<PromptTemplateListProps> = ({
                   <React.Fragment key={template.id}>
                     <button
                       onClick={() => onSelect(template)}
-                      className={`hover:bg-accent w-full rounded-md p-2 text-left transition-colors ${
-                        selectedId === template.id ? "bg-accent/50" : ""
-                      }`}
+                      className={cn(
+                        "w-full rounded-md p-2 text-left transition-colors",
+                        "hover:bg-accent hover:text-accent-foreground",
+                        selectedId === template.id
+                          ? [
+                              "bg-accent text-accent-foreground",
+                              "ring-accent ring-2",
+                              "shadow-sm",
+                            ]
+                          : "text-accent-foreground",
+                      )}
                     >
-                      <div className="font-medium">{template.name}</div>
-                      <div className="text-muted-foreground line-clamp-1 text-xs">
-                        {template.description}
+                      <div className="flex flex-col gap-1">
+                        <span
+                          className={cn(
+                            "font-medium",
+                            selectedId === template.id && "font-semibold",
+                          )}
+                        >
+                          {template.name}
+                        </span>
+                        {template.description && (
+                          <span
+                            className={cn(
+                              "line-clamp-2 text-sm",
+                              selectedId === template.id
+                                ? "text-accent-foreground/80"
+                                : "text-muted-foreground",
+                            )}
+                          >
+                            {template.description}
+                          </span>
+                        )}
                       </div>
                     </button>
-                    <Separator />
+                    <Separator className="my-1" />
                   </React.Fragment>
                 ))}
               </div>
