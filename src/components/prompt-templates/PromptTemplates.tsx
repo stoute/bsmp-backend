@@ -44,7 +44,11 @@ const PromptTemplates: React.FC<PromptTemplatesProps> = ({
   });
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [templateToDelete, setTemplateToDelete] = useState<
-    string | undefined
+    | {
+        id: string;
+        template: IPromptTemplate;
+      }
+    | undefined
   >();
   const listRef = useRef<{ fetchPromptTemplates: () => Promise<void> }>();
 
@@ -111,20 +115,51 @@ const PromptTemplates: React.FC<PromptTemplatesProps> = ({
   };
 
   const handleDeleteTemplate = (id: string) => {
-    setTemplateToDelete(id);
+    // Store both the ID and the current template
+    setTemplateToDelete({
+      id,
+      template: selectedTemplate!,
+    });
     setShowDeleteDialog(true);
   };
 
   const confirmDelete = async () => {
     if (templateToDelete) {
-      setSelectedTemplate(undefined);
-      setSelectedId(undefined);
-      // Refresh the list after successful deletion
-      if (listRef.current) {
-        await listRef.current.fetchPromptTemplates();
+      try {
+        const response = await fetch(
+          `/api/prompts/${templateToDelete.id}.json`,
+          {
+            method: "DELETE",
+          },
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to delete template");
+        }
+
+        // Only clear selection and refresh list if delete was successful
+        setSelectedTemplate(undefined);
+        setSelectedId(undefined);
+
+        if (listRef.current) {
+          await listRef.current.fetchPromptTemplates();
+        }
+      } catch (error) {
+        console.error("Error deleting template:", error);
       }
     }
     setShowDeleteDialog(false);
+    setTemplateToDelete(undefined);
+  };
+
+  const cancelDelete = () => {
+    // Restore the selected template
+    if (templateToDelete) {
+      setSelectedTemplate(templateToDelete.template);
+      setSelectedId(templateToDelete.id);
+    }
+    setShowDeleteDialog(false);
+    setTemplateToDelete(undefined);
   };
 
   const handleDuplicateTemplate = async (template: IPromptTemplate) => {
@@ -172,7 +207,7 @@ const PromptTemplates: React.FC<PromptTemplatesProps> = ({
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel onClick={cancelDelete}>Cancel</AlertDialogCancel>
             <AlertDialogAction onClick={confirmDelete}>
               Delete
             </AlertDialogAction>

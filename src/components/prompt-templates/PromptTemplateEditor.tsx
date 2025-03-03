@@ -152,42 +152,12 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
   };
 
   // Handle template deletion
-  const handleDelete = async () => {
+  const handleDelete = () => {
     if (!promptTemplate?.id) return;
 
-    setLoading(true);
-    setError(null);
-
-    try {
-      const response = await fetch(`/api/prompts/${promptTemplate.id}.json`, {
-        method: "DELETE",
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(
-          errorData.message || "Failed to delete prompt template",
-        );
-      }
-
-      if (onDelete) {
-        onDelete(promptTemplate.id);
-      }
-
-      form.reset({
-        name: "",
-        description: "",
-        systemPrompt: "",
-        template: "",
-        variables: [],
-      });
-      setIsNew(true);
-    } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "An unknown error occurred",
-      );
-    } finally {
-      setLoading(false);
+    // Just notify the parent component - let it handle the confirmation and actual deletion
+    if (onDelete) {
+      onDelete(promptTemplate.id);
     }
   };
 
