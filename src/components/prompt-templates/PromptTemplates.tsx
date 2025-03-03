@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import PromptTemplateList from "@components/prompt-templates/PromptTemplateList.tsx";
 import PromptTemplateEditor from "@components/prompt-templates/PromptTemplateEditor.tsx";
 import {
@@ -41,7 +41,7 @@ const PromptTemplates: React.FC<PromptTemplatesProps> = ({
   const [templateToDelete, setTemplateToDelete] = useState<
     string | undefined
   >();
-  const [listKey, setListKey] = useState(0); // Add this to force list reload
+  const listRef = useRef<{ fetchPromptTemplates: () => Promise<void> }>();
 
   useEffect(() => {
     if (!initialTemplate) {
@@ -59,11 +59,8 @@ const PromptTemplates: React.FC<PromptTemplatesProps> = ({
     setSelectedId(undefined);
   };
 
-  // Modified to handle list reload and selection
   const handleSaveTemplate = async (template: IPromptTemplate) => {
     console.log("Saving template:", template);
-    // Force list to reload by incrementing key
-    setListKey((prev) => prev + 1);
     // Wait for next tick to ensure list has reloaded
     setTimeout(() => {
       setSelectedTemplate(template);
@@ -76,14 +73,26 @@ const PromptTemplates: React.FC<PromptTemplatesProps> = ({
     setShowDeleteDialog(true);
   };
 
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (templateToDelete) {
       setSelectedTemplate(undefined);
       setSelectedId(undefined);
-      // Force list to reload
-      setListKey((prev) => prev + 1);
+      // Refresh the list after successful deletion
+      if (listRef.current) {
+        await listRef.current.fetchPromptTemplates();
+      }
     }
     setShowDeleteDialog(false);
+  };
+
+  const handleDuplicateTemplate = async (template: IPromptTemplate) => {
+    // Set the newly created template as selected
+    setSelectedTemplate(template);
+    setSelectedId(template.id);
+    // Trigger list refresh
+    if (listRef.current) {
+      await listRef.current.fetchPromptTemplates();
+    }
   };
 
   return (
@@ -91,7 +100,7 @@ const PromptTemplates: React.FC<PromptTemplatesProps> = ({
       <div className="flex w-full flex-col gap-4 md:flex-row">
         <div className="w-full md:w-1/3">
           <PromptTemplateList
-            key={listKey} // Add this to force remount
+            ref={listRef}
             onSelect={handleSelectTemplate}
             onNew={handleNewTemplate}
             selectedId={selectedId}
@@ -103,6 +112,7 @@ const PromptTemplates: React.FC<PromptTemplatesProps> = ({
               promptTemplate={selectedTemplate}
               onSave={handleSaveTemplate}
               onDelete={handleDeleteTemplate}
+              onDuplicate={handleDuplicateTemplate}
               onCancel={() => setSelectedTemplate(undefined)}
             />
           )}

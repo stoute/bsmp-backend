@@ -1,4 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, {
+  forwardRef,
+  useImperativeHandle,
+  useEffect,
+  useState,
+} from "react";
 import { Plus, RefreshCw, Search } from "lucide-react";
 import type { IPromptTemplate } from "@types.ts";
 
@@ -20,17 +25,22 @@ interface PromptTemplateListProps {
   onSelect: (promptTemplate: IPromptTemplate) => void;
   onNew: () => void;
   selectedId?: string;
+  onRefresh?: () => void; // Add new prop for external refresh
 }
 
-const PromptTemplateList: React.FC<PromptTemplateListProps> = ({
-  onSelect,
-  onNew,
-  selectedId,
-}) => {
+const PromptTemplateList = forwardRef<
+  { fetchPromptTemplates: () => Promise<void> },
+  PromptTemplateListProps
+>(({ onSelect, onNew, selectedId }, ref) => {
   const [promptTemplates, setPromptTemplates] = useState<IPromptTemplate[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
+
+  // Expose fetchPromptTemplates to parent
+  useImperativeHandle(ref, () => ({
+    fetchPromptTemplates,
+  }));
 
   const fetchPromptTemplates = async () => {
     setLoading(true);
@@ -155,6 +165,6 @@ const PromptTemplateList: React.FC<PromptTemplateListProps> = ({
       </CardContent>
     </Card>
   );
-};
+});
 
 export default PromptTemplateList;
