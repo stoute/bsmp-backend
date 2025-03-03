@@ -1,8 +1,17 @@
 import React, { useState, useEffect } from "react";
 import PromptTemplateList from "@components/prompt-templates/PromptTemplateList.tsx";
 import PromptTemplateEditor from "@components/prompt-templates/PromptTemplateEditor.tsx";
-import { reloadPage } from "@lib/utils";
-import type { IPromptTemplate } from "@types.ts";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@components/ui/alert-dialog";
+import type { IPromptTemplate } from "@types";
 
 interface PromptTemplatesProps {
   initialTemplate?: IPromptTemplate;
@@ -28,6 +37,11 @@ const PromptTemplates: React.FC<PromptTemplatesProps> = ({
   const [selectedId, setSelectedId] = useState<string | undefined>(
     initialTemplate?.id,
   );
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [templateToDelete, setTemplateToDelete] = useState<
+    string | undefined
+  >();
+  const [listKey, setListKey] = useState(0); // Add this to force list reload
 
   useEffect(() => {
     if (!initialTemplate) {
@@ -35,56 +49,84 @@ const PromptTemplates: React.FC<PromptTemplatesProps> = ({
     }
   }, []);
 
-  // Handle template selection from the list
   const handleSelectTemplate = (template: IPromptTemplate) => {
     setSelectedTemplate(template);
     setSelectedId(template.id);
   };
 
-  // Handle creating a new template
   const handleNewTemplate = () => {
     setSelectedTemplate(newTemplate);
     setSelectedId(undefined);
   };
 
-  // Handle saving a template
-  const handleSaveTemplate = (template: IPromptTemplate) => {
+  // Modified to handle list reload and selection
+  const handleSaveTemplate = async (template: IPromptTemplate) => {
     console.log("Saving template:", template);
-    setSelectedTemplate(template);
-    setSelectedId(template.id);
-    reloadPage();
-    // todo: Refresh the list after saving
+    // Force list to reload by incrementing key
+    setListKey((prev) => prev + 1);
+    // Wait for next tick to ensure list has reloaded
+    setTimeout(() => {
+      setSelectedTemplate(template);
+      setSelectedId(template.id);
+    }, 0);
   };
 
-  // Handle deleting a template
   const handleDeleteTemplate = (id: string) => {
-    setSelectedTemplate(undefined);
-    // todo: setSelectedTemplate({});
-    setSelectedId(undefined);
-    // todo: Refresh the list after deleting
-    reloadPage();
+    setTemplateToDelete(id);
+    setShowDeleteDialog(true);
+  };
+
+  const confirmDelete = () => {
+    if (templateToDelete) {
+      setSelectedTemplate(undefined);
+      setSelectedId(undefined);
+      // Force list to reload
+      setListKey((prev) => prev + 1);
+    }
+    setShowDeleteDialog(false);
   };
 
   return (
-    <div className="flex w-full flex-col gap-4 md:flex-row">
-      <div className="w-full md:w-1/3">
-        <PromptTemplateList
-          onSelect={handleSelectTemplate}
-          onNew={handleNewTemplate}
-          selectedId={selectedId}
-        />
-      </div>
-      <div className="w-full md:w-2/3">
-        {selectedTemplate && (
-          <PromptTemplateEditor
-            promptTemplate={selectedTemplate}
-            onSave={handleSaveTemplate}
-            onDelete={handleDeleteTemplate}
-            onCancel={() => setSelectedTemplate(undefined)}
+    <>
+      <div className="flex w-full flex-col gap-4 md:flex-row">
+        <div className="w-full md:w-1/3">
+          <PromptTemplateList
+            key={listKey} // Add this to force remount
+            onSelect={handleSelectTemplate}
+            onNew={handleNewTemplate}
+            selectedId={selectedId}
           />
-        )}
+        </div>
+        <div className="w-full md:w-2/3">
+          {selectedTemplate && (
+            <PromptTemplateEditor
+              promptTemplate={selectedTemplate}
+              onSave={handleSaveTemplate}
+              onDelete={handleDeleteTemplate}
+              onCancel={() => setSelectedTemplate(undefined)}
+            />
+          )}
+        </div>
       </div>
-    </div>
+
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the
+              prompt template.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmDelete}>
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   );
 };
 

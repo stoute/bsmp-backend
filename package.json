@@ -38,6 +38,7 @@
     "@langchain/openai": "^0.4.4",
     "@nanostores/persistent": "^0.10.2",
     "@nanostores/react": "^0.8.4",
+    "@radix-ui/react-alert-dialog": "^1.1.6",
     "@radix-ui/react-label": "^2.1.2",
     "@radix-ui/react-scroll-area": "^1.2.3",
     "@radix-ui/react-select": "^2.1.6",
