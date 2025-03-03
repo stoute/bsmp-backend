@@ -33,7 +33,7 @@ const PromptTemplateList = forwardRef<
   PromptTemplateListProps
 >(({ onSelect, onNew, selectedId }, ref) => {
   const [promptTemplates, setPromptTemplates] = useState<IPromptTemplate[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -96,7 +96,9 @@ const PromptTemplateList = forwardRef<
             disabled={loading}
             title="Refresh templates"
           >
-            <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
+            <RefreshCw
+              className={`h-4 w-4 opacity-50 ${loading ? "animate-spin" : ""}`}
+            />
           </Button>
         </div>
         <Button onClick={onNew} className="w-full">
@@ -113,7 +115,7 @@ const PromptTemplateList = forwardRef<
             </div>
           ) : (
             <div className="p-1">
-              {filteredTemplates.length === 0 ? (
+              {!loading && filteredTemplates.length === 0 ? (
                 <div className="text-muted-foreground p-4 text-center">
                   {searchTerm
                     ? "No templates match your search"
