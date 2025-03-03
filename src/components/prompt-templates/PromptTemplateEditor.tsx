@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Trash2, Save, Plus, AlertCircle } from "lucide-react";
+import { Trash2, Save, Plus, AlertCircle, Copy } from "lucide-react";
 import type { IPromptTemplate } from "@types.ts";
 
 import {
@@ -46,6 +46,7 @@ interface PromptTemplateEditorProps {
   promptTemplate?: IPromptTemplate;
   onSave?: (template: IPromptTemplate) => void;
   onDelete?: (id: string) => void;
+  onDuplicate?: (template: IPromptTemplate) => void;
   onCancel?: () => void;
 }
 
@@ -53,6 +54,7 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
   promptTemplate,
   onSave,
   onDelete,
+  onDuplicate,
   onCancel,
 }) => {
   const [isNew, setIsNew] = useState(!promptTemplate?.id);
@@ -182,6 +184,49 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
         variables: [],
       });
       setIsNew(true);
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "An unknown error occurred",
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDuplicate = async () => {
+    if (!promptTemplate) return;
+    setLoading(true);
+    setError(null);
+    setSuccess(null);
+
+    try {
+      const response = await fetch("/api/prompts/index.json", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...promptTemplate,
+          id: undefined, // Remove id to create new entry
+          name: `${promptTemplate.name} (Copy)`,
+          created_at: undefined,
+          updated_at: undefined,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(
+          errorData.message || "Failed to duplicate prompt template",
+        );
+      }
+
+      const data = await response.json();
+      setSuccess("Prompt template duplicated successfully!");
+
+      if (onDuplicate) {
+        onDuplicate(data);
+      }
     } catch (err) {
       setError(
         err instanceof Error ? err.message : "An unknown error occurred",
@@ -391,16 +436,29 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
             <Separator />
 
             <div className="flex justify-between">
-              {!isNew && onDelete && (
-                <Button
-                  type="button"
-                  variant="destructive"
-                  onClick={handleDelete}
-                  disabled={loading}
-                >
-                  <Trash2 className="mr-2 h-4 w-4" />
-                  Delete
-                </Button>
+              {!isNew && (
+                <div className="flex gap-2">
+                  {onDelete && (
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      onClick={handleDelete}
+                      disabled={loading}
+                    >
+                      <Trash2 className="mr-2 h-4 w-4" />
+                      Delete
+                    </Button>
+                  )}
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={handleDuplicate}
+                    disabled={loading}
+                  >
+                    <Copy className="mr-2 h-4 w-4" />
+                    Duplicate
+                  </Button>
+                </div>
               )}
               <div className="ml-auto flex gap-2">
                 {onCancel && (
