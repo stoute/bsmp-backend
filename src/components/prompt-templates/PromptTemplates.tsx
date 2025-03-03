@@ -55,7 +55,6 @@ const PromptTemplates: React.FC<PromptTemplatesProps> = ({
         handleNewTemplate();
         return;
       }
-
       try {
         const response = await fetch(`/api/prompts/${selectedId}.json`);
         if (!response.ok) {
@@ -68,7 +67,6 @@ const PromptTemplates: React.FC<PromptTemplatesProps> = ({
         handleNewTemplate();
       }
     };
-
     fetchSelectedTemplate();
   }, [selectedId]);
 

@@ -4,7 +4,7 @@ import React, {
   useEffect,
   useState,
 } from "react";
-import { Plus, RefreshCw, Search } from "lucide-react";
+import { Plus, RefreshCw, Search, Loader2 } from "lucide-react";
 import type { IPromptTemplate } from "@types.ts";
 
 import { Button } from "@components/ui/button.tsx";
@@ -107,60 +107,66 @@ const PromptTemplateList = forwardRef<
         {error && <p className="text-destructive text-sm">{error}</p>}
 
         <ScrollArea className="flex-1 rounded-md border">
-          <div className="p-1">
-            {filteredTemplates.length === 0 ? (
-              <div className="text-muted-foreground p-4 text-center">
-                {searchTerm
-                  ? "No templates match your search"
-                  : "No templates found"}
-              </div>
-            ) : (
-              <div className="space-y-1">
-                {filteredTemplates.map((template) => (
-                  <React.Fragment key={template.id}>
-                    <button
-                      onClick={() => onSelect(template)}
-                      className={cn(
-                        "w-full rounded-md p-2 text-left transition-colors",
-                        "hover:bg-accent hover:text-accent-foreground",
-                        selectedId === template.id
-                          ? [
-                              "bg-accent text-accent-foreground",
-                              "ring-accent ring-2",
-                              "shadow-sm",
-                            ]
-                          : "text-accent-foreground",
-                      )}
-                    >
-                      <div className="flex flex-col gap-1">
-                        <span
-                          className={cn(
-                            "font-medium",
-                            selectedId === template.id && "font-semibold",
-                          )}
-                        >
-                          {template.name}
-                        </span>
-                        {template.description && (
+          {loading ? (
+            <div className="flex items-center justify-center p-8">
+              <Loader2 className="text-muted-foreground h-8 w-8 animate-spin" />
+            </div>
+          ) : (
+            <div className="p-1">
+              {filteredTemplates.length === 0 ? (
+                <div className="text-muted-foreground p-4 text-center">
+                  {searchTerm
+                    ? "No templates match your search"
+                    : "No templates found"}
+                </div>
+              ) : (
+                <div className="space-y-1">
+                  {filteredTemplates.map((template) => (
+                    <React.Fragment key={template.id}>
+                      <button
+                        onClick={() => onSelect(template)}
+                        className={cn(
+                          "w-full rounded-md p-2 text-left transition-colors",
+                          "hover:bg-accent hover:text-accent-foreground",
+                          selectedId === template.id
+                            ? [
+                                "bg-accent text-accent-foreground",
+                                "ring-accent ring-2",
+                                "shadow-sm",
+                              ]
+                            : "text-accent-foreground",
+                        )}
+                      >
+                        <div className="flex flex-col gap-1">
                           <span
                             className={cn(
-                              "line-clamp-2 text-sm",
-                              selectedId === template.id
-                                ? "text-accent-foreground/80"
-                                : "text-muted-foreground",
+                              "font-medium",
+                              selectedId === template.id && "font-semibold",
                             )}
                           >
-                            {template.description}
+                            {template.name}
                           </span>
-                        )}
-                      </div>
-                    </button>
-                    <Separator className="my-1" />
-                  </React.Fragment>
-                ))}
-              </div>
-            )}
-          </div>
+                          {template.description && (
+                            <span
+                              className={cn(
+                                "line-clamp-2 text-sm",
+                                selectedId === template.id
+                                  ? "text-accent-foreground/80"
+                                  : "text-muted-foreground",
+                              )}
+                            >
+                              {template.description}
+                            </span>
+                          )}
+                        </div>
+                      </button>
+                      <Separator className="my-1" />
+                    </React.Fragment>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
         </ScrollArea>
       </CardContent>
     </Card>
