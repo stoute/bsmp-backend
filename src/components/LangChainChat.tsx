@@ -5,7 +5,7 @@ import {
   SystemMessage,
   AIMessage,
 } from "@langchain/core/messages";
-import { customFetchHandler } from "@lib/customFetchHandler";
+import { proxyFetchHandler } from "@lib/proxyFetchHandler.ts";
 import OpenAI from "openai";
 import { ChatOpenAI } from "@langchain/openai";
 // import { OpenRouterApi } from "@langchain/core/llms/openrouter";
@@ -23,10 +23,9 @@ export default function LangChainChat() {
     temperature: 0.7,
     configuration: {
       dangerouslyAllowBrowser: true,
-      fetch: customFetchHandler,
+      fetch: proxyFetchHandler,
     },
     // model: "openai/gpt-4o-mini",
-    // model: "deepseek/deepseek-r1:free",
     model: "google/gemini-2.0-flash-001",
     apiKey: "none",
   });

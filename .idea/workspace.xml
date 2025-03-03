@@ -5,8 +5,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6db5ad0e-5635-4336-a0ae-8b285de92988" name="Changes" comment="refactor: PromptTemplateTable to PromptTemplate">
+      <change beforePath="$PROJECT_DIR$/.idea/AugmentWebviewStateStore.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/AugmentWebviewStateStore.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/ArrowCard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ArrowCard.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/LangChainChat.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/LangChainChat.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/prompt-templates/PromptTemplates.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/prompt-templates/PromptTemplates.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/customFetchHandler.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/proxyFetchHandler.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/utils.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/pages/api/ai-proxy.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/api/ai-proxy.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/api/prompts/[id].json.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/api/prompts/[id].json.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/prompts/index.astro" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/prompts/index.astro" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -70,6 +79,7 @@
       <map>
         <entry key="com.intellij.reactbuddy.reactComponents" value="false" />
         <entry key="com.intellij.reactbuddy.reactInspector" value="false" />
+        <entry key="com.intellij.reactbuddy.storybook" value="false" />
       </map>
     </option>
   </component>
@@ -123,9 +133,9 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="npm.dev:network" />
         <item itemvalue="npm.dev" />
         <item itemvalue="npm.build" />
-        <item itemvalue="npm.dev:network" />
         <item itemvalue="npm.db-push-remote" />
       </list>
     </recent_temporary>
@@ -147,6 +157,7 @@
       <option name="presentableId" value="Default" />
       <updated>1740642686598</updated>
       <workItem from="1740642687856" duration="59974000" />
+      <workItem from="1740897085267" duration="8140000" />
     </task>
     <task id="LOCAL-00001" summary="refactor: PromptTemplateTable to PromptTemplate">
       <option name="closed" value="true" />
@@ -170,9 +181,8 @@
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/src/lib/customFetchHandler.ts</url>
-          <line>7</line>
-          <properties lambdaOrdinal="-1" />
+          <url>file://$PROJECT_DIR$/src/lib/proxyFetchHandler.ts</url>
+          <line>4</line>
           <option name="timeStamp" value="1" />
         </line-breakpoint>
       </breakpoints>

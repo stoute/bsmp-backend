@@ -1,9 +1,8 @@
 export const prerender = false;
 
 import { v4 as uuid } from "uuid";
-// import { PromptTemplateTable, type PromptTemplateModel } from "@db/models";
 import { PromptTemplate, db, eq, and } from "astro:db";
-import type { IPromptTemplate } from "@lib/prompt-template/PromptTemplate";
+import type { IPromptTemplate } from "@types";
 
 // GET /api/prompts/[id]: Retrieves a specific prompt template by its id.
 export async function GET({ params }: { params: { id: string } }) {
@@ -172,16 +171,16 @@ export async function DELETE({ params }: { params: { id: string } }) {
   }
 }
 
-export async function getStaticPaths() {
-  const posts = await db.select().from(PromptTemplate);
-  let arr = [];
-  posts.map((post) => {
-    arr.push({ params: { id: post.id } });
-  });
-  return arr;
-  // todo: should work like this?
-  // return {
-  //   paths: arr,
-  //   fallback: false,
-  // };
-}
+// export async function getStaticPaths() {
+//   const posts = await db.select().from(PromptTemplate);
+//   let arr = [];
+//   posts.map((post) => {
+//     arr.push({ params: { id: post.id } });
+//   });
+//   return arr;
+//   // todo: should work like this?
+//   // return {
+//   //   paths: arr,
+//   //   fallback: false,
+//   // };
+// }

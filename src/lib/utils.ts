@@ -46,3 +46,9 @@ export function isRunningOnLocalhost(): boolean {
     hostname.startsWith("127.") // Any 127.x.x.x IP range
   );
 }
+
+export function reloadPage() {
+  if (typeof window !== "undefined") {
+    window.location.reload();
+  }
+}

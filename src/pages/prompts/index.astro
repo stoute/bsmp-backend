@@ -4,24 +4,16 @@ export const prerender = false;
 import PageLayout from "@layouts/PageLayout.astro";
 import TopLayout from "@layouts/TopLayout.astro";
 import BottomLayout from "@layouts/BottomLayout.astro";
-import PromptTemplates from "../../components/prompt-templates/PromptTemplates";
+import PromptTemplates from "@components/prompt-templates/PromptTemplates";
 ---
 
-<script is:inline>
-  const url = window.location.origin + "/api/hello";
-  const result = await fetch(url)
-    .then((response) => response.json())
-    .catch((error) => console.error("Error:", error));
-  console.log(result);
-</script>
-
-<PageLayout title={"dev"} description={"dev"}>
+<PageLayout title={"prompts"} description={"prompts"}>
   <TopLayout>
     <div class="animate page-heading">
-      {"DEV"}
+      {"Prompts"}
     </div>
   </TopLayout>
   <BottomLayout>
-    <PromptTemplates client:load initialTemplate={{}} />
+    <PromptTemplates client:load />
   </BottomLayout>
 </PageLayout>

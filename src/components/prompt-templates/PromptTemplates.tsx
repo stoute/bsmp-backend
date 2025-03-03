@@ -1,11 +1,23 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PromptTemplateList from "@components/prompt-templates/PromptTemplateList.tsx";
 import PromptTemplateEditor from "@components/prompt-templates/PromptTemplateEditor.tsx";
+import { reloadPage } from "@lib/utils";
 import type { IPromptTemplate } from "@types.ts";
 
 interface PromptTemplatesProps {
   initialTemplate?: IPromptTemplate;
 }
+
+const newTemplate: IPromptTemplate = {
+  id: "",
+  name: "",
+  description: "",
+  systemPrompt: "",
+  template: "",
+  variables: [],
+  created_at: new Date().toISOString(),
+  updated_at: new Date().toISOString(),
+};
 
 const PromptTemplates: React.FC<PromptTemplatesProps> = ({
   initialTemplate,
@@ -17,6 +29,12 @@ const PromptTemplates: React.FC<PromptTemplatesProps> = ({
     initialTemplate?.id,
   );
 
+  useEffect(() => {
+    if (!initialTemplate) {
+      handleNewTemplate();
+    }
+  }, []);
+
   // Handle template selection from the list
   const handleSelectTemplate = (template: IPromptTemplate) => {
     setSelectedTemplate(template);
@@ -25,16 +43,6 @@ const PromptTemplates: React.FC<PromptTemplatesProps> = ({
 
   // Handle creating a new template
   const handleNewTemplate = () => {
-    const newTemplate: IPromptTemplate = {
-      id: "",
-      name: "",
-      description: "",
-      systemPrompt: "",
-      template: "",
-      variables: [],
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    };
     setSelectedTemplate(newTemplate);
     setSelectedId(undefined);
   };
@@ -44,6 +52,7 @@ const PromptTemplates: React.FC<PromptTemplatesProps> = ({
     console.log("Saving template:", template);
     setSelectedTemplate(template);
     setSelectedId(template.id);
+    reloadPage();
     // todo: Refresh the list after saving
   };
 
@@ -53,6 +62,7 @@ const PromptTemplates: React.FC<PromptTemplatesProps> = ({
     // todo: setSelectedTemplate({});
     setSelectedId(undefined);
     // todo: Refresh the list after deleting
+    reloadPage();
   };
 
   return (

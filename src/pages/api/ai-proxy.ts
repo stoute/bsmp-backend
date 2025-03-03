@@ -22,7 +22,7 @@ export async function POST({
         Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: requestData.data.model || "gpt-4o-mini",
+        model: requestData.data.model || "openai/gpt-4o-mini",
         messages: requestData.data.messages,
         // Include other parameters as needed
       }),
