@@ -1,16 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import PromptTemplateList from "@components/prompt-templates/PromptTemplateList.tsx";
 import PromptTemplateEditor from "@components/prompt-templates/PromptTemplateEditor.tsx";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@components/ui/alert-dialog";
 import type { IPromptTemplate } from "@types";
 
 interface PromptTemplatesProps {
@@ -42,14 +32,6 @@ const PromptTemplates: React.FC<PromptTemplatesProps> = ({
     }
     return initialTemplate?.id;
   });
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const [templateToDelete, setTemplateToDelete] = useState<
-    | {
-        id: string;
-        template: IPromptTemplate;
-      }
-    | undefined
-  >();
   const listRef = useRef<{ fetchPromptTemplates: () => Promise<void> }>();
 
   // Fetch the selected template when component mounts or selectedId changes
@@ -114,52 +96,13 @@ const PromptTemplates: React.FC<PromptTemplatesProps> = ({
     }
   };
 
-  const handleDeleteTemplate = (id: string) => {
-    // Store both the ID and the current template
-    setTemplateToDelete({
-      id,
-      template: selectedTemplate!,
-    });
-    setShowDeleteDialog(true);
-  };
+  const handleDeleteTemplate = async (template: IPromptTemplate) => {
+    setSelectedTemplate(undefined);
+    setSelectedId(undefined);
 
-  const confirmDelete = async () => {
-    if (templateToDelete) {
-      try {
-        const response = await fetch(
-          `/api/prompts/${templateToDelete.id}.json`,
-          {
-            method: "DELETE",
-          },
-        );
-
-        if (!response.ok) {
-          throw new Error("Failed to delete template");
-        }
-
-        // Only clear selection and refresh list if delete was successful
-        setSelectedTemplate(undefined);
-        setSelectedId(undefined);
-
-        if (listRef.current) {
-          await listRef.current.fetchPromptTemplates();
-        }
-      } catch (error) {
-        console.error("Error deleting template:", error);
-      }
+    if (listRef.current) {
+      await listRef.current.fetchPromptTemplates();
     }
-    setShowDeleteDialog(false);
-    setTemplateToDelete(undefined);
-  };
-
-  const cancelDelete = () => {
-    // Restore the selected template
-    if (templateToDelete) {
-      setSelectedTemplate(templateToDelete.template);
-      setSelectedId(templateToDelete.id);
-    }
-    setShowDeleteDialog(false);
-    setTemplateToDelete(undefined);
   };
 
   const handleDuplicateTemplate = async (template: IPromptTemplate) => {
@@ -173,48 +116,28 @@ const PromptTemplates: React.FC<PromptTemplatesProps> = ({
   };
 
   return (
-    <>
-      <div className="flex w-full flex-col gap-4 md:flex-row">
-        <div className="w-full md:w-1/3">
-          <PromptTemplateList
-            ref={listRef}
-            onSelect={handleSelectTemplate}
-            onNew={handleNewTemplate}
-            selectedId={selectedId}
-          />
-        </div>
-        <div className="w-full md:w-2/3">
-          {selectedTemplate && (
-            <PromptTemplateEditor
-              key={selectedTemplate.id || "new"}
-              promptTemplate={selectedTemplate}
-              onSave={handleSaveTemplate}
-              onDelete={handleDeleteTemplate}
-              onDuplicate={handleDuplicateTemplate}
-              onCancel={() => setSelectedTemplate(undefined)}
-            />
-          )}
-        </div>
+    <div className="flex w-full flex-col gap-4 md:flex-row">
+      <div className="w-full md:w-1/3">
+        <PromptTemplateList
+          ref={listRef}
+          onSelect={handleSelectTemplate}
+          onNew={handleNewTemplate}
+          selectedId={selectedId}
+        />
       </div>
-
-      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the
-              prompt template.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel onClick={cancelDelete}>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmDelete}>
-              Delete
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </>
+      <div className="w-full md:w-2/3">
+        {selectedTemplate && (
+          <PromptTemplateEditor
+            key={selectedTemplate.id || "new"}
+            promptTemplate={selectedTemplate}
+            onSave={handleSaveTemplate}
+            onDelete={handleDeleteTemplate}
+            onDuplicate={handleDuplicateTemplate}
+            onCancel={() => setSelectedTemplate(undefined)}
+          />
+        )}
+      </div>
+    </div>
   );
 };
 
