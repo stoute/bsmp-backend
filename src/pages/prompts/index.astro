@@ -8,12 +8,14 @@ import PromptTemplates from "@components/prompt-templates/PromptTemplates";
 ---
 
 <PageLayout title={"prompts"} description={"prompts"}>
-  <TopLayout>
-    <div class="animate page-heading">
-      {"Prompts"}
-    </div>
-  </TopLayout>
+  <!--<TopLayout>-->
+  <!--  &lt;!&ndash;<div class="animate page-heading">&ndash;&gt;-->
+  <!--  &lt;!&ndash;  {"Prompts"}&ndash;&gt;-->
+  <!--  &lt;!&ndash;</div>&ndash;&gt;-->
+  <!--</TopLayout>-->
   <BottomLayout>
-    <PromptTemplates client:load />
+    <div class="animate pt-14">
+      <PromptTemplates client:load />
+    </div>
   </BottomLayout>
 </PageLayout>

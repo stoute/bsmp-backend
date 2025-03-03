@@ -6,11 +6,10 @@ import {
   AIMessage,
 } from "@langchain/core/messages";
 import { proxyFetchHandler } from "@lib/proxyFetchHandler.ts";
-import OpenAI from "openai";
 import { ChatOpenAI } from "@langchain/openai";
-// import { OpenRouterApi } from "@langchain/core/llms/openrouter";
 import type { IPromptTemplate } from "@types";
-import type { Agent } from "openai/_shims/auto/types";
+
+import styles from "./LangChainChat.module.css";
 
 export default function LangChainChat() {
   const [messages, setMessages] = useState([
@@ -59,14 +58,17 @@ export default function LangChainChat() {
   };
 
   return (
-    <div className="chat-container">
-      <div className="messages">
+    <div className={styles.chatContainer}>
+      <div className={styles.messages}>
         {messages.slice(1).map((message, i) => (
-          <div key={i} className={`message ${message._getType()}`}>
+          <div
+            key={i}
+            className={`${styles.message} ${styles[message._getType()]}`}
+          >
             {message.content}
           </div>
         ))}
-        {isLoading && <div className="loading">Thinking...</div>}
+        {isLoading && <div className={styles.loading}>Thinking...</div>}
       </div>
 
       <form onSubmit={handleSubmit}>
