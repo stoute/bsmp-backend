@@ -1,12 +1,10 @@
-// src/components/LangChainChat.jsx
+// src/components/chat/LangChainChat.jsx
 import { useState } from "react";
 import {
   HumanMessage,
   SystemMessage,
   AIMessage,
 } from "@langchain/core/messages";
-import { proxyFetchHandler } from "@lib/proxyFetchHandler.ts";
-import { ChatOpenAI } from "@langchain/openai";
 import { useLLMOutput } from "@llm-ui/react";
 import {
   codeBlockLookBack,
@@ -16,25 +14,19 @@ import {
 import { markdownLookBack } from "@llm-ui/markdown";
 import { MarkdownRenderer } from "./MarkdownRenderer";
 import { CodeBlockRenderer } from "./CodeBlockRenderer";
+import { useChatModel } from "@lib/hooks/useChatModel";
 
 import styles from "./LangChainChat.module.css";
 
-export default function LangChainChat() {
-  const [messages, setMessages] = useState([
-    new SystemMessage("You are a helpful assistant."),
-  ]);
+const model = "google/gemini-2.0-flash-001";
+const systemPrompt = "You are a helpful assistant.";
+
+export default function LangChainChat({}) {
+  const [messages, setMessages] = useState([new SystemMessage(systemPrompt)]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const chatModel = new ChatOpenAI({
-    temperature: 0.7,
-    configuration: {
-      dangerouslyAllowBrowser: true,
-      fetch: proxyFetchHandler,
-    },
-    model: "google/gemini-2.0-flash-001",
-    apiKey: "none",
-  });
+  const chatModel = useChatModel(model);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

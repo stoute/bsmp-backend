@@ -5,9 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6db5ad0e-5635-4336-a0ae-8b285de92988" name="Changes" comment="refactor: PromptTemplateTable to PromptTemplate">
+      <change afterPath="$PROJECT_DIR$/src/lib/hooks/useChatModel.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/AugmentWebviewStateStore.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/AugmentWebviewStateStore.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/styles/global.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/styles/global.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/CodeBlockRenderer.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/chat/CodeBlockRenderer.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/LangChainChat.module.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/chat/LangChainChat.module.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/LangChainChat.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/chat/LangChainChat.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/MarkdownRenderer.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/chat/MarkdownRenderer.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/proxyFetchHandler.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/dev/index.astro" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/dev/index.astro" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -81,6 +87,10 @@
       <recent name="$PROJECT_DIR$/src" />
       <recent name="$PROJECT_DIR$/src/pages" />
     </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/lib" />
+      <recent name="$PROJECT_DIR$/src/components/chat" />
+    </key>
   </component>
   <component name="RunManager" selected="npm.build">
     <configuration name="build" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
@@ -149,7 +159,7 @@
       <option name="presentableId" value="Default" />
       <updated>1740642686598</updated>
       <workItem from="1740642687856" duration="59974000" />
-      <workItem from="1740897085267" duration="36211000" />
+      <workItem from="1740897085267" duration="43014000" />
     </task>
     <task id="LOCAL-00001" summary="refactor: PromptTemplateTable to PromptTemplate">
       <option name="closed" value="true" />
