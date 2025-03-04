@@ -51,6 +51,14 @@ const formSchema = z.object({
   updated_at: z.string().optional(),
 });
 
+const emptyTemplate = {
+  name: "",
+  description: "",
+  systemPrompt: "",
+  template: "",
+  variables: [],
+};
+
 interface PromptTemplateEditorProps {
   apiEndPoint: string;
   promptTemplate?: IPromptTemplate;
@@ -61,7 +69,7 @@ interface PromptTemplateEditorProps {
 }
 
 const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
-  apiEndPoint,
+  apiEndPoint = "/api/prompts/index.json",
   promptTemplate,
   onSave,
   onDelete,
@@ -78,13 +86,7 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
   // Initialize form with default values or provided promptTemplate
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: promptTemplate || {
-      name: "",
-      description: "",
-      systemPrompt: "",
-      template: "",
-      variables: [],
-    },
+    defaultValues: promptTemplate || emptyTemplate,
   });
 
   // Reset form when promptTemplate changes
@@ -93,13 +95,7 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
       form.reset(promptTemplate);
       setIsNew(!promptTemplate.id);
     } else {
-      form.reset({
-        name: "",
-        description: "",
-        systemPrompt: "",
-        template: "",
-        variables: [],
-      });
+      form.reset(emptyTemplate);
       setIsNew(true);
     }
   }, [promptTemplate, form]);

@@ -18,7 +18,8 @@ const newTemplate: IPromptTemplate = {
   updated_at: new Date().toISOString(),
 };
 
-const apiEndPoint = "/api/prompts/index.json";
+const apiEndPoint = "https://bsmp.netlify.app/api/prompts/index.json";
+// const apiEndPoint = "/api/prompts/index.json";
 
 const PromptTemplates: React.FC<PromptTemplatesProps> = ({
   initialTemplate,
