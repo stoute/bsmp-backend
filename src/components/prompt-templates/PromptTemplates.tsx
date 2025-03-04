@@ -18,6 +18,8 @@ const newTemplate: IPromptTemplate = {
   updated_at: new Date().toISOString(),
 };
 
+const apiEndPoint = "/api/prompts/index.json";
+
 const PromptTemplates: React.FC<PromptTemplatesProps> = ({
   initialTemplate,
 }) => {
@@ -42,7 +44,7 @@ const PromptTemplates: React.FC<PromptTemplatesProps> = ({
         return;
       }
       try {
-        const response = await fetch(`/api/prompts/${selectedId}.json`);
+        const response = await fetch(apiEndPoint.replace("index", selectedId));
         if (!response.ok) {
           throw new Error("Failed to fetch template");
         }
@@ -120,6 +122,7 @@ const PromptTemplates: React.FC<PromptTemplatesProps> = ({
       <div className="w-full md:w-1/3">
         <PromptTemplateList
           ref={listRef}
+          dataUrl={apiEndPoint.replace("index", "list")}
           onSelect={handleSelectTemplate}
           onNew={handleNewTemplate}
           selectedId={selectedId}
@@ -129,6 +132,7 @@ const PromptTemplates: React.FC<PromptTemplatesProps> = ({
         {selectedTemplate && (
           <PromptTemplateEditor
             key={selectedTemplate.id || "new"}
+            apiEndPoint={apiEndPoint}
             promptTemplate={selectedTemplate}
             onSave={handleSaveTemplate}
             onDelete={handleDeleteTemplate}

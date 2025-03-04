@@ -43,7 +43,7 @@ import {
 const formSchema = z.object({
   id: z.string().optional(),
   name: z.string().min(1, "Name is required"),
-  description: z.string().min(1, "Description is required"),
+  description: z.string().optional(),
   systemPrompt: z.string().optional(),
   template: z.string().min(1, "Template is required"),
   variables: z.array(z.string()).optional().default([]),
@@ -52,6 +52,7 @@ const formSchema = z.object({
 });
 
 interface PromptTemplateEditorProps {
+  apiEndPoint: string;
   promptTemplate?: IPromptTemplate;
   onSave?: (template: IPromptTemplate) => void;
   onDelete?: (template: IPromptTemplate) => void; // Changed to pass full template
@@ -60,6 +61,7 @@ interface PromptTemplateEditorProps {
 }
 
 const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
+  apiEndPoint,
   promptTemplate,
   onSave,
   onDelete,
@@ -114,7 +116,7 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
 
       if (isNew) {
         // Create new prompt template
-        response = await fetch("/api/prompts/index.json", {
+        response = await fetch(apiEndPoint, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -123,7 +125,7 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
         });
       } else {
         // Update existing prompt template
-        response = await fetch(`/api/prompts/${values.id}.json`, {
+        response = await fetch(apiEndPoint.replace("index", values.id), {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
@@ -171,9 +173,13 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
     if (!promptTemplate) return;
 
     try {
-      const response = await fetch(`/api/prompts/${promptTemplate.id}.json`, {
-        method: "DELETE",
-      });
+      const response = await fetch(
+        apiEndPoint.replace("index", promptTemplate.id),
+        {
+          // const response = await fetch(apiBaseUrl + `/${promptTemplate.id}.json`, {
+          method: "DELETE",
+        },
+      );
 
       if (!response.ok) {
         throw new Error("Failed to delete template");
@@ -197,7 +203,7 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
     setSuccess(null);
 
     try {
-      const response = await fetch("/api/prompts/index.json", {
+      const response = await fetch(apiEndPoint, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

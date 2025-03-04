@@ -18,10 +18,15 @@ import { useChatModel } from "@lib/hooks/useChatModel";
 
 import styles from "./LangChainChat.module.css";
 
-const model = "google/gemini-2.0-flash-001";
-const systemPrompt = "You are a helpful assistant.";
+interface LangChainChatProps {
+  model?: string;
+  systemPrompt?: string;
+}
 
-export default function LangChainChat({}) {
+export default function LangChainChat({
+  model = "openai/gpt-3.5-turbo",
+  systemPrompt = "You are a helpful assistant.",
+}: LangChainChatProps) {
   const [messages, setMessages] = useState([new SystemMessage(systemPrompt)]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);

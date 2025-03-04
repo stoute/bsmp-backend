@@ -1,5 +1,35 @@
 import type { Site, Page, Links, Socials } from "@types";
 
+// Links
+export const LINKS: Links = [
+  {
+    TEXT: "Home",
+    HREF: "/",
+  },
+  {
+    TEXT: "Chat",
+    HREF: "/chat",
+  },
+  {
+    TEXT: "Prompts",
+    HREF: "/prompts",
+  },
+  {
+    TEXT: "Contact",
+    HREF: "/contact",
+  },
+  {
+    TEXT: "Projects",
+    HREF: "/projects",
+    DISABLED: "production",
+  },
+  // {
+  //   TEXT: "Blog",
+  //   HREF: "/blog",
+  //   DISABLED: "production",
+  // },
+];
+
 // Global
 export const SITE: Site = {
   TITLE: "BSMP",
@@ -24,37 +54,6 @@ export const SEARCH: Page = {
   TITLE: "Search",
   DESCRIPTION: "Search all posts and projects by keyword.",
 };
-
-// Links
-export const LINKS: Links = [
-  {
-    TEXT: "Home",
-    HREF: "/",
-  },
-  {
-    TEXT: "Prompts",
-    HREF: "/prompts",
-  },
-  {
-    TEXT: "Dev",
-    HREF: "/dev",
-    DISABLED: "production",
-  },
-  {
-    TEXT: "Contact",
-    HREF: "/contact",
-  },
-  {
-    TEXT: "Projects",
-    HREF: "/projects",
-    DISABLED: "production",
-  },
-  // {
-  //   TEXT: "Blog",
-  //   HREF: "/blog",
-  //   DISABLED: "production",
-  // },
-];
 
 // Socials
 export const SOCIALS: Socials = [

@@ -26,12 +26,13 @@ interface PromptTemplateListProps {
   onNew: () => void;
   selectedId?: string;
   onRefresh?: () => void; // Add new prop for external refresh
+  dataUrl: string;
 }
 
 const PromptTemplateList = forwardRef<
   { fetchPromptTemplates: () => Promise<void> },
   PromptTemplateListProps
->(({ onSelect, onNew, selectedId }, ref) => {
+>(({ dataUrl, onSelect, onNew, selectedId }, ref) => {
   const [promptTemplates, setPromptTemplates] = useState<IPromptTemplate[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -46,7 +47,7 @@ const PromptTemplateList = forwardRef<
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch("/api/prompts/index.json");
+      const response = await fetch(dataUrl);
       if (!response.ok) {
         throw new Error("Failed to fetch prompt templates");
       }
