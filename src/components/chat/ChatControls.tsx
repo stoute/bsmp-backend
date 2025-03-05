@@ -21,12 +21,26 @@ interface ChatControlsProps {
 export default function ChatControls({
   onTemplateChange,
   onModelChange,
-  selectedTemplateId,
-  selectedModel,
+  selectedTemplateId: propSelectedTemplateId,
+  selectedModel: propSelectedModel,
 }: ChatControlsProps) {
   const [templates, setTemplates] = useState<IPromptTemplate[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Initialize from appState or props
+  const [selectedTemplateId, setSelectedTemplateId] = useState(
+    () => appState.get().selectedTemplateId || propSelectedTemplateId,
+  );
+  const [selectedModel, setSelectedModel] = useState(
+    () => appState.get().selectedModel || propSelectedModel,
+  );
+
+  // Sync with appState
+  useEffect(() => {
+    appState.setKey("selectedTemplateId", selectedTemplateId);
+    appState.setKey("selectedModel", selectedModel);
+  }, [selectedTemplateId, selectedModel]);
 
   useEffect(() => {
     const fetchTemplates = async () => {
@@ -54,6 +68,7 @@ export default function ChatControls({
 
   const handleTemplateChange = async (templateId: string) => {
     try {
+      setSelectedTemplateId(templateId);
       const response = await fetch(
         `${appState.get().apiBaseUrl}/prompts/${templateId}.json`,
       );
@@ -65,6 +80,11 @@ export default function ChatControls({
     } catch (err) {
       console.error("Error fetching template:", err);
     }
+  };
+
+  const handleModelChange = (model: string) => {
+    setSelectedModel(model);
+    onModelChange(model);
   };
 
   return (
@@ -101,7 +121,7 @@ export default function ChatControls({
 
       <div className="flex items-center gap-2">
         <Label htmlFor="model-select">Model</Label>
-        <Select value={selectedModel} onValueChange={onModelChange}>
+        <Select value={selectedModel} onValueChange={handleModelChange}>
           <SelectTrigger id="model-select" className="w-[200px]">
             <SelectValue placeholder="Select model" />
           </SelectTrigger>

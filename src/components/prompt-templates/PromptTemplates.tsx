@@ -28,12 +28,7 @@ const PromptTemplates: React.FC<PromptTemplatesProps> = ({
     IPromptTemplate | undefined
   >(initialTemplate);
   const [selectedId, setSelectedId] = useState<string | undefined>(() => {
-    // Only access localStorage in the browser
-    if (typeof window !== "undefined") {
-      const savedId = localStorage.getItem("selectedTemplateId");
-      return savedId || initialTemplate?.id;
-    }
-    return initialTemplate?.id;
+    return appState.get().selectedTemplateId || initialTemplate?.id;
   });
   const listRef = useRef<{ fetchPromptTemplates: () => Promise<void> }>();
 
@@ -59,15 +54,9 @@ const PromptTemplates: React.FC<PromptTemplatesProps> = ({
     fetchSelectedTemplate();
   }, [selectedId]);
 
-  // Save selectedId to localStorage whenever it changes
+  // Update appState whenever selectedId changes
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      if (selectedId) {
-        localStorage.setItem("selectedTemplateId", selectedId);
-      } else {
-        localStorage.removeItem("selectedTemplateId");
-      }
-    }
+    appState.setKey("selectedTemplateId", selectedId);
   }, [selectedId]);
 
   const handleSelectTemplate = (template: IPromptTemplate) => {
