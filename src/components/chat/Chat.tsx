@@ -1,10 +1,6 @@
 // src/components/chat/Chat.jsx
-import { useState } from "react";
-import {
-  HumanMessage,
-  SystemMessage,
-  AIMessage,
-} from "@langchain/core/messages";
+import { useState, useEffect } from "react";
+import { AIMessage } from "@langchain/core/messages";
 import { useLLMOutput } from "@llm-ui/react";
 import {
   codeBlockLookBack,
@@ -14,14 +10,14 @@ import {
 import { markdownLookBack } from "@llm-ui/markdown";
 import { MarkdownRenderer } from "./MarkdownRenderer";
 import { CodeBlockRenderer } from "./CodeBlockRenderer";
-import { useChatModel } from "@lib/hooks/useChatModel";
-
+import { ChatSessionManager } from "@lib/templateParser";
+import type { ChatOpenAI } from "@langchain/openai";
 import styles from "./Chat.module.css";
 
 interface ChatProps {
   model?: string;
   systemPrompt?: string;
-  llm: any; // You might want to add proper typing here based on the ChatOpenAI type
+  llm: ChatOpenAI;
 }
 
 export default function Chat({
@@ -29,35 +25,37 @@ export default function Chat({
   systemPrompt = "You are a helpful assistant.",
   llm,
 }: ChatProps) {
-  const [messages, setMessages] = useState([new SystemMessage(systemPrompt)]);
+  const [chatManager, setChatManager] = useState<ChatSessionManager | null>(
+    null,
+  );
+  const [messages, setMessages] = useState<BaseMessage[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!input.trim()) return;
+  useEffect(() => {
+    const manager = new ChatSessionManager(llm, systemPrompt);
+    setChatManager(manager);
+    setMessages(manager.getMessages());
+  }, [llm, systemPrompt]);
 
-    const userMessage = new HumanMessage(input);
-    setMessages((prev) => [...prev, userMessage]);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!input.trim() || !chatManager) return;
+
     setInput("");
     setIsLoading(true);
 
     try {
-      const newMessages = [...messages, userMessage];
-      const response = await llm.invoke(newMessages);
-      setMessages((prev) => [...prev, response]);
+      const response = await chatManager.sendMessage(input);
+      setMessages(chatManager.getMessages());
     } catch (error) {
       console.error("Error:", error);
-      setMessages((prev) => [
-        ...prev,
-        new AIMessage("Sorry, I encountered an error."),
-      ]);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const MessageContent = ({ content }) => {
+  const MessageContent = ({ content }: { content: string }) => {
     const { blockMatches } = useLLMOutput({
       llmOutput: content,
       fallbackBlock: {
