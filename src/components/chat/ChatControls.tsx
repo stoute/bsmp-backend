@@ -63,7 +63,10 @@ export default function ChatControls({
       }
     };
 
-    fetchTemplates();
+    fetchTemplates().then(() => {
+      if (appState.get().selectedTemplateId)
+        handleTemplateChange(appState.get().selectedTemplateId);
+    });
   }, []);
 
   const handleTemplateChange = async (templateId: string) => {

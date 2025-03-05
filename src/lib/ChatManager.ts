@@ -15,18 +15,14 @@ import type { IPromptTemplate } from "@types";
 export class ChatManager {
   private messages: BaseMessage[] = [];
   private llm: ChatOpenAI;
-  private chatPrompt?: ChatPromptTemplate;
   private isLoading: boolean = false;
   public template?: IPromptTemplate;
+  public chatPromptTemplate?: ChatPromptTemplate;
 
   constructor(
     model: string = "openai/gpt-3.5-turbo",
-    systemPrompt: string = "You are a helpful assistant.",
-    template?: IPromptTemplate,
+    template: IPromptTemplate,
   ) {
-    if (template) {
-      this.setTemplate(template);
-    }
     this.llm = new ChatOpenAI({
       temperature: 0.7,
       configuration: {
@@ -36,8 +32,11 @@ export class ChatManager {
       model: model,
       apiKey: "none",
     });
-
-    this.messages = [new SystemMessage(systemPrompt)];
+    if (template) {
+      // todo: remove?
+      this.messages = [new SystemMessage(template.systemPrompt)];
+      this.setTemplate(template);
+    }
   }
 
   async setTemplate(template: IPromptTemplate) {
@@ -49,13 +48,13 @@ export class ChatManager {
         template.template,
       );
 
-      this.chatPrompt = ChatPromptTemplate.fromMessages([
+      this.chatPromptTemplate = ChatPromptTemplate.fromMessages([
         systemTemplate,
         humanTemplate,
       ]);
 
       // Get required variables from the template
-      const requiredVariables = this.chatPrompt.inputVariables;
+      const requiredVariables = this.chatPromptTemplate.inputVariables;
       if (requiredVariables.length > 0) {
         throw new Error(
           `Template requires variables: ${requiredVariables.join(", ")}`,
@@ -65,7 +64,7 @@ export class ChatManager {
       // Reset messages with new system prompt
       this.messages = [new SystemMessage(template.systemPrompt || "")];
 
-      return { ...template, chatPrompt: this.chatPrompt };
+      return { ...template, chatPrompt: this.chatPromptTemplate };
     } catch (error) {
       console.error("Error setting template:", error);
       throw error;
@@ -79,8 +78,8 @@ export class ChatManager {
     try {
       let processedInput = input;
 
-      if (this.chatPrompt && variables) {
-        const formatted = await this.chatPrompt.formatMessages({
+      if (this.chatPromptTemplate && variables) {
+        const formatted = await this.chatPromptTemplate.formatMessages({
           input,
           ...variables,
         });
@@ -139,10 +138,10 @@ export class ChatManager {
 }
 
 // Keep parseTemplate for backward compatibility
-export async function parseTemplate(
-  template: IPromptTemplate,
-  llm: ChatOpenAI,
-): Promise<IPromptTemplate> {
-  const chatManager = new ChatManager();
-  return chatManager.setTemplate(template);
-}
+// export async function parseTemplate(
+//   template: IPromptTemplate,
+//   llm: ChatOpenAI,
+// ): Promise<IPromptTemplate> {
+//   const chatManager = new ChatManager();
+//   return chatManager.setTemplate(template);
+// }

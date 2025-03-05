@@ -1,3 +1,5 @@
+import { ChatPromptTemplate } from "@langchain/core/prompts";
+
 export type Page = {
   TITLE: string;
   DESCRIPTION: string;
@@ -36,4 +38,8 @@ export interface IPromptTemplate {
   variables?: string[];
   created_at: string; // ISO datetime format
   updated_at: string; // ISO datetime format
+}
+
+export interface IParsedPromptTemplate extends IPromptTemplate {
+  chatPromptTemplate: ChatPromptTemplate;
 }

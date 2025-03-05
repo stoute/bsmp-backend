@@ -70,30 +70,17 @@ ChatInput.displayName = "ChatInput";
 type ChatProps = {
   template?: IPromptTemplate;
   model?: string;
-  systemPrompt?: string;
 };
 
-export default function Chat({ model, systemPrompt, template }: ChatProps) {
-  const [chatManager] = useState(
-    () => new ChatManager(model, systemPrompt, template),
-  );
+export default function Chat({ model, template }: ChatProps) {
+  const [chatManager] = useState(() => new ChatManager(model, template));
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState(chatManager.getMessages());
   const [isLoading, setIsLoading] = useState(false);
 
-  // useEffect(() => {
-  //   const initTemplate = async () => {
-  //     if (chatManager.template) {
-  //       try {
-  //         await chatManager.setTemplate(template);
-  //         setMessages(chatManager.getMessages());
-  //       } catch (error) {
-  //         console.error("Error initializing template:", error);
-  //       }
-  //     }
-  //   };
-  //   initTemplate();
-  // }, [template]);
+  useEffect(() => {
+    console.log(chatManager.chatPromptTemplate);
+  }, [template]);
 
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {

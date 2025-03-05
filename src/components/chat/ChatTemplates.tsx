@@ -2,7 +2,6 @@ import { useState } from "react";
 import type { IPromptTemplate } from "@types";
 import Chat from "./Chat";
 import ChatControls from "./ChatControls";
-import { useChatModel } from "@lib/hooks/useChatModel";
 
 interface ChatTemplatesProps {
   model?: string;
@@ -18,6 +17,8 @@ export default function ChatTemplates({
   >();
   const [selectedModel, setSelectedModel] = useState(model);
 
+  // if (!selectedTemplate) return;
+
   return (
     <div className="flex flex-col gap-4">
       <ChatControls
@@ -29,7 +30,7 @@ export default function ChatTemplates({
       <Chat
         key={`${selectedTemplate?.id || "default"}-${selectedModel}`}
         model={selectedModel}
-        systemPrompt={selectedTemplate?.systemPrompt || systemPrompt}
+        template={selectedTemplate}
       />
     </div>
   );
