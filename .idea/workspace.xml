@@ -5,10 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6db5ad0e-5635-4336-a0ae-8b285de92988" name="Changes" comment="refactor: PromptTemplateTable to PromptTemplate">
+      <change afterPath="$PROJECT_DIR$/src/components/chat/ChatTemplates.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/AugmentWebviewStateStore.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/AugmentWebviewStateStore.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/chat/Chat.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/chat/Chat.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/prompt-templates/PromptTemplates.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/prompt-templates/PromptTemplates.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/appStore.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/appStore.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/pages/chat/index.astro" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/chat/index.astro" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -156,7 +156,7 @@
       <option name="presentableId" value="Default" />
       <updated>1740642686598</updated>
       <workItem from="1740642687856" duration="59974000" />
-      <workItem from="1740897085267" duration="63957000" />
+      <workItem from="1740897085267" duration="67442000" />
     </task>
     <task id="LOCAL-00001" summary="refactor: PromptTemplateTable to PromptTemplate">
       <option name="closed" value="true" />

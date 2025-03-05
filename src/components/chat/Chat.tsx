@@ -21,17 +21,17 @@ import styles from "./Chat.module.css";
 interface ChatProps {
   model?: string;
   systemPrompt?: string;
+  llm: any; // You might want to add proper typing here based on the ChatOpenAI type
 }
 
 export default function Chat({
   model = "openai/gpt-3.5-turbo",
   systemPrompt = "You are a helpful assistant.",
+  llm,
 }: ChatProps) {
   const [messages, setMessages] = useState([new SystemMessage(systemPrompt)]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-
-  const llm = useChatModel(model);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
