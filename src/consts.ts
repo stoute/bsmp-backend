@@ -1,5 +1,14 @@
 import type { Site, Page, Links, Socials } from "@types";
 
+export const LLM_MODELS = [
+  "google/gemini-2.0-flash-lite-001",
+  "google/gemini-2.0-flash-001",
+  "openai/gpt-3.5-turbo",
+  "openai/gpt-4",
+  "openai/gpt-4o-mini",
+  "deepseek/deepseek-r1-distill-llama-8b",
+];
+
 // Links
 export const LINKS: Links = [
   {

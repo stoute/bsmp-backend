@@ -2,14 +2,14 @@
 export const prerender = false;
 
 import PageLayout from "@layouts/PageLayout.astro";
-import LangChainChat from "@components/chat/LangChainChat";
+import Chat from "../../components/chat/Chat";
 import BottomLayout from "@layouts/BottomLayout.astro";
 ---
 
 <PageLayout title="AI Chat">
   <BottomLayout>
     <div class="animate pt-14">
-      <LangChainChat
+      <Chat
         client:load
         model="google/gemini-2.0-flash-001"
         systemPrompt="You are a helpful assistant."

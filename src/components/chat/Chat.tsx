@@ -1,4 +1,4 @@
-// src/components/chat/LangChainChat.jsx
+// src/components/chat/Chat.jsx
 import { useState } from "react";
 import {
   HumanMessage,
@@ -16,14 +16,14 @@ import { MarkdownRenderer } from "./MarkdownRenderer";
 import { CodeBlockRenderer } from "./CodeBlockRenderer";
 import { useChatModel } from "@lib/hooks/useChatModel";
 
-import styles from "./LangChainChat.module.css";
+import styles from "./Chat.module.css";
 
 interface LangChainChatProps {
   model?: string;
   systemPrompt?: string;
 }
 
-export default function LangChainChat({
+export default function Chat({
   model = "openai/gpt-3.5-turbo",
   systemPrompt = "You are a helpful assistant.",
 }: LangChainChatProps) {
