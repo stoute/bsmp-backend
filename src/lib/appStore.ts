@@ -2,13 +2,14 @@
 import { persistentAtom, persistentMap } from "@nanostores/persistent";
 
 export type AppState = {
-  apiBaseUrl: string;
+  apiBaseUrl: "/api" | "https://bsmp.netlify.app/api";
   environment: "development" | "production";
-  user: object;
-  sidebar: "show" | "hide";
-  theme: "dark" | "light" | "auto";
 };
 
-export const appState = persistentMap<AppState>("appState", {});
+export const appState = persistentMap<AppState>("appState", {
+  // apiBaseUrl: "/api",
+  apiBaseUrl: "https://bsmp.netlify.app/api",
+  environment: "development",
+});
 
 export const isLoggedIn = persistentAtom("isLoggedIn", false);

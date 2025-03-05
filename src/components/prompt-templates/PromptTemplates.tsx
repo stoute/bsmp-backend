@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import PromptTemplateList from "@components/prompt-templates/PromptTemplateList.tsx";
 import PromptTemplateEditor from "@components/prompt-templates/PromptTemplateEditor.tsx";
+import { appState } from "@lib/appStore";
 import type { IPromptTemplate } from "@types";
 
 interface PromptTemplatesProps {
@@ -18,8 +19,7 @@ const newTemplate: IPromptTemplate = {
   updated_at: new Date().toISOString(),
 };
 
-const apiEndPoint = "https://bsmp.netlify.app/api/prompts/index.json";
-// const apiEndPoint = "/api/prompts/index.json";
+const apiEndPoint = appState.get().apiBaseUrl + "/prompts/index.json";
 
 const PromptTemplates: React.FC<PromptTemplatesProps> = ({
   initialTemplate,

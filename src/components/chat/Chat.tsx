@@ -18,7 +18,7 @@ import { useChatModel } from "@lib/hooks/useChatModel";
 
 import styles from "./Chat.module.css";
 
-interface LangChainChatProps {
+interface ChatProps {
   model?: string;
   systemPrompt?: string;
 }
@@ -26,12 +26,12 @@ interface LangChainChatProps {
 export default function Chat({
   model = "openai/gpt-3.5-turbo",
   systemPrompt = "You are a helpful assistant.",
-}: LangChainChatProps) {
+}: ChatProps) {
   const [messages, setMessages] = useState([new SystemMessage(systemPrompt)]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const chatModel = useChatModel(model);
+  const llm = useChatModel(model);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -44,7 +44,7 @@ export default function Chat({
 
     try {
       const newMessages = [...messages, userMessage];
-      const response = await chatModel.invoke(newMessages);
+      const response = await llm.invoke(newMessages);
       setMessages((prev) => [...prev, response]);
     } catch (error) {
       console.error("Error:", error);
