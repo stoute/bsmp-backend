@@ -1,54 +1,55 @@
-.code-block {
+/* Base styles for code blocks */
+pre {
   margin: 1rem 0;
-}
-
-.code-block pre {
   padding: 1rem;
   border-radius: 0.5rem;
   overflow-x: auto;
 }
 
-.code-block code {
+code {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   font-size: 0.875rem;
   line-height: 1.5;
 }
 
-/* Optional: Add a subtle border */
-.code-block pre {
-  border: 1px solid rgb(38 38 38);
+/* Shiki specific styles */
+.shiki {
+  @apply p-4 rounded-lg overflow-x-auto my-4;
+  @apply bg-zinc-100 dark:bg-zinc-800;
+  @apply border border-zinc-200 dark:border-zinc-700;
 }
 
-/* Dark mode adjustments if needed */
-:global(.dark) .code-block pre {
-  border-color: rgb(64 64 64);
+.shiki code {
+  @apply font-mono text-sm leading-relaxed;
+  @apply block w-full;
 }
 
-@layer components {
-  .shiki {
-    @apply p-4 rounded-lg overflow-x-auto my-4;
-    @apply bg-zinc-900 dark:bg-zinc-950;
-    @apply border border-zinc-200 dark:border-zinc-800;
-  }
+/* Line numbers */
+.shiki {
+  counter-reset: line;
+}
 
-  .shiki code {
-    @apply font-mono text-sm leading-relaxed;
-    @apply block w-full;
-  }
+.shiki > code > .line {
+  @apply block;
+  line-height: 0.09;
+  padding: 0 1rem;
+}
 
-  /* Optional: Add line numbers */
-  .shiki {
-    counter-reset: line;
-  }
+.shiki > code > .line:before {
+  counter-increment: line;
+  content: counter(line);
+  @apply inline-block w-4 mr-4 text-zinc-400 text-right select-none;
+}
 
-  .shiki > code > .line {
-    @apply block;
-    line-height: 0.09; /* Adjust this value to control spacing */
-  }
+/* Copy button styles */
+.copy-button {
+  @apply absolute top-2 right-2 p-2 rounded-md;
+  @apply bg-zinc-200 dark:bg-zinc-700;
+  @apply hover:bg-zinc-300 dark:hover:bg-zinc-600;
+  @apply transition-colors duration-200;
+  opacity: 0;
+}
 
-  .shiki > code > .line::before {
-    counter-increment: line;
-    content: counter(line);
-    @apply inline-block w-4 mr-4 text-zinc-500 text-right;
-  }
+.shiki:hover .copy-button {
+  opacity: 1;
 }

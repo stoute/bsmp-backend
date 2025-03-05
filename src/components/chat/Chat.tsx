@@ -1,100 +1,128 @@
 // src/components/chat/Chat.jsx
-import { useState } from "react";
-import {
-  HumanMessage,
-  SystemMessage,
-  AIMessage,
-} from "@langchain/core/messages";
-import { useLLMOutput } from "@llm-ui/react";
-import {
-  codeBlockLookBack,
-  findCompleteCodeBlock,
-  findPartialCodeBlock,
-} from "@llm-ui/code";
-import { markdownLookBack } from "@llm-ui/markdown";
+import { useState, useEffect, useCallback, memo } from "react";
+import { ChatManager } from "@lib/ChatManager.ts";
 import { MarkdownRenderer } from "./MarkdownRenderer";
-import { CodeBlockRenderer } from "./CodeBlockRenderer";
-import { useChatModel } from "@lib/hooks/useChatModel";
-
+import { MessageErrorBoundary } from "./MessageErrorBoundary";
+import type { IPromptTemplate } from "@types";
 import styles from "./Chat.module.css";
 
-interface ChatProps {
+const MessageContent = memo(({ message }: { message: any }) => {
+  const content =
+    typeof message.content === "string"
+      ? message.content
+      : message.content?.toString() || "";
+
+  if (!content) return null;
+
+  return (
+    <div className="prose dark:prose-invert max-w-none">
+      <MarkdownRenderer blockMatch={{ output: content }} />
+    </div>
+  );
+});
+MessageContent.displayName = "MessageContent";
+
+const ChatMessage = memo(({ message }: { message: any }) => (
+  <div
+    className={`${styles.message} ${
+      message._getType() === "human" ? styles.human : styles.ai
+    }`}
+  >
+    <MessageErrorBoundary>
+      {message._getType() === "human" ? (
+        <div className={styles.userMessage}>{message.content}</div>
+      ) : (
+        <MessageContent message={message} />
+      )}
+    </MessageErrorBoundary>
+  </div>
+));
+ChatMessage.displayName = "ChatMessage";
+
+const ChatInput = memo(
+  ({
+    input,
+    isLoading,
+    onInputChange,
+    onSubmit,
+  }: {
+    input: string;
+    isLoading: boolean;
+    onInputChange: (value: string) => void;
+    onSubmit: (e: React.FormEvent) => void;
+  }) => (
+    <form onSubmit={onSubmit} className={styles.inputForm}>
+      <input
+        value={input}
+        onChange={(e) => onInputChange(e.target.value)}
+        placeholder="Ask something..."
+        disabled={isLoading}
+        className={styles.input}
+      />
+      <button type="submit" disabled={isLoading} className={styles.button}>
+        Send
+      </button>
+    </form>
+  ),
+);
+ChatInput.displayName = "ChatInput";
+
+type ChatProps = {
+  template?: IPromptTemplate;
   model?: string;
   systemPrompt?: string;
-  llm: any; // You might want to add proper typing here based on the ChatOpenAI type
-}
+};
 
-export default function Chat({
-  model = "openai/gpt-3.5-turbo",
-  systemPrompt = "You are a helpful assistant.",
-  llm,
-}: ChatProps) {
-  const [messages, setMessages] = useState([new SystemMessage(systemPrompt)]);
+export default function Chat({ model, systemPrompt, template }: ChatProps) {
+  const [chatManager] = useState(
+    () => new ChatManager(model, systemPrompt, template),
+  );
   const [input, setInput] = useState("");
+  const [messages, setMessages] = useState(chatManager.getMessages());
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!input.trim()) return;
+  // useEffect(() => {
+  //   const initTemplate = async () => {
+  //     if (chatManager.template) {
+  //       try {
+  //         await chatManager.setTemplate(template);
+  //         setMessages(chatManager.getMessages());
+  //       } catch (error) {
+  //         console.error("Error initializing template:", error);
+  //       }
+  //     }
+  //   };
+  //   initTemplate();
+  // }, [template]);
 
-    const userMessage = new HumanMessage(input);
-    setMessages((prev) => [...prev, userMessage]);
-    setInput("");
-    setIsLoading(true);
+  const handleSubmit = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault();
+      if (!input.trim()) return;
 
-    try {
-      const newMessages = [...messages, userMessage];
-      const response = await llm.invoke(newMessages);
-      setMessages((prev) => [...prev, response]);
-    } catch (error) {
-      console.error("Error:", error);
-      setMessages((prev) => [
-        ...prev,
-        new AIMessage("Sorry, I encountered an error."),
-      ]);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+      setIsLoading(true);
+      try {
+        await chatManager.sendMessage(input);
+        setMessages(chatManager.getMessages());
+        setInput("");
+      } catch (error) {
+        console.error("Chat error:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [input, chatManager],
+  );
 
-  const MessageContent = ({ content }) => {
-    const { blockMatches } = useLLMOutput({
-      llmOutput: content,
-      fallbackBlock: {
-        component: MarkdownRenderer,
-        lookBack: markdownLookBack(),
-      },
-      blocks: [
-        {
-          component: CodeBlockRenderer,
-          findCompleteMatch: findCompleteCodeBlock(),
-          findPartialMatch: findPartialCodeBlock(),
-          lookBack: codeBlockLookBack(),
-        },
-      ],
-      isStreamFinished: true,
-    });
-
-    return (
-      <div>
-        {blockMatches.map((blockMatch, index) => {
-          const Component = blockMatch.block.component;
-          return <Component key={index} blockMatch={blockMatch} />;
-        })}
-      </div>
-    );
-  };
+  const handleInputChange = useCallback((value: string) => {
+    setInput(value);
+  }, []);
 
   return (
     <div className={styles.chatContainer}>
       <div className={styles.messages}>
         {messages.slice(1).map((message, index) => (
-          <div
-            key={index}
-            className={`${styles.message} ${styles[message._getType()]}`}
-          >
-            <MessageContent content={message.content} />
-          </div>
+          <ChatMessage key={index} message={message} />
         ))}
         {isLoading && (
           <div className={styles.message}>
@@ -103,17 +131,12 @@ export default function Chat({
         )}
       </div>
 
-      <form onSubmit={handleSubmit} className={styles.inputForm}>
-        <input
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="Ask something..."
-          disabled={isLoading}
-        />
-        <button type="submit" disabled={isLoading}>
-          Send
-        </button>
-      </form>
+      <ChatInput
+        input={input}
+        isLoading={isLoading}
+        onInputChange={handleInputChange}
+        onSubmit={handleSubmit}
+      />
     </div>
   );
 }

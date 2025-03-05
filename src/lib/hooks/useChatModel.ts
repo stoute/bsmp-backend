@@ -1,4 +1,5 @@
 import { ChatOpenAI } from "@langchain/openai";
+import { appState } from "@lib/appStore";
 
 export function useChatModel(model: string = "openai/gpt-3.5-turbo") {
   const chatModel = new ChatOpenAI({
@@ -19,16 +20,19 @@ const proxyFetchHandler = async (url: string, options: any) => {
   const endpoint = urlObj.pathname.split("/v1/")[1];
 
   // Forward to our proxy with the necessary data
-  const response: Response = await fetch("/api/ai-proxy", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
+  const response: Response = await fetch(
+    appState.get().apiBaseUrl + "/ai-proxy",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        endpoint,
+        data: JSON.parse(options.body),
+      }),
     },
-    body: JSON.stringify({
-      endpoint,
-      data: JSON.parse(options.body),
-    }),
-  });
+  );
 
   return response;
 };

@@ -17,7 +17,6 @@ export default function ChatTemplates({
     IPromptTemplate | undefined
   >();
   const [selectedModel, setSelectedModel] = useState(model);
-  const llm = useChatModel(selectedModel);
 
   return (
     <div className="flex flex-col gap-4">
@@ -31,7 +30,6 @@ export default function ChatTemplates({
         key={`${selectedTemplate?.id || "default"}-${selectedModel}`}
         model={selectedModel}
         systemPrompt={selectedTemplate?.systemPrompt || systemPrompt}
-        llm={llm}
       />
     </div>
   );
