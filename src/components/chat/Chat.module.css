@@ -93,12 +93,14 @@
   border-radius: 4px;
   background-color: rgb(255 255 255); /* white */
   color: rgb(24 24 27); /* zinc-900 */
+  outline: none; /* Remove focus outline */
 }
 
 :global(.dark) .inputForm input {
   background-color: rgb(24 24 27); /* zinc-900 */
   color: rgb(244 244 245); /* zinc-100 */
   @apply border;
+  outline: none; /* Remove focus outline */
 }
 
 
