@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: column;
   height: 70vh;
-  border: 1px solid var(--tw-prose-td-borders);
+  @apply border;
   border-radius: 8px;
   overflow: hidden;
   background-color: rgb(255 255 255); /* white */
@@ -23,6 +23,27 @@
   margin-bottom: 1rem;
   padding: 1rem;
   border-radius: 8px;
+  position: relative;
+}
+
+.message button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.message button:hover {
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 4px;
+}
+
+.message.human button {
+  color: inherit;
+}
+
+.message.ai button {
+  color: inherit;
 }
 
 
@@ -56,26 +77,30 @@
 .inputForm {
   display: flex;
   padding: 1rem;
-  border-top: 1px solid var(--tw-prose-td-borders);
+  /*@apply border;*/
   background-color: rgb(255 255 255); /* white */
 }
 
 :global(.dark) .inputForm {
+  @apply border;
   background-color: rgb(0 0 0); /* black */
 }
 
 .inputForm input {
   flex: 1;
   padding: 0.75rem;
-  border: 1px solid var(--tw-prose-td-borders);
+  @apply border;
   border-radius: 4px;
   background-color: rgb(255 255 255); /* white */
   color: rgb(24 24 27); /* zinc-900 */
+  outline: none; /* Remove focus outline */
 }
 
 :global(.dark) .inputForm input {
   background-color: rgb(24 24 27); /* zinc-900 */
   color: rgb(244 244 245); /* zinc-100 */
+  @apply border;
+  outline: none; /* Remove focus outline */
 }
 
 
@@ -84,15 +109,15 @@
   margin-left: 0.5rem;
   background-color: rgb(24 24 27); /* zinc-900 */
   color: rgb(244 244 245); /* zinc-100 */
-  border: none;
   border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.2s ease;
+  @apply border;
 }
 
 :global(.dark) .inputForm button {
-  background-color: rgb(244 244 245); /* zinc-100 */
-  color: rgb(24 24 27); /* zinc-900 */
+  color: rgb(244 244 245); /* zinc-100 */
+  background-color: rgb(24 24 27); /* zinc-900 */
 }
 
 .inputForm button:hover {
@@ -100,7 +125,7 @@
 }
 
 :global(.dark) .inputForm button:hover {
-  background-color: rgb(228 228 231); /* zinc-200 */
+  background-color: rgb(113 113 122); /* zinc-500 */
 }
 
 .inputForm button:disabled {

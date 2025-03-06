@@ -1,5 +1,5 @@
 // src/components/chat/Chat.jsx
-import { useState, useEffect, useCallback, memo } from "react";
+import { useState, useEffect, useCallback, memo, useRef } from "react";
 import { ChatManager } from "@lib/ChatManager.ts";
 import { MarkdownRenderer } from "./MarkdownRenderer";
 import { MessageErrorBoundary } from "./MessageErrorBoundary";
@@ -22,21 +22,47 @@ const MessageContent = memo(({ message }: { message: any }) => {
 });
 MessageContent.displayName = "MessageContent";
 
-const ChatMessage = memo(({ message }: { message: any }) => (
-  <div
-    className={`${styles.message} ${
-      message._getType() === "human" ? styles.human : styles.ai
-    }`}
-  >
-    <MessageErrorBoundary>
-      {message._getType() === "human" ? (
-        <div className={styles.userMessage}>{message.content}</div>
-      ) : (
-        <MessageContent message={message} />
-      )}
-    </MessageErrorBoundary>
-  </div>
-));
+const ChatMessage = memo(({ message }: { message: any }) => {
+  const [isCopied, setIsCopied] = useState(false);
+
+  const handleCopy = async (content: string) => {
+    try {
+      await navigator.clipboard.writeText(content);
+      setIsCopied(true);
+      // Reset the icon after a short delay
+      setTimeout(() => {
+        setIsCopied(false);
+      }, 1000);
+    } catch (err) {
+      console.error("Failed to copy message:", err);
+    }
+  };
+
+  return (
+    <div
+      className={`${styles.message} ${
+        message._getType() === "human" ? styles.human : styles.ai
+      } group relative`}
+    >
+      <button
+        onClick={() => handleCopy(message.content)}
+        className="absolute top-2 right-2 opacity-0 transition-opacity duration-200 group-hover:opacity-100"
+        aria-label={isCopied ? "Copied!" : "Copy message"}
+      >
+        <svg className="h-4 w-4 text-current opacity-70 hover:opacity-100">
+          <use href={isCopied ? "/copy.svg#filled" : "/copy.svg#empty"} />
+        </svg>
+      </button>
+      <MessageErrorBoundary>
+        {message._getType() === "human" ? (
+          <div className={styles.userMessage}>{message.content}</div>
+        ) : (
+          <MessageContent message={message} />
+        )}
+      </MessageErrorBoundary>
+    </div>
+  );
+});
 ChatMessage.displayName = "ChatMessage";
 
 const ChatInput = memo(
@@ -50,20 +76,32 @@ const ChatInput = memo(
     isLoading: boolean;
     onInputChange: (value: string) => void;
     onSubmit: (e: React.FormEvent) => void;
-  }) => (
-    <form onSubmit={onSubmit} className={styles.inputForm}>
-      <input
-        value={input}
-        onChange={(e) => onInputChange(e.target.value)}
-        placeholder="Ask something..."
-        disabled={isLoading}
-        className={styles.input}
-      />
-      <button type="submit" disabled={isLoading} className={styles.button}>
-        Send
-      </button>
-    </form>
-  ),
+  }) => {
+    const inputRef = useRef<HTMLInputElement>(null);
+
+    // Focus input when loading state changes from true to false
+    useEffect(() => {
+      if (!isLoading) {
+        inputRef.current?.focus();
+      }
+    }, [isLoading]);
+
+    return (
+      <form onSubmit={onSubmit} className={styles.inputForm}>
+        <input
+          ref={inputRef}
+          value={input}
+          onChange={(e) => onInputChange(e.target.value)}
+          placeholder="Ask something..."
+          disabled={isLoading}
+          className={styles.input}
+        />
+        <button type="submit" disabled={isLoading} className={styles.button}>
+          Send
+        </button>
+      </form>
+    );
+  },
 );
 ChatInput.displayName = "ChatInput";
 

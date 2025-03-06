@@ -1,89 +1,145 @@
-![Astro Sphere Lighthouse Score](_astrosphere.jpg)
+### BSMP - media programming
 
-Astro Sphere is a static, minimalist, lightweight, lightning fast portfolio and blog theme based on my personal website.
+A modern, server-side rendered website built with Astro, featuring dynamic content, dark mode support, and optimal performance.
 
-It is Astro, Tailwind and Typescript, with a very small amount of SolidJS for stateful components.
+## 🛠 Tech Stack
 
-## 🚀 Deploy your own
+- **Framework:** [Astro](https://astro.build) with Server-Side Rendering (SSR)
+- **Styling:** Tailwind CSS
+- **Components:** React for interactive components
+- **Content:** MDX for rich content authoring
+- **Deployment:** Multi-platform support (Netlify, Vercel, Firebase)
+- **Database:** Astro DB integration
 
-[![Deploy with Vercel](_deploy_vercel.svg)](https://vercel.com/new/clone?repository-url=https://github.com/markhorn-dev/astro-sphere)  [![Deploy with Netlify](_deploy_netlify.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/markhorn-dev/astro-sphere)
+## ✨ Features
 
-## 📋 Features
+- Server-Side Rendering for optimal performance
+- Dark/Light theme with persistent user preference
+- Responsive design with Tailwind CSS
+- Interactive chat component
+- Blog with MDX support
+- Projects showcase
+- Content search functionality
+- RSS Feed generation
+- Automatic sitemap generation
+- SEO optimization
+- Animated UI elements
+- Code syntax highlighting
+- Network-enabled development mode
 
-- ✅ 100/100 Lighthouse performance
-- ✅ Responsive
-- ✅ Accessible
-- ✅ SEO-friendly
-- ✅ Typesafe
-- ✅ Minimal style
-- ✅ Light/Dark Theme
-- ✅ Animated UI
-- ✅ Tailwind styling
-- ✅ Auto generated sitemap
-- ✅ Auto generated RSS Feed
-- ✅ Markdown support
-- ✅ MDX Support (components in your markdown)
-- ✅ Searchable content (posts and projects)
-- ✅ Code Blocks - copy to clipboard
+## 🚀 Quick Start
 
-## 💯 Lighthouse score
-![Astro Sphere Lighthouse Score](_lighthouse.png)
+```bash
+# Install dependencies
+npm install
 
-## 🕊️ Lightweight
-All pages under 100kb (including fonts)
+# Start development server
+npm run dev
 
-## ⚡︎ Fast
-Rendered in ~40ms on localhost
+# Start development server with network access
+npm run dev:network
 
-## 📄 Configuration
+# Build for production
+npm run build
 
-The blog posts on the demo serve as the documentation and configuration.
+# Preview production build
+npm run preview
 
-## 💻 Commands
+# Preview production build with network access
+npm run preview:network
+```
 
-All commands are run from the root of the project, from a terminal:
+## 📁 Project Structure
 
-Replace npm with your package manager of choice. `npm`, `pnpm`, `yarn`, `bun`, etc
+```
+/
+├── public/           # Static assets
+│   ├── fonts/       # Custom fonts
+│   └── js/         # Client-side scripts
+├── src/
+│   ├── components/  # UI components
+│   ├── content/     # MDX/Markdown content
+│   │   ├── blog/   # Blog posts
+│   │   ├── projects/ # Project showcases
+│   │   └── legal/  # Legal documents
+│   ├── layouts/    # Page layouts
+│   ├── pages/      # Route pages
+│   └── styles/     # Global styles
+```
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run dev:network`     | Starts dev server on local network               |
-| `npm run sync`            | Generates TypeScript types for all Astro modules.|
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run preview:network` | Starts preview server on local network           |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-| `npm run lint`            | Run ESLint                                       |
-| `npm run lint:fix`        | Auto-fix ESLint issues                           |
+## 🔧 Configuration
 
-## 🗺️ Roadmap
+Key configuration files:
+- `astro.config.mjs` - Astro configuration
+- `tailwind.config.mjs` - Tailwind CSS configuration
+- `src/consts.ts` - Site-wide constants and metadata
 
-A few features I plan to implement
-- ⬜ Article Pages - Table of Contents
-- ⬜ Article Pages - Share on social media
+## 💻 Development
 
-## ✨ Acknowledgement
+### Content Management
 
-Theme inspired by [Paco Coursey](https://paco.me/), [Lee Robinson](https://leerob.io/) and [Hayden Bleasel](https://www.haydenbleasel.com/)
+Content is managed through Markdown and MDX files in the `src/content/` directory:
+- Blog posts: `src/content/blog/`
+- Projects: `src/content/projects/`
+- Legal content: `src/content/legal/`
 
+### Adding New Content
 
-## 🏛️ License
+Create a new directory in the respective collection with an `index.md` or `index.mdx` file:
 
-MIT
+```yaml
+---
+title: "Your Title"
+summary: "Brief description"
+date: "YYYY-MM-DD"
+draft: false
+tags:
+  - Tag1
+  - Tag2
+---
+```
 
+## 🌐 Deployment
 
-# 1.0.1 Update
+The application supports multiple deployment platforms:
 
-Added ability to run dev and preview on local network.
-added npm run dev:network
-added npm run preview:network
+```bash
+# Netlify deployment
+npm run build
+# Configure in netlify.toml
 
-Added slightly more particle density in both light and dark mode.
+# Firebase deployment
+npm run deploy-firebase
+```
 
-Added subtle dark mode star and meteor animations.
+## 🔄 Database Operations
 
-Removed eslint config
+```bash
+# Pull remote database
+npm run db-pull-remote
+
+# Push to remote database
+npm run db-push-remote
+```
+
+## 🧪 Quality Assurance
+
+```bash
+# Run linting
+npm run lint
+
+# Fix linting issues
+npm run lint:fix
+```
+
+## License
+
+MIT License
+
+## 👤 Author
+
+Bob Stoute - madia programming
+- Website: [www.bobstoute.nl](https://www.bobstoute.nl)
+- GitHub: [github.com/stoute/bsmp-website](https://github.com/stoute/bsmp-website)
+- Email: stoute.bob@gmail.com
 
