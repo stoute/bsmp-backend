@@ -8,6 +8,7 @@
 
 @theme {
   /*--*: initial;*/
+
 }
 
 /*
@@ -47,6 +48,11 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+  /* fixme*/
+  [role*="combobox"] {
+    /*@apply bg-white dark:bg-black !important;*/
+    /*background: black; !important*/
   }
 }
 
