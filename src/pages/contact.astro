@@ -19,23 +19,23 @@ const cvRef = "cv-bobstoute.pdf";
   }
 </style>
 
-<PageLayout title={"contact"} description={"contact"}>
+<PageLayout title="contact" description="contact" colorMode="dark">
   <div class="background-image bg-subway-dark">
     <div
-      class="animate absolute h-screen w-full flex-col flex items-center justify-center"
+      class="animate dark absolute flex h-screen w-full flex-col items-center justify-center"
     >
-      <div class="flex flex-wrap gap-1 flex-col items-center justify-center">
+      <div class="flex flex-col flex-wrap items-center justify-center gap-1">
         <ContactSvg class="opacity-90" />
-        <div class="flex flex-wrap gap-1 pt-2 items-center justify-center">
+        <div class="flex flex-wrap items-center justify-center gap-1 pt-2">
           {
             SOCIALS.map((SOCIAL) => (
               <a
                 href={SOCIAL.HREF}
                 target="_blank"
                 aria-label={`${SITE.TITLE} on ${SOCIAL.NAME}`}
-                class="group size-10 rounded-full p-2 items-center justify-center hover:bg-black/5 dark:hover:bg-white/20  blend"
+                class="group blend size-10 items-center justify-center rounded-full p-2 hover:bg-black/5 dark:hover:bg-white/20"
               >
-                <svg class="size-full fill-current group-hover:fill-black dark:group-hover:fill-white blend">
+                <svg class="blend size-full fill-current group-hover:fill-black dark:group-hover:fill-white">
                   <use href={`/social.svg#${SOCIAL.ICON}`} />
                 </svg>
               </a>
@@ -43,7 +43,7 @@ const cvRef = "cv-bobstoute.pdf";
           }
         </div>
         <div
-          class="border-[#DDD] border-2 rounded-2xl text-bold text-sm py-2 px-4 mt-2"
+          class="text-bold mt-2 rounded-2xl border-2 border-[#DDD] px-4 py-2 text-sm"
           id="email-btn"
         >
           <a href={cvRef} target="_blank">download cv</a>

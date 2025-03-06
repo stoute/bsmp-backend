@@ -6,6 +6,11 @@ const subpath = pathname.match(/[^/]+/g);
 import Container from "@components/Container.astro";
 import type { Link } from "@types";
 
+interface Props {
+  colorMode?: "light" | "dark" | "system";
+}
+
+const { colorMode } = Astro.props;
 const EMAIL: unknown = SOCIALS.find((SOCIAL) => SOCIAL.NAME === "Email");
 const environment =
   Astro.url.hostname === "localhost" ? "development" : "production";
@@ -24,7 +29,16 @@ const environment =
           <!--<svg class="size-6 fill-current">-->
           <!--  <use href="/brand.svg#brand"></use>-->
           <!--</svg>-->
-          <img src="/brand.svg" alt={SITE.TITLE} class="h-8 w-auto" />
+          <img
+            src="/images/logo-light.svg"
+            alt={SITE.TITLE}
+            class="block h-8 w-auto dark:hidden"
+          />
+          <img
+            src="/images/logo-dark.svg"
+            alt={SITE.TITLE}
+            class="hidden h-8 w-auto dark:block"
+          />
           <div class="pt-1 pl-3">
             {SITE.TITLE}
           </div>
@@ -68,6 +82,7 @@ const environment =
 
         <button
           id="header-theme-button"
+          onclick="changeTheme()"
           aria-label={`Toggle light and dark theme`}
           class={cn(
             "hidden md:flex",
@@ -76,6 +91,9 @@ const environment =
             "stroke-current hover:stroke-black dark:hover:stroke-white",
             "border border-black/10 dark:border-white/25",
             "transition-colors duration-300 ease-in-out",
+            // Only hide the button when colorMode is "light" or "dark"
+            (colorMode === "light" || colorMode === "dark") &&
+              "!hidden md:!hidden",
           )}
         >
           <svg class="block size-full dark:hidden">
