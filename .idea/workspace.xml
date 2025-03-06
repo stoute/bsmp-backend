@@ -7,8 +7,9 @@
     <list default="true" id="6db5ad0e-5635-4336-a0ae-8b285de92988" name="Changes" comment="fix: removed input focus styling">
       <change beforePath="$PROJECT_DIR$/.idea/AugmentWebviewStateStore.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/AugmentWebviewStateStore.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/chat/Chat.module.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/chat/Chat.module.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/js/theme.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/js/theme.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/layouts/PageLayout.astro" beforeDir="false" afterPath="$PROJECT_DIR$/src/layouts/PageLayout.astro" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/contact.astro" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/contact.astro" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -200,7 +201,7 @@
       <workItem from="1740642687856" duration="59974000" />
       <workItem from="1740897085267" duration="103573000" />
       <workItem from="1741204589637" duration="4717000" />
-      <workItem from="1741263643966" duration="9961000" />
+      <workItem from="1741263643966" duration="11993000" />
     </task>
     <task id="LOCAL-00001" summary="refactor: PromptTemplateTable to PromptTemplate">
       <option name="closed" value="true" />

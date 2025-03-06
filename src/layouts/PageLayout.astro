@@ -4,24 +4,31 @@ import BaseHead from "@components/BaseHead.astro";
 import Header from "@components/Header.astro";
 import Footer from "@components/Footer.astro";
 import Drawer from "@components/Drawer.astro";
-const { title, description } = Astro.props;
 import { SITE } from "@consts";
 
+interface Props {
+  title: string;
+  description: string;
+  colorMode?: "light" | "dark" | "system"; // Add this prop
+}
+
+const { title, description, colorMode = "system" } = Astro.props;
 const urlPath = Astro.url.pathname.split("/").filter(Boolean).join(" ");
+
+// Determine the class based on colorMode
+const getColorModeClass = () => {
+  if (colorMode === "dark") return "dark";
+  if (colorMode === "light") return "light";
+  return ""; // For system preference
+};
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" class:list={[urlPath, getColorModeClass()]}>
   <head>
     <BaseHead title={`${title} | ${SITE.TITLE}`} description={description} />
-    <script>
-      import { appState } from "@lib/appStore";
-      import { isRunningOnLocalhost } from "@lib/utils";
-      const environment = isRunningOnLocalhost() ? "development" : "production";
-      appState.setKey("environment", environment);
-    </script>
   </head>
-  <body class:list={urlPath}>
+  <body>
     <Header />
     <Drawer />
     <main>
