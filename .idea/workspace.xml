@@ -6,10 +6,12 @@
   <component name="ChangeListManager">
     <list default="true" id="6db5ad0e-5635-4336-a0ae-8b285de92988" name="Changes" comment="refactor: PromptTemplateTable to PromptTemplate">
       <change beforePath="$PROJECT_DIR$/.idea/AugmentWebviewStateStore.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/AugmentWebviewStateStore.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/chat/Chat.module.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/chat/Chat.module.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/ui/input.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/input.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/chat/index.astro" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/chat/index.astro" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/chat/Chat.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/chat/Chat.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/chat/MarkdownRenderer.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/chat/MarkdownRenderer.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/styles/code-block.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/styles/code-block.css" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -34,6 +36,9 @@
     &quot;accountId&quot;: &quot;cc6d4433-b90f-47d3-b237-8632449963e3&quot;
   }
 }</component>
+  <component name="KubernetesApiProvider"><![CDATA[{
+  "isMigrated": true
+}]]></component>
   <component name="PhpWorkspaceProjectConfiguration" interpreter_name="PHP Mamp 7.0.2" />
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 4
@@ -198,7 +203,7 @@
       <workItem from="1740642687856" duration="59974000" />
       <workItem from="1740897085267" duration="103573000" />
       <workItem from="1741204589637" duration="4717000" />
-      <workItem from="1741263643966" duration="2440000" />
+      <workItem from="1741263643966" duration="6536000" />
     </task>
     <task id="LOCAL-00001" summary="refactor: PromptTemplateTable to PromptTemplate">
       <option name="closed" value="true" />

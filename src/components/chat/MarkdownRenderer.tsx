@@ -47,6 +47,14 @@ export const MarkdownRenderer: LLMOutputComponent = ({ blockMatch }) => {
             const html = highlighter.codeToHtml(code, {
               lang,
               theme,
+              // fixme: shiki line wrap
+              // decorations: [
+              //   {
+              //     start: { line: 0, character: 0 },
+              //     end: { line: 0, character: 50 },
+              //     properties: { class: "wrapped-line" },
+              //   },
+              // ],
             });
 
             return (
