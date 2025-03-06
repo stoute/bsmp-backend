@@ -33,14 +33,16 @@ export class ChatManager {
       apiKey: "none",
     });
     if (template) {
-      // todo: remove?
-      this.messages = [new SystemMessage(template.systemPrompt)];
       this.setTemplate(template);
+    } else {
+      this.messages = [new SystemMessage("You are a helpful assistant.")];
     }
   }
 
   async setTemplate(template: IPromptTemplate) {
     try {
+      // this.messages = [new SystemMessage(template.systemPrompt)];
+
       const systemTemplate = SystemMessagePromptTemplate.fromTemplate(
         template.systemPrompt || "",
       );
@@ -56,15 +58,17 @@ export class ChatManager {
       // Get required variables from the template
       const requiredVariables = this.chatPromptTemplate.inputVariables;
       if (requiredVariables.length > 0) {
-        throw new Error(
+        console.warn(
           `Template requires variables: ${requiredVariables.join(", ")}`,
         );
       }
-
       // Reset messages with new system prompt
       this.messages = [new SystemMessage(template.systemPrompt || "")];
+      if (template.description)
+        this.messages.push(new AIMessage(template.description));
 
-      return { ...template, chatPrompt: this.chatPromptTemplate };
+      this.llm.invoke(this.messages);
+      // return { ...template, chatPrompt: this.chatPromptTemplate };
     } catch (error) {
       console.error("Error setting template:", error);
       throw error;
@@ -73,6 +77,8 @@ export class ChatManager {
 
   async sendMessage(input: string, variables?: Record<string, string>) {
     if (!input.trim()) return null;
+
+    console.log("variable", variables);
 
     this.isLoading = true;
     try {

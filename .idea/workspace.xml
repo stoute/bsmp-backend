@@ -7,8 +7,12 @@
     <list default="true" id="6db5ad0e-5635-4336-a0ae-8b285de92988" name="Changes" comment="refactor: PromptTemplateTable to PromptTemplate">
       <change beforePath="$PROJECT_DIR$/.idea/AugmentWebviewStateStore.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/AugmentWebviewStateStore.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/ui/select.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/select.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/styles/global.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/styles/global.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/db/config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/db/config.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/prompt-templates/PromptTemplateEditor.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/prompt-templates/PromptTemplateEditor.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/ChatManager.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/ChatManager.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/api/ai-o.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/api/ai-o.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/api/prompts/index.json.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/api/prompts/index.json.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/types.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -88,7 +92,7 @@
       <recent name="$PROJECT_DIR$/src/components/chat" />
     </key>
   </component>
-  <component name="RunManager" selected="npm.dev">
+  <component name="RunManager" selected="npm.db-push-remote">
     <configuration name="build" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
       <package-json value="$PROJECT_DIR$/package.json" />
       <command value="run" />
@@ -131,10 +135,10 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="npm.db-push-remote" />
         <item itemvalue="npm.dev" />
         <item itemvalue="npm.dev:network" />
         <item itemvalue="npm.build" />
-        <item itemvalue="npm.db-push-remote" />
       </list>
     </recent_temporary>
   </component>

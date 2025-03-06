@@ -45,7 +45,7 @@ const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
   description: z.string().optional(),
   systemPrompt: z.string().optional(),
-  template: z.string().min(1, "Template is required"),
+  template: z.string().optional(), // Remove min validation
   variables: z.array(z.string()).optional().default([]),
   created_at: z.string().optional(),
   updated_at: z.string().optional(),

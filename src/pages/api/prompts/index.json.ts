@@ -39,7 +39,8 @@ export async function POST({ request }: { request: Request }) {
     // Validate the request body against the PromptTemplate interface.
     const { name, description, systemPrompt, template, variables } =
       requestBody;
-    if (!name || !template) {
+    if (!name) {
+      // Remove template check
       return new Response(
         JSON.stringify({ message: "Missing required fields" }),
         {

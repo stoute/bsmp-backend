@@ -34,7 +34,7 @@ export interface IPromptTemplate {
   name: string;
   description: string;
   systemPrompt?: string;
-  template: string;
+  template?: string; // Changed to optional
   variables?: string[];
   created_at: string; // ISO datetime format
   updated_at: string; // ISO datetime format

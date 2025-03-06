@@ -31,10 +31,11 @@ export async function POST({ request }: { request: Request }) {
     const promptData: IPromptTemplate = await request.json();
 
     // Validate required fields
-    if (!promptData.template || !promptData.variables) {
+    if (!promptData.name) {
+      // Remove template check
       return new Response(
         JSON.stringify({
-          error: "Missing required fields: template, variables",
+          error: "Missing required fields: variables",
         }),
         {
           status: 400,

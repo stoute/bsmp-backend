@@ -9,7 +9,7 @@ const PromptTemplate = defineTable({
     name: column.text(),
     description: column.text(),
     systemPrompt: column.text(),
-    template: column.text(),
+    template: column.text({ optional: true }), // Made optional
     variables: column.json(), // Array of strings
     created_at: column.text(), // fixme: use column.date()
     updated_at: column.text(),
