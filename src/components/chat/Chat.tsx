@@ -1,5 +1,5 @@
 // src/components/chat/Chat.jsx
-import { useState, useEffect, useCallback, memo } from "react";
+import { useState, useEffect, useCallback, memo, useRef } from "react";
 import { ChatManager } from "@lib/ChatManager.ts";
 import { MarkdownRenderer } from "./MarkdownRenderer";
 import { MessageErrorBoundary } from "./MessageErrorBoundary";
@@ -76,20 +76,32 @@ const ChatInput = memo(
     isLoading: boolean;
     onInputChange: (value: string) => void;
     onSubmit: (e: React.FormEvent) => void;
-  }) => (
-    <form onSubmit={onSubmit} className={styles.inputForm}>
-      <input
-        value={input}
-        onChange={(e) => onInputChange(e.target.value)}
-        placeholder="Ask something..."
-        disabled={isLoading}
-        className={styles.input}
-      />
-      <button type="submit" disabled={isLoading} className={styles.button}>
-        Send
-      </button>
-    </form>
-  ),
+  }) => {
+    const inputRef = useRef<HTMLInputElement>(null);
+
+    // Focus input when loading state changes from true to false
+    useEffect(() => {
+      if (!isLoading) {
+        inputRef.current?.focus();
+      }
+    }, [isLoading]);
+
+    return (
+      <form onSubmit={onSubmit} className={styles.inputForm}>
+        <input
+          ref={inputRef}
+          value={input}
+          onChange={(e) => onInputChange(e.target.value)}
+          placeholder="Ask something..."
+          disabled={isLoading}
+          className={styles.input}
+        />
+        <button type="submit" disabled={isLoading} className={styles.button}>
+          Send
+        </button>
+      </form>
+    );
+  },
 );
 ChatInput.displayName = "ChatInput";
 
