@@ -9,7 +9,7 @@ import { SITE } from "@consts";
 interface Props {
   title: string;
   description: string;
-  colorMode?: "light" | "dark" | "system"; // Add this prop
+  colorMode?: "light" | "dark" | "system";
 }
 
 const { title, description, colorMode = "system" } = Astro.props;
@@ -24,12 +24,20 @@ const getColorModeClass = () => {
 ---
 
 <!doctype html>
-<html lang="en" class:list={[urlPath, getColorModeClass()]}>
-  <head title={`${title} | ${SITE.TITLE}`}>
+<html
+  lang="en"
+  class:list={[urlPath, getColorModeClass()]}
+  data-color-mode={colorMode}
+>
+  <head>
     <BaseHead title={`${title} | ${SITE.TITLE}`} description={description} />
+    <script is:inline define:vars={{ colorMode }}>
+      // Set initial color mode
+      document.documentElement.dataset.colorMode = colorMode;
+    </script>
   </head>
   <body>
-    <Header />
+    <Header colorMode={colorMode} />
     <Drawer />
     <main>
       <slot />

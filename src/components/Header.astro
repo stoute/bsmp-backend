@@ -6,6 +6,11 @@ const subpath = pathname.match(/[^/]+/g);
 import Container from "@components/Container.astro";
 import type { Link } from "@types";
 
+interface Props {
+  colorMode?: "light" | "dark" | "system";
+}
+
+const { colorMode } = Astro.props;
 const EMAIL: unknown = SOCIALS.find((SOCIAL) => SOCIAL.NAME === "Email");
 const environment =
   Astro.url.hostname === "localhost" ? "development" : "production";
@@ -86,6 +91,9 @@ const environment =
             "stroke-current hover:stroke-black dark:hover:stroke-white",
             "border border-black/10 dark:border-white/25",
             "transition-colors duration-300 ease-in-out",
+            // Only hide the button when colorMode is "light" or "dark"
+            (colorMode === "light" || colorMode === "dark") &&
+              "!hidden md:!hidden",
           )}
         >
           <svg class="block size-full dark:hidden">
