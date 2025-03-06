@@ -117,7 +117,7 @@
 
 :global(.dark) .inputForm button {
   color: rgb(244 244 245); /* zinc-100 */
-  background-colorcolor: rgb(24 24 27); /* zinc-900 */
+  background-color: rgb(24 24 27); /* zinc-900 */
 }
 
 .inputForm button:hover {
