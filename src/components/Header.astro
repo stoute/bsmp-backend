@@ -24,7 +24,16 @@ const environment =
           <!--<svg class="size-6 fill-current">-->
           <!--  <use href="/brand.svg#brand"></use>-->
           <!--</svg>-->
-          <img src="/brand.svg" alt={SITE.TITLE} class="h-8 w-auto" />
+          <img
+            src="/images/logo-light.svg"
+            alt={SITE.TITLE}
+            class="block h-8 w-auto dark:hidden"
+          />
+          <img
+            src="/images/logo-dark.svg"
+            alt={SITE.TITLE}
+            class="hidden h-8 w-auto dark:block"
+          />
           <div class="pt-1 pl-3">
             {SITE.TITLE}
           </div>
