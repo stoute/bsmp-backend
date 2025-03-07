@@ -24,7 +24,7 @@ export function readingTime(html: string) {
 export function parseLinks(links: Links[], environment: string): Links[] {
   let arr: Links[] = [];
   links.map((link) => {
-    if (environment === "production" && link["DISABLED"] === "production") {
+    if (link["DISABLED"] && link["DISABLED"] === environment) {
       return;
     } else {
       arr.push(link);

@@ -10,6 +10,7 @@ import {
   SelectValue,
 } from "@components/ui/select";
 import { Label } from "@components/ui/label";
+import { DEFAULT_TEMPLATE_ID, DEFAULT_MODEL } from "@/consts";
 
 interface ChatControlsProps {
   onTemplateChange: (template: IPromptTemplate) => void;
@@ -30,10 +31,10 @@ export default function ChatControls({
 
   // Initialize from appState or props
   const [selectedTemplateId, setSelectedTemplateId] = useState(
-    () => appState.get().selectedTemplateId || propSelectedTemplateId,
+    () => DEFAULT_TEMPLATE_ID || propSelectedTemplateId,
   );
   const [selectedModel, setSelectedModel] = useState(
-    () => appState.get().selectedModel || propSelectedModel,
+    () => DEFAULT_MODEL || propSelectedModel,
   );
 
   // Sync with appState
