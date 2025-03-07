@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://bob-stoute.firebaseapp.com/sitemap-index.xml

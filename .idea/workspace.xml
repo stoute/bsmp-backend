@@ -4,13 +4,114 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6db5ad0e-5635-4336-a0ae-8b285de92988" name="Changes" comment="feat: color mode logo">
-      <change beforePath="$PROJECT_DIR$/.idea/AugmentWebviewStateStore.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/AugmentWebviewStateStore.xml" afterDir="false" />
+    <list default="true" id="6db5ad0e-5635-4336-a0ae-8b285de92988" name="Changes" comment="feat: theme button toggle">
+      <change afterPath="$PROJECT_DIR$/public/images/Users/bobstoute/Git/@bsmp/bsmp-backend/public/images/Logo.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/images/logo@2x.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/images/logo@3x.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/_astro/ClientRouter.astro_astro_type_script_index_0_lang.BScVxmeO.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/_astro/contact.HpKVEWWW.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/_astro/spongebob.dGmXfKPV_1dtBMQ.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/about/index.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/blog/01-astro-sphere-file-structure/index.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/blog/02-astro-sphere-getting-started/index.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/blog/03-astro-sphere-add-new-post-or-projects/index.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/blog/04-astro-sphere-writing-markdown/index.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/blog/05-astro-sphere-writing-mdx/index.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/blog/06-astro-sphere-social-links/index.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/blog/index.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/brand copy.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/brand.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/contact/index.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/copy.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/cv-bobstoute.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/favicon.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/fonts/FontAwesome.otf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/fonts/OpenSans-Bold.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/fonts/OpenSans-Italic.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/fonts/OpenSans-Regular.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/fonts/RopaSans-Regular.woff" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/fonts/atkinson-bold.woff" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/fonts/atkinson-regular.woff" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/fonts/fontawesome-webfont.eot" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/fonts/fontawesome-webfont.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/fonts/fontawesome-webfont.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/fonts/fontawesome-webfont.woff" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/fonts/fontawesome-webfont.woff2" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/images/Users/bobstoute/Git/@bsmp/astro-sphere/public/images/About.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/images/Users/bobstoute/Git/@bsmp/astro-sphere/public/images/Contact.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/images/Users/bobstoute/Git/@bsmp/astro-sphere/public/images/DevStackIcon.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/images/Users/bobstoute/Git/@bsmp/astro-sphere/public/images/NodesIcon.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/images/Users/bobstoute/Git/@bsmp/bsmp-website/public/images/About.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/images/Users/bobstoute/Git/@bsmp/bsmp-website/public/images/Contact.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/images/Users/bobstoute/Git/@bsmp/bsmp-website/public/images/DocIcon.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/images/Users/bobstoute/Git/@bsmp/bsmp-website/public/images/HeadphoneIcon.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/images/about.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/images/about@2x.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/images/about@3x.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/images/background-street.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/images/background_subway-dark.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/images/background_subway-light.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/images/background_subway.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/images/bg.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/images/contact.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/images/contact@2x.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/images/contact@3x.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/images/dev-stack-icon.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/images/doc-icon.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/images/github-traffic.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/images/headphone-icon.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/images/logo.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/images/nodes-icon.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/images/ocean.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/images/overlay.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/index.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/js/animate.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/js/bg.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/js/copy.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/js/scroll.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/js/theme.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/legal/privacy/index.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/legal/terms/index.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/music/index.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/open-graph.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/projects/index.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/projects/project-1/index.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/projects/project-2/index.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/projects/project-3/index.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/projects/project-4/index.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/robots.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/rss.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/search/index.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/sitemap-0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/sitemap-index.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/social.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/stack.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/ui.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/work/index-copy/index.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/bob-stoute/hosting/work/index.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebase/hosting.LmZpcmViYXNlL2JvYi1zdG91dGUvaG9zdGluZw.cache" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebaserc" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/js/theme.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/js/theme.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_astrosphere.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/_deploy_netlify.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/_deploy_vercel.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/_lighthouse.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/firebase.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/brand copy.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/images/Users/bobstoute/Git/@bsmp/astro-sphere/public/images/About.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/images/Users/bobstoute/Git/@bsmp/astro-sphere/public/images/Contact.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/images/Users/bobstoute/Git/@bsmp/astro-sphere/public/images/DevStackIcon.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/images/Users/bobstoute/Git/@bsmp/astro-sphere/public/images/NodesIcon.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/images/Users/bobstoute/Git/@bsmp/bsmp-backend/public/images/LogoDark.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/public/images/Users/bobstoute/Git/@bsmp/bsmp-backend/public/images/LogoDark.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/images/Users/bobstoute/Git/@bsmp/bsmp-backend/public/images/LogoLight.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/public/images/Users/bobstoute/Git/@bsmp/bsmp-backend/public/images/LogoLight.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/images/logo-dark.svg" beforeDir="false" afterPath="$PROJECT_DIR$/public/images/logo-dark.svg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/images/logo-light.svg" beforeDir="false" afterPath="$PROJECT_DIR$/public/images/logo-light.svg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/images/logo.svg" beforeDir="false" afterPath="$PROJECT_DIR$/public/images/logo.svg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src-design/app-bsmp.sketch" beforeDir="false" afterPath="$PROJECT_DIR$/src-design/app-bsmp.sketch" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src-design/cv-oud.mdx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src-design/cv.mdx" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/Header.astro" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Header.astro" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/layouts/PageLayout.astro" beforeDir="false" afterPath="$PROJECT_DIR$/src/layouts/PageLayout.astro" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/contact.astro" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/contact.astro" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -205,7 +306,7 @@
       <workItem from="1740642687856" duration="59974000" />
       <workItem from="1740897085267" duration="103573000" />
       <workItem from="1741204589637" duration="4717000" />
-      <workItem from="1741263643966" duration="15394000" />
+      <workItem from="1741263643966" duration="22616000" />
     </task>
     <task id="LOCAL-00001" summary="refactor: PromptTemplateTable to PromptTemplate">
       <option name="closed" value="true" />
@@ -255,7 +356,15 @@
       <option name="project" value="LOCAL" />
       <updated>1741284247794</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="feat: theme button toggle">
+      <option name="closed" value="true" />
+      <created>1741285488219</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1741285488219</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -267,7 +376,8 @@
     <MESSAGE value="fix: removed input focus styling" />
     <MESSAGE value="feat: color mode per page. default is system" />
     <MESSAGE value="feat: color mode logo" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat: color mode logo" />
+    <MESSAGE value="feat: theme button toggle" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: theme button toggle" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
