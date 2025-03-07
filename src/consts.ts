@@ -22,6 +22,7 @@ export const LINKS: Links = [
   {
     TEXT: "Prompts",
     HREF: "/prompts",
+    DISABLED: "production",
   },
   {
     TEXT: "Contact",
