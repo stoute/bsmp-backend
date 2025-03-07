@@ -21,6 +21,7 @@ const getColorModeClass = () => {
   if (colorMode === "light") return "light";
   return ""; // For system preference
 };
+const environment: string = import.meta.env.MODE;
 ---
 
 <!doctype html>
@@ -31,8 +32,9 @@ const getColorModeClass = () => {
 >
   <head>
     <BaseHead title={`${title} | ${SITE.TITLE}`} description={description} />
-    <script is:inline define:vars={{ colorMode }}>
-      // Set initial color mode
+    <script is:inline define:vars={{ environment, colorMode }}>
+      // Set environment and initial color mode
+      document.documentElement.dataset.environment = environment;
       document.documentElement.dataset.colorMode = colorMode;
     </script>
   </head>
