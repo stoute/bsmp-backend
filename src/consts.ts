@@ -27,10 +27,15 @@ export const LINKS: Links = [
     TEXT: "Contact",
     HREF: "/contact",
   },
+
   {
     TEXT: "Projects",
     HREF: "/projects",
     DISABLED: "production",
+  },
+  {
+    TEXT: "Login",
+    HREF: "/auth/login",
   },
   // {
   //   TEXT: "Blog",
