@@ -1,4 +1,6 @@
-### BSMP - media programming
+![Astro Sphere Lighthouse Score](public/images/logo@3x.png)
+
+#### BSMP - media programming
 
 A modern, server-side rendered website built with Astro, featuring dynamic content, dark mode support, and optimal performance.
 

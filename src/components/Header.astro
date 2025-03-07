@@ -12,8 +12,7 @@ interface Props {
 
 const { colorMode } = Astro.props;
 const EMAIL: unknown = SOCIALS.find((SOCIAL) => SOCIAL.NAME === "Email");
-const environment =
-  Astro.url.hostname === "localhost" ? "development" : "production";
+const environment: string = import.meta.env.MODE;
 ---
 
 <header id="header" class="fixed top-0 z-50 h-16 w-full">
@@ -26,9 +25,6 @@ const environment =
           href="/"
           class="flex gap-1 text-current transition-colors duration-300 ease-in-out hover:text-black dark:hover:text-white"
         >
-          <!--<svg class="size-6 fill-current">-->
-          <!--  <use href="/brand.svg#brand"></use>-->
-          <!--</svg>-->
           <img
             src="/images/logo-light.svg"
             alt={SITE.TITLE}
