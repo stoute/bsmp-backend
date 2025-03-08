@@ -4,7 +4,8 @@ import { cn, parseLinks } from "@lib/utils";
 const { pathname } = Astro.url;
 const subpath = pathname.match(/[^/]+/g);
 import Container from "@components/Container.astro";
-import type { Link } from "@types";
+import LogoLight from "@/images/logo-light.svg";
+import LogoDark from "@/images/logo-dark.svg";
 
 interface Props {
   colorMode?: "light" | "dark" | "system";
@@ -25,16 +26,8 @@ const environment: string = import.meta.env.MODE;
           href="/"
           class="flex gap-1 text-current transition-colors duration-300 ease-in-out hover:text-black dark:hover:text-white"
         >
-          <img
-            src="/images/logo-light.svg"
-            alt={SITE.TITLE}
-            class="block h-8 w-auto dark:hidden"
-          />
-          <img
-            src="/images/logo-dark.svg"
-            alt={SITE.TITLE}
-            class="hidden h-8 w-auto dark:block"
-          />
+          <LogoLight class="block h-8 w-auto dark:hidden" />
+          <LogoDark class="hidden h-8 w-auto dark:block" />
           <div class="pt-1 pl-3">
             {SITE.TITLE}
           </div>
