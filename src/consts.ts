@@ -8,6 +8,8 @@ export const LLM_MODELS = [
   "openai/gpt-4o-mini",
   "deepseek/deepseek-r1-distill-llama-8b",
 ];
+export const DEFAULT_MODEL = "openai/gpt-3.5-turbo";
+export const DEFAULT_TEMPLATE_ID = "be0a2289-88ca-42b5-860c-a97bae747362";
 
 // Links
 export const LINKS: Links = [

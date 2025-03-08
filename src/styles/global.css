@@ -75,7 +75,7 @@ html {
 
 html.dark {
   color-scheme: dark;
-  /*background-color: black;*/
+  background-color: black; /* Add this line */
 }
 
 html,

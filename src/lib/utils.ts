@@ -21,16 +21,10 @@ export function readingTime(html: string) {
   return `${readingTimeMinutes} min read`;
 }
 
-export function parseLinks(links: Links[], environment: string): Links[] {
-  let arr: Links[] = [];
-  links.map((link) => {
-    if (environment === "production" && link["DISABLED"] === "production") {
-      return;
-    } else {
-      arr.push(link);
-    }
+export function parseLinks(links: Links, environment: string): Links {
+  return links.filter((link) => {
+    return !(link.DISABLED && link.DISABLED === environment);
   });
-  return arr;
 }
 
 export function isRunningOnLocalhost(): boolean {

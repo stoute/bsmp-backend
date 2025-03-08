@@ -10,6 +10,7 @@ import {
   SelectValue,
 } from "@components/ui/select";
 import { Label } from "@components/ui/label";
+import { DEFAULT_TEMPLATE_ID, DEFAULT_MODEL } from "@/consts";
 
 interface ChatControlsProps {
   onTemplateChange: (template: IPromptTemplate) => void;
@@ -29,12 +30,31 @@ export default function ChatControls({
   const [error, setError] = useState<string | null>(null);
 
   // Initialize from appState or props
-  const [selectedTemplateId, setSelectedTemplateId] = useState(
-    () => appState.get().selectedTemplateId || propSelectedTemplateId,
-  );
-  const [selectedModel, setSelectedModel] = useState(
-    () => appState.get().selectedModel || propSelectedModel,
-  );
+  const [selectedTemplateId, setSelectedTemplateId] = useState(() => {
+    const storedTemplateId = appState.get().selectedTemplateId;
+    return propSelectedTemplateId || storedTemplateId || DEFAULT_TEMPLATE_ID;
+  });
+
+  const [selectedModel, setSelectedModel] = useState(() => {
+    const storedModel = appState.get().selectedModel;
+    return propSelectedModel || storedModel || DEFAULT_MODEL;
+  });
+
+  // Sync with appState and handle template changes
+  useEffect(() => {
+    if (
+      propSelectedTemplateId &&
+      propSelectedTemplateId !== selectedTemplateId
+    ) {
+      setSelectedTemplateId(propSelectedTemplateId);
+    }
+  }, [propSelectedTemplateId]);
+
+  useEffect(() => {
+    if (propSelectedModel && propSelectedModel !== selectedModel) {
+      setSelectedModel(propSelectedModel);
+    }
+  }, [propSelectedModel]);
 
   // Sync with appState
   useEffect(() => {
@@ -64,8 +84,10 @@ export default function ChatControls({
     };
 
     fetchTemplates().then(() => {
-      if (appState.get().selectedTemplateId)
-        handleTemplateChange(appState.get().selectedTemplateId);
+      const storedTemplateId = appState.get().selectedTemplateId;
+      if (storedTemplateId) {
+        handleTemplateChange(storedTemplateId);
+      }
     });
   }, []);
 
@@ -85,21 +107,26 @@ export default function ChatControls({
     }
   };
 
-  const handleModelChange = (model: string) => {
-    setSelectedModel(model);
-    onModelChange(model);
+  const handleModelChange = async (model: string) => {
+    try {
+      setSelectedModel(model);
+      appState.setKey("selectedModel", model);
+      onModelChange(model);
+    } catch (err) {
+      console.error("Error changing model:", err);
+    }
   };
 
   return (
-    <div className="bg-card flex items-center gap-4 rounded-lg border p-4">
-      <div className="flex items-center gap-2">
+    <div className="bg-card flex flex-col items-start gap-4 rounded-lg border p-4 sm:flex-row sm:items-center">
+      <div className="flex w-full items-center gap-2 sm:w-auto">
         <Label htmlFor="template-select">Templates</Label>
         <Select
           value={selectedTemplateId}
           onValueChange={handleTemplateChange}
           disabled={loading}
         >
-          <SelectTrigger id="template-select" className="w-[200px]">
+          <SelectTrigger id="template-select" className="w-full sm:w-[200px]">
             <SelectValue placeholder="Select template" />
           </SelectTrigger>
           <SelectContent>
@@ -122,10 +149,10 @@ export default function ChatControls({
         </Select>
       </div>
 
-      <div className="flex items-center gap-2">
+      <div className="flex w-full items-center gap-2 sm:w-auto">
         <Label htmlFor="model-select">Model</Label>
         <Select value={selectedModel} onValueChange={handleModelChange}>
-          <SelectTrigger id="model-select" className="w-[200px]">
+          <SelectTrigger id="model-select" className="w-full sm:w-[200px]">
             <SelectValue placeholder="Select model" />
           </SelectTrigger>
           <SelectContent>

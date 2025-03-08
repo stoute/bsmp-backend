@@ -10,8 +10,8 @@ const getEnvironment = () => {
 export type AppState = {
   apiBaseUrl: "/api" | "https://bsmp.netlify.app/api";
   environment: "development" | "production";
-  selectedModel?: string;
-  selectedTemplateId?: string;
+  selectedModel?: string | undefined;
+  selectedTemplateId?: string | undefined;
 };
 
 export const appState = persistentMap<AppState>("appState", {
@@ -19,8 +19,8 @@ export const appState = persistentMap<AppState>("appState", {
   apiBaseUrl: "https://bsmp.netlify.app/api",
   // environment: if(typeof window === "undefined") document.documentElement.dataset.environment,
   environment: getEnvironment(),
-  selectedModel: "openai/gpt-3.5-turbo",
-  selectedTemplateId: "default",
+  selectedModel: undefined,
+  selectedTemplateId: undefined,
 });
 
 export const isLoggedIn = persistentAtom("isLoggedIn", false);
