@@ -10,7 +10,7 @@
     "----build": "astro build",
     "build": "astro build --remote",
     "edmulate-firebase": "firebase emulators:start",
-    "deploy-firebase": "firebase deploy",
+    "--deploy-firebase": "firebase deploy",
     "deploy-vercel": "npm run build && vercel deploy --prebuilt",
     "preview": "astro preview",
     "preview:network": "astro dev --host",

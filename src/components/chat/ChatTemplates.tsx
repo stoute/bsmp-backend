@@ -11,6 +11,7 @@ export default function ChatTemplates() {
   const [selectedModel, setSelectedModel] = useState<string>(() => {
     appState.get().selectedModel;
   });
+  const [isTemplatesLoading, setIsTemplatesLoading] = useState(true);
 
   return (
     <div className="flex flex-col gap-4">
@@ -19,11 +20,13 @@ export default function ChatTemplates() {
         onModelChange={setSelectedModel}
         selectedTemplateId={selectedTemplate?.id}
         selectedModel={selectedModel}
+        onLoadingChange={setIsTemplatesLoading}
       />
       <Chat
         key={`${selectedTemplate?.id || "default"}-${selectedModel}`}
         model={selectedModel}
         template={selectedTemplate}
+        isTemplatesLoading={isTemplatesLoading}
       />
     </div>
   );

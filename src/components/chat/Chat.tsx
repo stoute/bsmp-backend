@@ -67,22 +67,24 @@ const ChatInput = memo(
   ({
     input,
     isLoading,
+    isTemplatesLoading,
     onInputChange,
     onSubmit,
   }: {
     input: string;
     isLoading: boolean;
+    isTemplatesLoading: boolean;
     onInputChange: (value: string) => void;
     onSubmit: (e: React.FormEvent) => void;
   }) => {
     const inputRef = useRef<HTMLInputElement>(null);
 
-    // Focus input when loading state changes from true to false
+    // Focus input when both loading states change from true to false
     useEffect(() => {
-      if (!isLoading) {
+      if (!isLoading && !isTemplatesLoading) {
         inputRef.current?.focus();
       }
-    }, [isLoading]);
+    }, [isLoading, isTemplatesLoading]);
 
     return (
       <form onSubmit={onSubmit} className={styles.inputForm}>
@@ -91,10 +93,14 @@ const ChatInput = memo(
           value={input}
           onChange={(e) => onInputChange(e.target.value)}
           placeholder="Ask something..."
-          disabled={isLoading}
+          disabled={isLoading || isTemplatesLoading}
           className={styles.input}
         />
-        <button type="submit" disabled={isLoading} className={styles.button}>
+        <button
+          type="submit"
+          disabled={isLoading || isTemplatesLoading}
+          className={styles.button}
+        >
           Send
         </button>
       </form>
@@ -106,9 +112,14 @@ ChatInput.displayName = "ChatInput";
 type ChatProps = {
   template?: IPromptTemplate;
   model?: string;
+  isTemplatesLoading: boolean;
 };
 
-export default function Chat({ model, template }: ChatProps) {
+export default function Chat({
+  model,
+  template,
+  isTemplatesLoading,
+}: ChatProps) {
   const [chatManager] = useState(() => new ChatManager(model, template));
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState(chatManager.getMessages());
@@ -159,9 +170,11 @@ export default function Chat({ model, template }: ChatProps) {
         {messages.slice(1).map((message, index) => (
           <ChatMessage key={index} message={message} />
         ))}
-        {isLoading && (
+        {(isLoading || isTemplatesLoading) && (
           <div className={styles.message}>
-            <div className={styles.loading}>Thinking...</div>
+            <div className={styles.loading}>
+              {isTemplatesLoading ? "Loading templates..." : "Thinking..."}
+            </div>
           </div>
         )}
       </div>
@@ -169,6 +182,7 @@ export default function Chat({ model, template }: ChatProps) {
       <ChatInput
         input={input}
         isLoading={isLoading}
+        isTemplatesLoading={isTemplatesLoading}
         onInputChange={handleInputChange}
         onSubmit={handleSubmit}
       />

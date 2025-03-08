@@ -17,6 +17,7 @@ interface ChatControlsProps {
   onModelChange: (model: string) => void;
   selectedTemplateId?: string;
   selectedModel: string;
+  onLoadingChange?: (loading: boolean) => void; // Add this prop
 }
 
 export default function ChatControls({
@@ -24,6 +25,7 @@ export default function ChatControls({
   onModelChange,
   selectedTemplateId: propSelectedTemplateId,
   selectedModel: propSelectedModel,
+  onLoadingChange,
 }: ChatControlsProps) {
   const [templates, setTemplates] = useState<IPromptTemplate[]>([]);
   const [loading, setLoading] = useState(true);
@@ -65,6 +67,7 @@ export default function ChatControls({
   useEffect(() => {
     const fetchTemplates = async () => {
       setLoading(true);
+      onLoadingChange?.(true); // Notify parent of loading state
       setError(null);
       try {
         const response = await fetch(
@@ -80,6 +83,7 @@ export default function ChatControls({
         setError("Failed to load templates");
       } finally {
         setLoading(false);
+        onLoadingChange?.(false); // Notify parent of loading complete
       }
     };
 
