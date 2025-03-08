@@ -21,12 +21,6 @@ export function readingTime(html: string) {
   return `${readingTimeMinutes} min read`;
 }
 
-export function parseLinks(links: Links, environment: string): Links {
-  return links.filter((link) => {
-    return !(link.DISABLED && link.DISABLED === environment);
-  });
-}
-
 export function isRunningOnLocalhost(): boolean {
   if (typeof window === "undefined") {
     // If window is not available, we are not in a browser
