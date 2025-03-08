@@ -11,9 +11,7 @@ const MessageContent = memo(({ message }: { message: any }) => {
     typeof message.content === "string"
       ? message.content
       : message.content?.toString() || "";
-
   if (!content) return null;
-
   return (
     <div className="prose dark:prose-invert max-w-none">
       <MarkdownRenderer blockMatch={{ output: content }} />

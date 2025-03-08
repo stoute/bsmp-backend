@@ -4,21 +4,12 @@ import Chat from "./Chat";
 import ChatControls from "./ChatControls";
 import { appState } from "@lib/appStore";
 
-interface ChatTemplatesProps {
-  model?: string;
-  systemPrompt?: string;
-}
-
-export default function ChatTemplates({
-  model = "openai/gpt-3.5-turbo",
-  systemPrompt = "You are a helpful assistant.",
-}: ChatTemplatesProps) {
+export default function ChatTemplates() {
   const [selectedTemplate, setSelectedTemplate] = useState<
     IPromptTemplate | undefined
   >();
-  const [selectedModel, setSelectedModel] = useState(() => {
-    const storedModel = appState.get().selectedModel;
-    return storedModel || model;
+  const [selectedModel, setSelectedModel] = useState<string>(() => {
+    appState.get().selectedModel;
   });
 
   return (

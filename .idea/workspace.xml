@@ -7,8 +7,9 @@
     <list default="true" id="6db5ad0e-5635-4336-a0ae-8b285de92988" name="Changes" comment="feat: theme button toggle">
       <change beforePath="$PROJECT_DIR$/.idea/AugmentWebviewStateStore.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/AugmentWebviewStateStore.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/chat/ChatControls.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/chat/ChatControls.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/chat/Chat.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/chat/Chat.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/chat/ChatTemplates.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/chat/ChatTemplates.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/appStore.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/appStore.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
