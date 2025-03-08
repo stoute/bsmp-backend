@@ -2,6 +2,7 @@ import { useState } from "react";
 import type { IPromptTemplate } from "@types";
 import Chat from "./Chat";
 import ChatControls from "./ChatControls";
+import { appState } from "@lib/appStore";
 
 interface ChatTemplatesProps {
   model?: string;
@@ -15,9 +16,10 @@ export default function ChatTemplates({
   const [selectedTemplate, setSelectedTemplate] = useState<
     IPromptTemplate | undefined
   >();
-  const [selectedModel, setSelectedModel] = useState(model);
-
-  // if (!selectedTemplate) return;
+  const [selectedModel, setSelectedModel] = useState(() => {
+    const storedModel = appState.get().selectedModel;
+    return storedModel || model;
+  });
 
   return (
     <div className="flex flex-col gap-4">

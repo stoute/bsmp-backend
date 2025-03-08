@@ -8,6 +8,7 @@
       <change beforePath="$PROJECT_DIR$/.idea/AugmentWebviewStateStore.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/AugmentWebviewStateStore.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/chat/ChatControls.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/chat/ChatControls.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/chat/ChatTemplates.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/chat/ChatTemplates.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
