@@ -115,10 +115,22 @@ export default function Chat({ model, template }: ChatProps) {
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState(chatManager.getMessages());
   const [isLoading, setIsLoading] = useState(false);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
 
+  const scrollToBottom = () => {
+    if (messagesContainerRef.current) {
+      const { scrollHeight, clientHeight } = messagesContainerRef.current;
+      messagesContainerRef.current.scrollTop = scrollHeight - clientHeight;
+    }
+  };
+
+  // Scroll to bottom when messages change or loading state changes
   useEffect(() => {
-    console.log(chatManager.chatPromptTemplate);
-  }, [template]);
+    // Use requestAnimationFrame to ensure DOM has updated
+    requestAnimationFrame(() => {
+      scrollToBottom();
+    });
+  }, [messages, isLoading]);
 
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
@@ -145,7 +157,7 @@ export default function Chat({ model, template }: ChatProps) {
 
   return (
     <div className={styles.chatContainer}>
-      <div className={styles.messages}>
+      <div ref={messagesContainerRef} className={styles.messages}>
         {messages.slice(1).map((message, index) => (
           <ChatMessage key={index} message={message} />
         ))}
