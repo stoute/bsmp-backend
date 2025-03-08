@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { LLM_MODELS } from "@/consts";
 import type { IPromptTemplate } from "@types";
 import { appState } from "@lib/appStore";
@@ -28,6 +28,7 @@ export default function ChatControls({
   const [templates, setTemplates] = useState<IPromptTemplate[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const initialLoadRef = useRef(true);
 
   // Initialize from appState or props
   const [selectedTemplateId, setSelectedTemplateId] = useState(() => {
@@ -84,9 +85,15 @@ export default function ChatControls({
     };
 
     fetchTemplates().then(() => {
-      const storedTemplateId = appState.get().selectedTemplateId;
-      if (storedTemplateId) {
-        handleTemplateChange(storedTemplateId);
+      // Only fetch stored template on initial load if there's no current chat
+      if (initialLoadRef.current) {
+        const currentChat = appState.get().currentChat;
+        const storedTemplateId = appState.get().selectedTemplateId;
+
+        if (!currentChat?.messages?.length && storedTemplateId) {
+          handleTemplateChange(storedTemplateId);
+        }
+        initialLoadRef.current = false;
       }
     });
   }, []);
