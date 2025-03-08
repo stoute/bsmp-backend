@@ -92,15 +92,15 @@ export default function ChatControls({
   };
 
   return (
-    <div className="bg-card flex items-center gap-4 rounded-lg border p-4">
-      <div className="flex items-center gap-2">
+    <div className="bg-card flex flex-col items-start gap-4 rounded-lg border p-4 sm:flex-row sm:items-center">
+      <div className="flex w-full items-center gap-2 sm:w-auto">
         <Label htmlFor="template-select">Templates</Label>
         <Select
           value={selectedTemplateId}
           onValueChange={handleTemplateChange}
           disabled={loading}
         >
-          <SelectTrigger id="template-select" className="w-[200px]">
+          <SelectTrigger id="template-select" className="w-full sm:w-[200px]">
             <SelectValue placeholder="Select template" />
           </SelectTrigger>
           <SelectContent>
@@ -123,10 +123,10 @@ export default function ChatControls({
         </Select>
       </div>
 
-      <div className="flex items-center gap-2">
+      <div className="flex w-full items-center gap-2 sm:w-auto">
         <Label htmlFor="model-select">Model</Label>
         <Select value={selectedModel} onValueChange={handleModelChange}>
-          <SelectTrigger id="model-select" className="w-[200px]">
+          <SelectTrigger id="model-select" className="w-full sm:w-[200px]">
             <SelectValue placeholder="Select model" />
           </SelectTrigger>
           <SelectContent>
