@@ -2,6 +2,7 @@
 import { getCollection } from "astro:content";
 import PageLayout from "@layouts/PageLayout.astro";
 import BottomLayout from "@layouts/BottomLayout.astro";
+import ArrowCard from "@components/ArrowCard";
 import { SITE, SOCIALS } from "@consts";
 
 const posts = (await getCollection("blog"))
@@ -37,10 +38,12 @@ const projects = (await getCollection("projects"))
             <p class="mt-5 mb-5 flex items-center justify-center">
               <img
                 src="/images/logo-light.svg"
+                alt="logo"
                 class="animated block h-18 w-18 dark:hidden"
               />
               <img
                 src="/images/logo-dark.svg"
+                alt="logo"
                 class="animated hidden h-18 w-18 dark:block"
               />
             </p>
@@ -61,34 +64,34 @@ const projects = (await getCollection("projects"))
     </section>
 
     <!--Project Preview Section -->
-    <!--<section class="animate">-->
-    <!--  <div class="space-y-4">-->
-    <!--    <div class="flex justify-between">-->
-    <!--      <p class="font-semibold text-black dark:text-white">-->
-    <!--        Recent projects-->
-    <!--      </p>-->
-    <!--      <a-->
-    <!--        href="/projects"-->
-    <!--        class="group blend col-span-3 flex w-fit items-center gap-1 text-black underline decoration-black/25 decoration-[.5px] underline-offset-2 hover:decoration-black dark:text-white dark:decoration-white/50 dark:hover:decoration-white"-->
-    <!--      >-->
-    <!--        <span-->
-    <!--          class="blend text-black/75 group-hover:text-black dark:text-white/75 dark:group-hover:text-white"-->
-    <!--        >-->
-    <!--          All projects-->
-    <!--        </span>-->
-    <!--      </a>-->
-    <!--    </div>-->
-    <!--    <ul class="space-y-4">-->
-    <!--      {-->
-    <!--        projects.map((project) => (-->
-    <!--          <li>-->
-    <!--            <ArrowCard entry={project} />-->
-    <!--          </li>-->
-    <!--        ))-->
-    <!--      }-->
-    <!--    </ul>-->
-    <!--  </div>-->
-    <!--</section>-->
+    <section class="animate">
+      <div class="space-y-4">
+        <div class="flex justify-between">
+          <p class="font-semibold text-black dark:text-white">
+            Recent projects
+          </p>
+          <a
+            href="/projects"
+            class="group blend col-span-3 flex w-fit items-center gap-1 text-black underline decoration-black/25 decoration-[.5px] underline-offset-2 hover:decoration-black dark:text-white dark:decoration-white/50 dark:hover:decoration-white"
+          >
+            <span
+              class="blend text-black/75 group-hover:text-black dark:text-white/75 dark:group-hover:text-white"
+            >
+              All projects
+            </span>
+          </a>
+        </div>
+        <ul class="space-y-4">
+          {
+            projects.map((project) => (
+              <li>
+                <ArrowCard entry={project} />
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </section>
 
     <!-- Blog Preview Section -->
     <!--<section class="animate">-->
