@@ -4,29 +4,29 @@ import Chat from "./Chat";
 import ChatControls from "./ChatControls";
 import { appState } from "@lib/appStore";
 
+const DEFAULT_MODEL = "openai/gpt-3.5-turbo";
+
 export default function ChatTemplates() {
   const [selectedTemplate, setSelectedTemplate] = useState<
     IPromptTemplate | undefined
-  >();
-  const [selectedModel, setSelectedModel] = useState<string>(() => {
-    appState.get().selectedModel;
+  >(() => {
+    return undefined;
   });
-  const [isTemplatesLoading, setIsTemplatesLoading] = useState(true);
+
+  const onTemplateChange = (template: IPromptTemplate) => {
+    setSelectedTemplate(template);
+  };
 
   return (
     <div className="flex flex-col gap-4">
       <ChatControls
-        onTemplateChange={setSelectedTemplate}
-        onModelChange={setSelectedModel}
+        onTemplateChange={onTemplateChange}
+        onModelChange={() => {}}
         selectedTemplateId={selectedTemplate?.id}
-        selectedModel={selectedModel}
-        onLoadingChange={setIsTemplatesLoading}
       />
       <Chat
-        key={`${selectedTemplate?.id || "default"}-${selectedModel}`}
-        model={selectedModel}
+        key={`${selectedTemplate?.id || "default"}`}
         template={selectedTemplate}
-        isTemplatesLoading={isTemplatesLoading}
       />
     </div>
   );

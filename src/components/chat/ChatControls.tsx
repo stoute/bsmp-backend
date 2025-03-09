@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { LLM_MODELS } from "@/consts";
 import type { IPromptTemplate } from "@types";
 import { appState } from "@lib/appStore";
@@ -30,6 +30,7 @@ export default function ChatControls({
   const [templates, setTemplates] = useState<IPromptTemplate[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const initialLoadRef = useRef(true);
 
   // Initialize from appState or props
   const [selectedTemplateId, setSelectedTemplateId] = useState(() => {
@@ -37,32 +38,35 @@ export default function ChatControls({
     return propSelectedTemplateId || storedTemplateId || DEFAULT_TEMPLATE_ID;
   });
 
+  // Initialize from appState first
   const [selectedModel, setSelectedModel] = useState(() => {
     const storedModel = appState.get().selectedModel;
-    return propSelectedModel || storedModel || DEFAULT_MODEL;
+    // Only use prop if there's no stored model
+    return storedModel || DEFAULT_MODEL;
   });
 
-  // Sync with appState and handle template changes
+  // Sync with props only if there's no stored model
   useEffect(() => {
+    const storedModel = appState.get().selectedModel;
     if (
-      propSelectedTemplateId &&
-      propSelectedTemplateId !== selectedTemplateId
+      !storedModel &&
+      propSelectedModel &&
+      propSelectedModel !== selectedModel
     ) {
-      setSelectedTemplateId(propSelectedTemplateId);
-    }
-  }, [propSelectedTemplateId]);
-
-  useEffect(() => {
-    if (propSelectedModel && propSelectedModel !== selectedModel) {
       setSelectedModel(propSelectedModel);
+      appState.setKey("selectedModel", propSelectedModel);
     }
   }, [propSelectedModel]);
 
-  // Sync with appState
-  useEffect(() => {
-    appState.setKey("selectedTemplateId", selectedTemplateId);
-    appState.setKey("selectedModel", selectedModel);
-  }, [selectedTemplateId, selectedModel]);
+  const handleModelChange = async (model: string) => {
+    try {
+      setSelectedModel(model);
+      appState.setKey("selectedModel", model);
+      onModelChange(model);
+    } catch (err) {
+      console.error("Error changing model:", err);
+    }
+  };
 
   useEffect(() => {
     const fetchTemplates = async () => {
@@ -88,9 +92,15 @@ export default function ChatControls({
     };
 
     fetchTemplates().then(() => {
-      const storedTemplateId = appState.get().selectedTemplateId;
-      if (storedTemplateId) {
-        handleTemplateChange(storedTemplateId);
+      // Only fetch stored template on initial load if there's no current chat
+      if (initialLoadRef.current) {
+        const currentChat = appState.get().currentChat;
+        const storedTemplateId = appState.get().selectedTemplateId;
+
+        if (!currentChat?.messages?.length && storedTemplateId) {
+          handleTemplateChange(storedTemplateId);
+        }
+        initialLoadRef.current = false;
       }
     });
   }, []);
@@ -105,19 +115,10 @@ export default function ChatControls({
         throw new Error("Failed to fetch template");
       }
       const template = await response.json();
+
       onTemplateChange(template);
     } catch (err) {
       console.error("Error fetching template:", err);
-    }
-  };
-
-  const handleModelChange = async (model: string) => {
-    try {
-      setSelectedModel(model);
-      appState.setKey("selectedModel", model);
-      onModelChange(model);
-    } catch (err) {
-      console.error("Error changing model:", err);
     }
   };
 
