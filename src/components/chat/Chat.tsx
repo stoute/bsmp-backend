@@ -22,6 +22,20 @@ export default function Chat({ template }: ChatProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
 
+  // Initialize llm chatManager and messages after hydration
+  useEffect(() => {
+    const currentModel = appState.get().selectedModel;
+
+    if (!chatManagerRef.current) {
+      const savedChat = appState.get().currentChat;
+      isRestoringRef.current = savedChat?.messages?.length > 0;
+
+      chatManagerRef.current = new ChatManager(currentModel);
+      setMessages(chatManagerRef.current.getMessages());
+      setIsInitialized(true);
+    }
+  }, []);
+
   const scrollToBottom = useCallback(() => {
     if (messagesContainerRef.current) {
       const container = messagesContainerRef.current;
@@ -42,24 +56,6 @@ export default function Chat({ template }: ChatProps) {
       }
     }
   }, [messages.length]);
-
-  // Initialize llm chatManager and messages after hydration
-  useEffect(() => {
-    const currentModel = appState.get().selectedModel;
-
-    if (!chatManagerRef.current) {
-      const savedChat = appState.get().currentChat;
-      isRestoringRef.current = savedChat?.messages?.length > 0;
-
-      chatManagerRef.current = new ChatManager(
-        currentModel,
-        template,
-        isRestoringRef.current,
-      );
-      setMessages(chatManagerRef.current.getMessages());
-      setIsInitialized(true);
-    }
-  }, [template]);
 
   // Handle initial scroll for restored chat
   useEffect(() => {

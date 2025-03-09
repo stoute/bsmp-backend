@@ -25,11 +25,7 @@ export class ChatManager {
   private unsubscribe: (() => void) | null = null;
 
   // Constructor called by Chat component
-  constructor(
-    model: string = DEFAULT_MODEL,
-    template?: IPromptTemplate,
-    isRestoring: boolean = false,
-  ) {
+  constructor(model: string = DEFAULT_MODEL, template?: IPromptTemplate) {
     this.model = model;
     this.llm = new ChatOpenAI({
       temperature: 0.7,
@@ -49,51 +45,26 @@ export class ChatManager {
       if (state.selectedModel && state.selectedModel !== this.model) {
         this.updateModel(state.selectedModel);
       }
+      if (state.selectedTemplate && state.selectedTemplate !== this.template) {
+        this.init(state.selectedTemplate);
+      }
     });
 
     // Call async init
-    this.init(template, isRestoring);
-  }
-
-  private updateModel(newModel: string) {
-    this.model = newModel;
-    this.llm = new ChatOpenAI({
-      temperature: 0.7,
-      configuration: {
-        dangerouslyAllowBrowser: true,
-        fetch: this.proxyFetchHandler,
-      },
-      model: newModel,
-      apiKey: "none",
-    });
-    this.saveState();
-  }
-  // Add cleanup method
-  public cleanup() {
-    if (this.unsubscribe) {
-      this.unsubscribe();
-      this.unsubscribe = null;
-    }
+    this.init(template);
   }
 
   public async init(template?: IPromptTemplate) {
     try {
       await this.restoreState();
-      if (template) {
-        // if (template && !isRestoring) {
+      const currentChat = appState.get().currentChat;
+      const storedTemplateId = currentChat?.template?.id;
+      if (template && template.id !== storedTemplateId) {
         // Set template and invoke LLM
-        const currentChat = appState.get().currentChat;
         appState.setKey("currentChat", { ...currentChat, template });
         appState.setKey("selectedTemplateId", template.id);
         await this.setTemplate(template);
-        // } else if (isRestoring) {
-        // Restore template and messages from appState
-        // await this.restoreState();
-        // todo: is this needed?
-        // await this.llm.invoke(this.messages);
       }
-      // console.log(appState.get().currentChat?.model);
-      // console.log(appState.get().selectedModel);
       this.messages.map((msg) => {
         const type = msg._getType();
         if (type === "human") {
@@ -150,16 +121,37 @@ export class ChatManager {
       this.saveState();
 
       // Invoke LLM with new messages
-      await this.llm.invoke(this.messages);
+      // await this.llm.invoke(this.messages);
 
       // Save state again after LLM response
-      this.saveState();
+      // this.saveState();
     } catch (error) {
       console.error("Error setting template:", error);
       // Fallback to default system message
       this.messages = [new SystemMessage(DEFAULT_SYSTEM_MESSAGE)];
       this.saveState();
       throw error;
+    }
+  }
+
+  private updateModel(newModel: string) {
+    this.model = newModel;
+    this.llm = new ChatOpenAI({
+      temperature: 0.7,
+      configuration: {
+        dangerouslyAllowBrowser: true,
+        fetch: this.proxyFetchHandler,
+      },
+      model: newModel,
+      apiKey: "none",
+    });
+    this.saveState();
+  }
+  // Add cleanup method
+  public cleanup() {
+    if (this.unsubscribe) {
+      this.unsubscribe();
+      this.unsubscribe = null;
     }
   }
 

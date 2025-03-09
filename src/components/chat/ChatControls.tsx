@@ -114,8 +114,9 @@ export default function ChatControls({
       if (!response.ok) {
         throw new Error("Failed to fetch template");
       }
-      const template = await response.json();
-
+      const template: IPromptTemplate = await response.json();
+      appState.setKey("selectedTemplate", template);
+      appState.setKey("selectedTemplateId", template.id);
       onTemplateChange(template);
     } catch (err) {
       console.error("Error fetching template:", err);
