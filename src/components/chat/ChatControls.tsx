@@ -36,32 +36,35 @@ export default function ChatControls({
     return propSelectedTemplateId || storedTemplateId || DEFAULT_TEMPLATE_ID;
   });
 
+  // Initialize from appState first
   const [selectedModel, setSelectedModel] = useState(() => {
     const storedModel = appState.get().selectedModel;
-    return propSelectedModel || storedModel || DEFAULT_MODEL;
+    // Only use prop if there's no stored model
+    return storedModel || propSelectedModel || DEFAULT_MODEL;
   });
 
-  // Sync with appState and handle template changes
+  // Sync with props only if there's no stored model
   useEffect(() => {
+    const storedModel = appState.get().selectedModel;
     if (
-      propSelectedTemplateId &&
-      propSelectedTemplateId !== selectedTemplateId
+      !storedModel &&
+      propSelectedModel &&
+      propSelectedModel !== selectedModel
     ) {
-      setSelectedTemplateId(propSelectedTemplateId);
-    }
-  }, [propSelectedTemplateId]);
-
-  useEffect(() => {
-    if (propSelectedModel && propSelectedModel !== selectedModel) {
       setSelectedModel(propSelectedModel);
+      appState.setKey("selectedModel", propSelectedModel);
     }
   }, [propSelectedModel]);
 
-  // Sync with appState
-  useEffect(() => {
-    appState.setKey("selectedTemplateId", selectedTemplateId);
-    appState.setKey("selectedModel", selectedModel);
-  }, [selectedTemplateId, selectedModel]);
+  const handleModelChange = async (model: string) => {
+    try {
+      setSelectedModel(model);
+      appState.setKey("selectedModel", model);
+      onModelChange(model);
+    } catch (err) {
+      console.error("Error changing model:", err);
+    }
+  };
 
   useEffect(() => {
     const fetchTemplates = async () => {
@@ -111,16 +114,6 @@ export default function ChatControls({
       onTemplateChange(template);
     } catch (err) {
       console.error("Error fetching template:", err);
-    }
-  };
-
-  const handleModelChange = async (model: string) => {
-    try {
-      setSelectedModel(model);
-      appState.setKey("selectedModel", model);
-      onModelChange(model);
-    } catch (err) {
-      console.error("Error changing model:", err);
     }
   };
 

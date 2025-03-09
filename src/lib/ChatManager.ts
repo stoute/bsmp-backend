@@ -66,6 +66,7 @@ export class ChatManager {
 
   private async restoreState() {
     const savedChat = appState.get().currentChat;
+    appState.setKey("selectedModel", savedChat.model);
     if (savedChat?.template) {
       this.template = savedChat.template;
     }
