@@ -31,43 +31,40 @@ export default function Chat({ template }: ChatProps) {
 
   // Initialize llm chatManager and messages after hydration
   useEffect(() => {
+    const currentModel = appState.get().selectedModel;
+
     if (!chatManagerRef.current) {
-      (async () => {
-        chatManagerRef.current = new ChatManager(
-          appState.get().selectedModel,
-          template,
-        );
-        await chatManagerRef.current.init(template);
-        setMessages(chatManagerRef.current.getMessages());
-        setIsInitialized(true);
-      })();
+      const savedChat = appState.get().currentChat;
+      isRestoringRef.current = savedChat?.messages?.length > 0;
+
+      chatManagerRef.current = new ChatManager(
+        currentModel,
+        template,
+        isRestoringRef.current,
+      );
+      setMessages(chatManagerRef.current.getMessages());
+      setIsInitialized(true);
     }
   }, [template]);
 
   // Handle initial scroll for restored chat
   useEffect(() => {
-    if (isInitialized && isRestoringRef.current && messages.length > 0) {
-      // Use a longer timeout to ensure all content is rendered
-      setTimeout(scrollToBottom, 300);
-      isRestoringRef.current = false;
-    }
-  }, [isInitialized, messages, scrollToBottom]);
+    if (isInitialized && messages.length > 0) {
+      if (isRestoringRef.current) {
+        // Use a longer timeout for restored chats
+        setTimeout(scrollToBottom, 300);
+        isRestoringRef.current = false;
+      } else {
+        // Immediate scroll for new messages
+        scrollToBottom();
 
-  // Regular scroll effect for new messages
-  useEffect(() => {
-    if (!isRestoringRef.current) {
-      // Scroll immediately for user messages
-      scrollToBottom();
-      // For AI responses, also scroll after a brief delay to ensure content is rendered
-      if (
-        messages.length > 0 &&
-        messages[messages.length - 1]._getType() === "ai"
-      ) {
-        const timeoutId = setTimeout(scrollToBottom, 100);
-        return () => clearTimeout(timeoutId);
+        // Additional scroll after a delay for AI responses
+        if (messages[messages.length - 1]._getType() === "ai") {
+          setTimeout(scrollToBottom, 100);
+        }
       }
     }
-  }, [messages, scrollToBottom]);
+  }, [isInitialized, messages, scrollToBottom]);
 
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
