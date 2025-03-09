@@ -13,7 +13,7 @@ import {
 } from "@langchain/core/messages";
 import type { IPromptTemplate } from "@types";
 import { appState, type ChatState } from "@lib/appStore";
-import { DEFAULT_MODEL } from "@consts";
+import { DEFAULT_MODEL, DEFAULT_SYSTEM_MESSAGE } from "@consts";
 
 export class ChatManager {
   private messages: BaseMessage[] = [];
@@ -40,7 +40,7 @@ export class ChatManager {
     });
 
     // Initialize with default system message
-    this.messages = [new SystemMessage("You are a helpful assistant.")];
+    this.messages = [new SystemMessage(DEFAULT_SYSTEM_MESSAGE)];
 
     // Call async init
     this.init(template, isRestoring);
@@ -51,44 +51,48 @@ export class ChatManager {
       if (template && !isRestoring) {
         // Set template and invoke LLM
         await this.setTemplate(template);
-        await this.llm.invoke(this.messages);
       } else if (isRestoring) {
         // Restore template and messages from appState
-        const savedChat = appState.get().currentChat;
-        if (savedChat?.template) {
-          this.template = savedChat.template;
-        }
-        if (savedChat?.messages && Array.isArray(savedChat.messages)) {
-          const restoredMessages = savedChat.messages
-            .filter((msg) => msg && msg.role && msg.content) // Ensure valid messages
-            .map((msg) => {
-              switch (msg.role.toLowerCase()) {
-                case "system":
-                  return new SystemMessage(msg.content);
-                case "assistant":
-                case "ai":
-                  return new AIMessage(msg.content);
-                case "human":
-                case "user":
-                  return new HumanMessage(msg.content);
-                default:
-                  console.warn(
-                    `Unknown message role: ${msg.role}, defaulting to human`,
-                  );
-                  return new HumanMessage(msg.content);
-              }
-            });
-
-          if (restoredMessages.length > 0) {
-            this.messages = restoredMessages;
-            await this.llm.invoke(this.messages);
-          }
-        }
+        await this.restoreState();
       }
+      // todo: is this needed?
+      // await this.llm.invoke(this.messages);
     } catch (error) {
       console.error("Error during initialization:", error);
       // Fallback to default system message
-      this.messages = [new SystemMessage("You are a helpful assistant.")];
+      this.messages = [new SystemMessage(DEFAULT_SYSTEM_MESSAGE)];
+    }
+  }
+
+  private async restoreState() {
+    const savedChat = appState.get().currentChat;
+    if (savedChat?.template) {
+      this.template = savedChat.template;
+    }
+    if (savedChat?.messages && Array.isArray(savedChat.messages)) {
+      const restoredMessages = savedChat.messages
+        .filter((msg) => msg && msg.role && msg.content) // Ensure valid messages
+        .map((msg) => {
+          switch (msg.role.toLowerCase()) {
+            case "system":
+              return new SystemMessage(msg.content);
+            case "assistant":
+            case "ai":
+              return new AIMessage(msg.content);
+            case "human":
+            case "user":
+              return new HumanMessage(msg.content);
+            default:
+              console.warn(
+                `Unknown message role: ${msg.role}, defaulting to human`,
+              );
+              return new HumanMessage(msg.content);
+          }
+        });
+
+      if (restoredMessages.length > 0) {
+        this.messages = restoredMessages;
+      }
     }
   }
 
@@ -130,7 +134,7 @@ export class ChatManager {
 
       this.template = template;
       const systemTemplate = SystemMessagePromptTemplate.fromTemplate(
-        template.systemPrompt || "You are a helpful assistant.",
+        template.systemPrompt || DEFAULT_SYSTEM_MESSAGE,
       );
       const humanTemplate = HumanMessagePromptTemplate.fromTemplate(
         template.template || "{input}",
@@ -151,9 +155,7 @@ export class ChatManager {
 
       // Reset messages with new system prompt
       this.messages = [
-        new SystemMessage(
-          template.systemPrompt || "You are a helpful assistant.",
-        ),
+        new SystemMessage(template.systemPrompt || DEFAULT_SYSTEM_MESSAGE),
       ];
       if (template.description) {
         this.messages.push(new AIMessage(template.description));
@@ -161,7 +163,7 @@ export class ChatManager {
     } catch (error) {
       console.error("Error setting template:", error);
       // Fallback to default system message
-      this.messages = [new SystemMessage("You are a helpful assistant.")];
+      this.messages = [new SystemMessage(DEFAULT_SYSTEM_MESSAGE)];
       throw error;
     }
   }

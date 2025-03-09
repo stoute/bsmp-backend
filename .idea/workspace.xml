@@ -7,6 +7,7 @@
     <list default="true" id="6db5ad0e-5635-4336-a0ae-8b285de92988" name="Changes" comment="feat: theme button toggle">
       <change beforePath="$PROJECT_DIR$/.idea/AugmentWebviewStateStore.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/AugmentWebviewStateStore.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/consts.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/consts.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/lib/ChatManager.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/ChatManager.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/styles/code-block.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/styles/code-block.css" afterDir="false" />
     </list>

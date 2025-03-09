@@ -9,7 +9,7 @@ pre {
   overflow-x: auto;
 }
 pre:has(code) {
-  padding: 1.5rem 0;
+  padding: 1.5rem 0 !important;
 }
 
 code {
