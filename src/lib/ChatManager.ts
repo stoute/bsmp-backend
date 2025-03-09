@@ -65,18 +65,18 @@ export class ChatManager {
 
   public async init(template?: IPromptTemplate) {
     try {
-      // await this.saveState();
       await this.restoreState();
-
       let currentChat = appState.get().currentChat;
       const storedTemplateId = currentChat?.template?.id;
       // template has changed
-      if (currentChat?.template) {
-        // await this.setTemplate(currentChat.template);
+      if (currentChat?.template && !template) {
+        await this.setTemplate(currentChat.template);
+      } else {
+        if (template) {
+          await this.setTemplate(template);
+        }
       }
-      if (template && template.id !== storedTemplateId) {
-        await this.setTemplate(template);
-      }
+
       this.messages.map((msg) => {
         const type = msg._getType();
         if (type === "human") {
@@ -84,12 +84,11 @@ export class ChatManager {
         } else if (type === "ai") {
           // console.log("AI: ", msg.content);
         } else {
-          console.log("System: ", msg.content);
+          // console.log("System: ", msg.content);
         }
       });
-      // this.saveState();
-      // todo: is this needed?
-      // await this.llm.invoke(this.messages);
+
+      await this.saveState();
     } catch (error) {
       console.error("Error during initialization:", error);
       // Fallback to default system message
@@ -131,27 +130,27 @@ export class ChatManager {
 
       // push messages with new system prompt
       let messages: BaseMessage[] = [];
-      messages.push(
-        new SystemMessage(template.systemPrompt || DEFAULT_SYSTEM_MESSAGE),
+
+      const newSystemMessage = new SystemMessage(
+        template.systemPrompt || DEFAULT_SYSTEM_MESSAGE,
       );
+      this.replaceSystemMessage(newSystemMessage);
+
+      // messages.push(
+      //   new SystemMessage(template.systemPrompt || DEFAULT_SYSTEM_MESSAGE),
+      // );
       if (template.description) {
         messages.push(new AIMessage(template.description));
       }
       this.messages = [...this.messages, ...messages];
 
       // Save state after setting messages
-      this.saveState();
-
-      // Invoke LLM with new messages
-      // await this.llm.invoke(this.messages);
-
-      // Save state again after LLM response
       // this.saveState();
     } catch (error) {
       console.error("Error setting template:", error);
       // Fallback to default system message
       this.messages = [new SystemMessage(DEFAULT_SYSTEM_MESSAGE)];
-      this.saveState();
+      // this.saveState();
       throw error;
     }
   }
@@ -248,7 +247,6 @@ export class ChatManager {
     this.isLoading = true;
     try {
       let processedInput = input;
-
       if (this.chatPromptTemplate && variables) {
         const formatted = await this.chatPromptTemplate.formatMessages({
           input,
@@ -263,17 +261,14 @@ export class ChatManager {
       const validMessages = this.messages.filter(
         (msg) => msg && msg.content && typeof msg.content === "string",
       );
-
       if (validMessages.length === 0) {
         throw new Error("No valid messages to process");
       }
-
       const response = await this.llm.invoke(validMessages);
       if (response) {
         this.messages.push(response);
         this.saveState();
       }
-
       return response;
     } catch (error) {
       console.error("Error in chat:", error);
@@ -303,6 +298,21 @@ export class ChatManager {
     this.saveState();
   }
 
+  /**
+   * Replaces all system messages with a new system message
+   * @param systemMessage - The new system message to inject
+   */
+  public replaceSystemMessage(systemMessage?: SystemMessage) {
+    // Remove all existing system messages
+    this.messages = this.messages.filter((msg) => msg._getType() !== "system");
+    // Insert the new system message at the beginning
+    if (systemMessage) {
+      this.messages.unshift(systemMessage);
+    }
+    // Save the state
+    this.saveState();
+  }
+
   getLLM(): ChatOpenAI {
     return this.llm;
   }
@@ -329,12 +339,3 @@ export class ChatManager {
     return response;
   };
 }
-
-// Keep parseTemplate for backward compatibility
-// export async function parseTemplate(
-//   template: IPromptTemplate,
-//   llm: ChatOpenAI,
-// ): Promise<IPromptTemplate> {
-//   const chatManager = new ChatManager();
-//   return chatManager.setTemplate(template);
-// }

@@ -8,7 +8,7 @@ import { MessageErrorBoundary } from "./MessageErrorBoundary";
 import type { IPromptTemplate } from "@types";
 import styles from "./Chat.module.css";
 
-export default function Chat({ template }: ChatProps) {
+export default function Chat() {
   const chatManagerRef = useRef<ChatManager | null>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const isRestoringRef = useRef(false);
@@ -26,18 +26,30 @@ export default function Chat({ template }: ChatProps) {
     }
   }, []);
 
-  const scrollLastMessageToTop = useCallback(() => {
-    if (messagesContainerRef.current && messages.length > 0) {
+  const scrollLastUserMessageToTop = useCallback(() => {
+    if (!messagesContainerRef.current || messages.length === 0) return;
+
+    // Give time for the DOM to update
+    setTimeout(() => {
       const container = messagesContainerRef.current;
+      if (!container) return;
+
       const messageElements = container.getElementsByClassName(styles.message);
-      if (messageElements.length >= 2) {
-        const lastUserMessage = messageElements[messageElements.length - 2];
-        const containerTop = container.getBoundingClientRect().top;
-        const messageTop = lastUserMessage.getBoundingClientRect().top;
-        container.scrollTop += messageTop - containerTop;
-      }
-    }
-  }, []); // Remove messages.length dependency
+      const lastAiMessage = messageElements[messageElements.length - 1];
+      if (!lastAiMessage) return;
+
+      // Calculate the scroll position to show the AI message at the top
+      const containerRect = container.getBoundingClientRect();
+      const messageRect = lastAiMessage.getBoundingClientRect();
+      const scrollOffset =
+        messageRect.top - containerRect.top + container.scrollTop;
+
+      container.scrollTo({
+        top: scrollOffset,
+        behavior: "smooth",
+      });
+    }, 100);
+  }, [messages.length]); // Include messages.length to ensure we have the latest messages
 
   // Initialize chat manager only once
   useEffect(() => {
@@ -60,12 +72,12 @@ export default function Chat({ template }: ChatProps) {
     } else {
       const lastMessage = messages[messages.length - 1];
       if (lastMessage?._getType() === "ai") {
-        setTimeout(scrollLastMessageToTop, 100);
+        setTimeout(scrollLastUserMessageToTop, 100);
       } else {
         scrollToBottom();
       }
     }
-  }, [isInitialized, messages, scrollToBottom, scrollLastMessageToTop]);
+  }, [isInitialized, messages, scrollToBottom, scrollLastUserMessageToTop]);
 
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
@@ -74,9 +86,11 @@ export default function Chat({ template }: ChatProps) {
 
       setIsLoading(true);
       try {
-        scrollToBottom();
         await chatManagerRef.current.sendMessage(input);
         setMessages(chatManagerRef.current.getMessages());
+        // scrollToBottom();
+        scrollLastUserMessageToTop();
+
         setInput("");
       } catch (error) {
         console.error("Chat error:", error);
@@ -113,9 +127,11 @@ export default function Chat({ template }: ChatProps) {
         </button>
       </div>
       <div ref={messagesContainerRef} className={styles.messages}>
-        {messages.slice(1).map((message, index) => (
-          <ChatMessage key={index} message={message} />
-        ))}
+        {messages
+          .filter((message) => message._getType() !== "system")
+          .map((message, index) => (
+            <ChatMessage key={index} message={message} />
+          ))}
         {isLoading && (
           <div className={styles.message}>
             <div className={styles.loading}>Thinking...</div>
