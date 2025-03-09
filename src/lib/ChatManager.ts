@@ -22,6 +22,7 @@ export class ChatManager {
   public template?: IPromptTemplate;
   public chatPromptTemplate?: ChatPromptTemplate;
   private model: string;
+  private unsubscribe: (() => void) | null = null;
 
   // Constructor called by Chat component
   constructor(
@@ -43,8 +44,36 @@ export class ChatManager {
     // Initialize with default system message
     this.messages = [new SystemMessage(DEFAULT_SYSTEM_MESSAGE)];
 
+    // Subscribe to appState model changes
+    this.unsubscribe = appState.subscribe((state) => {
+      if (state.selectedModel && state.selectedModel !== this.model) {
+        this.updateModel(state.selectedModel);
+      }
+    });
+
     // Call async init
     this.init(template, isRestoring);
+  }
+
+  private updateModel(newModel: string) {
+    this.model = newModel;
+    this.llm = new ChatOpenAI({
+      temperature: 0.7,
+      configuration: {
+        dangerouslyAllowBrowser: true,
+        fetch: this.proxyFetchHandler,
+      },
+      model: newModel,
+      apiKey: "none",
+    });
+    this.saveState();
+  }
+  // Add cleanup method
+  public cleanup() {
+    if (this.unsubscribe) {
+      this.unsubscribe();
+      this.unsubscribe = null;
+    }
   }
 
   public async init(template?: IPromptTemplate) {
