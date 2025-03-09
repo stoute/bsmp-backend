@@ -4,6 +4,7 @@ import {
   SystemMessagePromptTemplate,
   HumanMessagePromptTemplate,
 } from "@langchain/core/prompts";
+
 import {
   HumanMessage,
   SystemMessage,
@@ -12,6 +13,7 @@ import {
 } from "@langchain/core/messages";
 import type { IPromptTemplate } from "@types";
 import { appState, type ChatState } from "@lib/appStore";
+import { DEFAULT_MODEL } from "@consts";
 
 export class ChatManager {
   private messages: BaseMessage[] = [];
@@ -22,7 +24,7 @@ export class ChatManager {
   private model: string;
 
   constructor(
-    model: string = "openai/gpt-3.5-turbo",
+    model: string = DEFAULT_MODEL,
     template?: IPromptTemplate,
     isRestoring: boolean = false,
   ) {
@@ -47,9 +49,11 @@ export class ChatManager {
   private async init(template?: IPromptTemplate, isRestoring: boolean = false) {
     try {
       if (template && !isRestoring) {
+        // Set template and invoke LLM
         await this.setTemplate(template);
         await this.llm.invoke(this.messages);
       } else if (isRestoring) {
+        // Restore template and messages from appState
         const savedChat = appState.get().currentChat;
         if (savedChat?.template) {
           this.template = savedChat.template;
@@ -77,6 +81,7 @@ export class ChatManager {
 
           if (restoredMessages.length > 0) {
             this.messages = restoredMessages;
+            await this.llm.invoke(this.messages);
           }
         }
       }
