@@ -29,6 +29,20 @@ export default function Chat({ template }: ChatProps) {
     }
   }, []);
 
+  const scrollLastMessageToTop = useCallback(() => {
+    if (messagesContainerRef.current && messages.length > 0) {
+      const container = messagesContainerRef.current;
+      const messageElements = container.getElementsByClassName(styles.message);
+      if (messageElements.length >= 2) {
+        // Get second to last message (user's message)
+        const lastUserMessage = messageElements[messageElements.length - 2];
+        const containerTop = container.getBoundingClientRect().top;
+        const messageTop = lastUserMessage.getBoundingClientRect().top;
+        container.scrollTop += messageTop - containerTop;
+      }
+    }
+  }, [messages.length]);
+
   // Initialize llm chatManager and messages after hydration
   useEffect(() => {
     const currentModel = appState.get().selectedModel;
@@ -73,18 +87,22 @@ export default function Chat({ template }: ChatProps) {
 
       setIsLoading(true);
       try {
+        // Scroll to bottom immediately after user input
+        scrollToBottom();
+
         await chatManagerRef.current.sendMessage(input);
         setMessages(chatManagerRef.current.getMessages());
         setInput("");
-        // Scroll after the response is received
-        setTimeout(scrollToBottom, 100);
+
+        // Scroll last message to top after AI response
+        setTimeout(scrollLastMessageToTop, 100);
       } catch (error) {
         console.error("Chat error:", error);
       } finally {
         setIsLoading(false);
       }
     },
-    [input, scrollToBottom],
+    [input, scrollToBottom, scrollLastMessageToTop],
   );
 
   const handleClearChat = useCallback(() => {
@@ -94,7 +112,9 @@ export default function Chat({ template }: ChatProps) {
       template?.systemPrompt || "You are a helpful assistant.",
     );
     setMessages(chatManagerRef.current.getMessages());
-  }, [template]);
+    // Scroll to bottom after clearing
+    setTimeout(scrollToBottom, 100);
+  }, [template, scrollToBottom]);
 
   const handleInputChange = useCallback((value: string) => {
     setInput(value);
