@@ -58,13 +58,14 @@ export class ChatManager {
           const restoredMessages = savedChat.messages
             .filter((msg) => msg && msg.role && msg.content) // Ensure valid messages
             .map((msg) => {
-              console.log(msg.role);
-              switch (msg.role) {
+              switch (msg.role.toLowerCase()) {
                 case "system":
                   return new SystemMessage(msg.content);
                 case "assistant":
+                case "ai":
                   return new AIMessage(msg.content);
                 case "human":
+                case "user":
                   return new HumanMessage(msg.content);
                 default:
                   console.warn(
@@ -91,10 +92,27 @@ export class ChatManager {
       model: this.model,
       templateId: this.template?.id,
       template: this.template,
-      messages: this.messages.map((msg) => ({
-        role: msg._getType(),
-        content: msg.content,
-      })),
+      messages: this.messages.map((msg) => {
+        // Map _getType() values to consistent role names
+        let role: string;
+        switch (msg._getType()) {
+          case "ai":
+            role = "assistant";
+            break;
+          case "human":
+            role = "human";
+            break;
+          case "system":
+            role = "system";
+            break;
+          default:
+            role = "human";
+        }
+        return {
+          role,
+          content: msg.content,
+        };
+      }),
     };
     appState.setKey("currentChat", chatState);
   }
