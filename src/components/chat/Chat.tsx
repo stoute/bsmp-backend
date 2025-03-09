@@ -8,10 +8,6 @@ import { MessageErrorBoundary } from "./MessageErrorBoundary";
 import type { IPromptTemplate } from "@types";
 import styles from "./Chat.module.css";
 
-type ChatProps = {
-  template?: IPromptTemplate;
-};
-
 export default function Chat({ template }: ChatProps) {
   const chatManagerRef = useRef<ChatManager | null>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
@@ -22,20 +18,7 @@ export default function Chat({ template }: ChatProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
 
-  // Initialize llm chatManager and messages after hydration
-  useEffect(() => {
-    const currentModel = appState.get().selectedModel;
-
-    if (!chatManagerRef.current) {
-      const savedChat = appState.get().currentChat;
-      isRestoringRef.current = savedChat?.messages?.length > 0;
-
-      chatManagerRef.current = new ChatManager(currentModel);
-      setMessages(chatManagerRef.current.getMessages());
-      setIsInitialized(true);
-    }
-  }, []);
-
+  // Memoize scroll functions to prevent recreation
   const scrollToBottom = useCallback(() => {
     if (messagesContainerRef.current) {
       const container = messagesContainerRef.current;
@@ -48,33 +31,41 @@ export default function Chat({ template }: ChatProps) {
       const container = messagesContainerRef.current;
       const messageElements = container.getElementsByClassName(styles.message);
       if (messageElements.length >= 2) {
-        // Get second to last message (user's message)
         const lastUserMessage = messageElements[messageElements.length - 2];
         const containerTop = container.getBoundingClientRect().top;
         const messageTop = lastUserMessage.getBoundingClientRect().top;
         container.scrollTop += messageTop - containerTop;
       }
     }
-  }, [messages.length]);
+  }, []); // Remove messages.length dependency
 
-  // Handle initial scroll for restored chat
+  // Initialize chat manager only once
   useEffect(() => {
-    if (isInitialized && messages.length > 0) {
-      if (isRestoringRef.current) {
-        // Use a longer timeout for restored chats
-        setTimeout(scrollToBottom, 300);
-        isRestoringRef.current = false;
-      } else {
-        // Immediate scroll for new messages
-        scrollToBottom();
+    if (chatManagerRef.current) return;
+    const savedChat = appState.get().currentChat;
+    isRestoringRef.current = savedChat?.messages?.length > 0;
 
-        // Additional scroll after a delay for AI responses
-        if (messages[messages.length - 1]._getType() === "ai") {
-          setTimeout(scrollToBottom, 100);
-        }
+    chatManagerRef.current = new ChatManager();
+    setMessages(chatManagerRef.current.getMessages());
+    setIsInitialized(true);
+  }, []); // Empty dependency array since this should only run once
+
+  // Handle scroll behavior when messages change
+  useEffect(() => {
+    if (!isInitialized || messages.length === 0) return;
+
+    if (isRestoringRef.current) {
+      setTimeout(scrollToBottom, 300);
+      isRestoringRef.current = false;
+    } else {
+      const lastMessage = messages[messages.length - 1];
+      if (lastMessage?._getType() === "ai") {
+        setTimeout(scrollLastMessageToTop, 100);
+      } else {
+        scrollToBottom();
       }
     }
-  }, [isInitialized, messages, scrollToBottom]);
+  }, [isInitialized, messages, scrollToBottom, scrollLastMessageToTop]);
 
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
@@ -83,34 +74,25 @@ export default function Chat({ template }: ChatProps) {
 
       setIsLoading(true);
       try {
-        // Scroll to bottom immediately after user input
         scrollToBottom();
-
         await chatManagerRef.current.sendMessage(input);
         setMessages(chatManagerRef.current.getMessages());
         setInput("");
-
-        // Scroll last message to top after AI response
-        setTimeout(scrollLastMessageToTop, 100);
       } catch (error) {
         console.error("Chat error:", error);
       } finally {
         setIsLoading(false);
       }
     },
-    [input, scrollToBottom, scrollLastMessageToTop],
+    [input, scrollToBottom],
   );
 
   const handleClearChat = useCallback(() => {
     if (!chatManagerRef.current) return;
-
-    chatManagerRef.current.clearMessages(
-      template?.systemPrompt || "You are a helpful assistant.",
-    );
+    chatManagerRef.current.clearMessages();
     setMessages(chatManagerRef.current.getMessages());
-    // Scroll to bottom after clearing
     setTimeout(scrollToBottom, 100);
-  }, [template, scrollToBottom]);
+  }, [scrollToBottom]);
 
   const handleInputChange = useCallback((value: string) => {
     setInput(value);

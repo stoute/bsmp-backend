@@ -19,21 +19,21 @@ export class ChatManager {
   private messages: BaseMessage[] = [];
   private llm: ChatOpenAI;
   private isLoading: boolean = false;
-  public template?: IPromptTemplate;
-  public chatPromptTemplate?: ChatPromptTemplate;
+  private chatPromptTemplate?: ChatPromptTemplate;
   private model: string;
   private unsubscribe: (() => void) | null = null;
+  public template?: IPromptTemplate;
 
   // Constructor called by Chat component
-  constructor(model: string = DEFAULT_MODEL, template?: IPromptTemplate) {
-    this.model = model;
+  constructor() {
+    this.model = appState.get().selectedModel || DEFAULT_MODEL;
     this.llm = new ChatOpenAI({
       temperature: 0.7,
       configuration: {
-        dangerouslyAllowBrowser: true,
+        // dangerouslyAllowBrowser: true,
         fetch: this.proxyFetchHandler,
       },
-      model: model,
+      model: this.model,
       apiKey: "none",
     });
 
@@ -42,27 +42,39 @@ export class ChatManager {
 
     // Subscribe to appState model changes
     this.unsubscribe = appState.subscribe((state) => {
-      if (state.selectedModel && state.selectedModel !== this.model) {
+      // Only update model if it's different and not already being updated
+      if (
+        state.selectedModel &&
+        state.selectedModel !== this.model &&
+        state.selectedModel !== appState.get().currentChat?.model
+      ) {
         this.updateModel(state.selectedModel);
       }
-      if (state.selectedTemplate && state.selectedTemplate !== this.template) {
+
+      // Only update template if it's different and not already being updated
+      if (
+        state.selectedTemplate &&
+        state.selectedTemplate.id !== this.template?.id
+      ) {
         this.init(state.selectedTemplate);
       }
     });
-
     // Call async init
-    this.init(template);
+    this.init(appState.get().selectedTemplate || undefined);
   }
 
   public async init(template?: IPromptTemplate) {
     try {
+      // await this.saveState();
       await this.restoreState();
-      const currentChat = appState.get().currentChat;
+
+      let currentChat = appState.get().currentChat;
       const storedTemplateId = currentChat?.template?.id;
+      // template has changed
+      if (currentChat?.template) {
+        // await this.setTemplate(currentChat.template);
+      }
       if (template && template.id !== storedTemplateId) {
-        // Set template and invoke LLM
-        appState.setKey("currentChat", { ...currentChat, template });
-        appState.setKey("selectedTemplateId", template.id);
         await this.setTemplate(template);
       }
       this.messages.map((msg) => {
@@ -75,6 +87,7 @@ export class ChatManager {
           console.log("System: ", msg.content);
         }
       });
+      // this.saveState();
       // todo: is this needed?
       // await this.llm.invoke(this.messages);
     } catch (error) {
@@ -89,6 +102,13 @@ export class ChatManager {
       if (!template) {
         throw new Error("Template is required");
       }
+      // Set template and invoke LLM
+      let currentChat = appState.get().currentChat;
+      if (currentChat) {
+        currentChat.template = template;
+        appState.setKey("currentChat", { ...currentChat, template });
+      }
+      appState.setKey("selectedTemplateId", template.id);
       this.template = template;
       const systemTemplate = SystemMessagePromptTemplate.fromTemplate(
         template.systemPrompt || DEFAULT_SYSTEM_MESSAGE,
@@ -101,7 +121,7 @@ export class ChatManager {
         humanTemplate,
       ]);
 
-      // Get required variables from the template
+      // todo: Get required variables from the template
       const requiredVariables = this.chatPromptTemplate.inputVariables;
       if (requiredVariables.length > 0) {
         console.warn(
@@ -109,13 +129,15 @@ export class ChatManager {
         );
       }
 
-      // Reset messages with new system prompt
-      this.messages = [
+      // push messages with new system prompt
+      let messages: BaseMessage[] = [];
+      messages.push(
         new SystemMessage(template.systemPrompt || DEFAULT_SYSTEM_MESSAGE),
-      ];
+      );
       if (template.description) {
-        this.messages.push(new AIMessage(template.description));
+        messages.push(new AIMessage(template.description));
       }
+      this.messages = [...this.messages, ...messages];
 
       // Save state after setting messages
       this.saveState();
@@ -157,9 +179,10 @@ export class ChatManager {
 
   private async restoreState() {
     const savedChat = appState.get().currentChat;
+    if (!savedChat) return;
     appState.setKey("selectedModel", savedChat.model);
     if (savedChat?.template) {
-      appState.setKey("selectedTemplateId", savedChat.template.id);
+      // appState.setKey("selectedTemplateId", savedChat.template.id);
       this.template = savedChat.template;
     }
     if (savedChat?.messages && Array.isArray(savedChat.messages)) {
@@ -194,7 +217,7 @@ export class ChatManager {
       model: this.model,
       templateId: this.template?.id,
       template: this.template,
-      messages: this.messages.map((msg) => {
+      messages: this.messages.map((msg: BaseMessage) => {
         // Map _getType() values to consistent role names
         let role: string;
         switch (msg._getType()) {
@@ -270,8 +293,13 @@ export class ChatManager {
     this.saveState();
   }
 
-  clearMessages(systemPrompt: string) {
-    this.messages = [new SystemMessage(systemPrompt)];
+  clearMessages() {
+    if (this.template?.systemPrompt) {
+      this.messages = [new SystemMessage(this.template.systemPrompt)];
+      this.saveState();
+      return;
+    }
+    this.messages = [new SystemMessage(DEFAULT_SYSTEM_MESSAGE)];
     this.saveState();
   }
 

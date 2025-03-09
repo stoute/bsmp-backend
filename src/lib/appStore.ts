@@ -9,6 +9,15 @@ const getEnvironment = () => {
   return "development";
 };
 
+export type AppState = {
+  apiBaseUrl: "/api" | "https://bsmp.netlify.app/api";
+  environment: "development" | "production";
+  selectedModel?: string;
+  selectedTemplate?: IPromptTemplate; // Add the full template object
+  selectedTemplateId?: string;
+  currentChat?: ChatState;
+};
+
 export type ChatState = {
   model: string;
   templateId?: string;
@@ -17,15 +26,6 @@ export type ChatState = {
     role: string;
     content: string;
   }[];
-};
-
-export type AppState = {
-  apiBaseUrl: "/api" | "https://bsmp.netlify.app/api";
-  environment: "development" | "production";
-  selectedModel?: string;
-  selectedTemplate?: IPromptTemplate; // Add the full template object
-  selectedTemplateId?: string;
-  currentChat?: ChatState;
 };
 
 // Specify the serializer/deserializer for the persistent store
