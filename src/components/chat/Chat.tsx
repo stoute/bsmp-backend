@@ -10,10 +10,9 @@ import styles from "./Chat.module.css";
 
 type ChatProps = {
   template?: IPromptTemplate;
-  model?: string;
 };
 
-export default function Chat({ model, template }: ChatProps) {
+export default function Chat({ template }: ChatProps) {
   const chatManagerRef = useRef<ChatManager | null>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const isRestoringRef = useRef(false);
@@ -33,16 +32,17 @@ export default function Chat({ model, template }: ChatProps) {
   // Initialize llm chatManager and messages after hydration
   useEffect(() => {
     if (!chatManagerRef.current) {
-      console.log(appState.value?.currentChat?.template?.id);
-      const savedChat = appState.get().currentChat;
-      const isRestoring = savedChat?.messages != null;
-      isRestoringRef.current = isRestoring;
-
-      chatManagerRef.current = new ChatManager(model, template, isRestoring);
-      setMessages(chatManagerRef.current.getMessages());
-      setIsInitialized(true);
+      (async () => {
+        chatManagerRef.current = new ChatManager(
+          appState.get().selectedModel,
+          template,
+        );
+        await chatManagerRef.current.init(template);
+        setMessages(chatManagerRef.current.getMessages());
+        setIsInitialized(true);
+      })();
     }
-  }, [model, template]);
+  }, [template]);
 
   // Handle initial scroll for restored chat
   useEffect(() => {

@@ -40,7 +40,7 @@ export default function ChatControls({
   const [selectedModel, setSelectedModel] = useState(() => {
     const storedModel = appState.get().selectedModel;
     // Only use prop if there's no stored model
-    return storedModel || propSelectedModel || DEFAULT_MODEL;
+    return storedModel || DEFAULT_MODEL;
   });
 
   // Sync with props only if there's no stored model
@@ -111,6 +111,7 @@ export default function ChatControls({
         throw new Error("Failed to fetch template");
       }
       const template = await response.json();
+
       onTemplateChange(template);
     } catch (err) {
       console.error("Error fetching template:", err);
