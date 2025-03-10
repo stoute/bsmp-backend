@@ -1,7 +1,8 @@
 import { useEffect, useState, useRef, useCallback } from "react";
+import { useStore } from "@nanostores/react";
 import { LLM_MODELS } from "@/consts";
 import type { IPromptTemplate } from "@types";
-import { appState, chatManager } from "@lib/appStore";
+import { appState, chatManager, templateList } from "@lib/appStore";
 import {
   Select,
   SelectContent,
@@ -17,6 +18,7 @@ export default function ChatControls() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const initialLoadRef = useRef(true);
+  const templateListStore = useStore(templateList);
 
   // Initialize from appState or props
   const [selectedTemplateId, setSelectedTemplateId] = useState(() => {
@@ -88,6 +90,10 @@ export default function ChatControls() {
           handleTemplateChange(storedTemplateId);
         }
         initialLoadRef.current = false;
+      }
+      if (templateListStore) {
+        // templateListStore.
+        // ccnsole.log("templateListStore", templateListStore);
       }
     });
   }, []);

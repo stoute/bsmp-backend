@@ -6,6 +6,11 @@ export const LLM_MODELS = [
   "openai/gpt-3.5-turbo",
   "openai/gpt-4o-mini",
   "deepseek/deepseek-r1-distill-llama-8b",
+  // uncensored
+  "perplexity/sonar-reasoning",
+  "gryphe/mythomist-7b",
+  "thedrummer/unslopnemo-12b",
+  "neversleep/noromaid-20b",
 ];
 export const DEFAULT_MODEL = "openai/gpt-3.5-turbo";
 export const DEFAULT_TEMPLATE_ID = "be0a2289-88ca-42b5-860c-a97bae747362";
