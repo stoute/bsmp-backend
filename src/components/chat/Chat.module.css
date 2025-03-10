@@ -1,7 +1,7 @@
 .chatContainer {
   display: flex;
   flex-direction: column;
-  height: 70vh;
+  height: 100%; /* Changed from 70vh to use all remaining space */
   @apply border;
   border-radius: 8px;
   overflow: hidden;

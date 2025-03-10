@@ -3,13 +3,8 @@ export const prerender = true;
 
 import PageLayout from "@layouts/PageLayout.astro";
 import ChatTemplates from "@components/chat/ChatTemplates";
-import BottomLayout from "@layouts/BottomLayout.astro";
 ---
 
 <PageLayout title="AI Chat">
-  <BottomLayout>
-    <div class="animate pt-14">
-      <ChatTemplates client:load />
-    </div>
-  </BottomLayout>
+  <ChatTemplates client:load />
 </PageLayout>

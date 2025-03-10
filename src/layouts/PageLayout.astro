@@ -14,6 +14,8 @@ interface Props {
 
 const { title, description, colorMode = "system" } = Astro.props;
 const urlPath = Astro.url.pathname.split("/").filter(Boolean).join(" ");
+const { pathname } = Astro.url;
+const isChatPage = pathname === "/chat" || pathname.startsWith("/chat/");
 
 // Determine the class based on colorMode
 const getColorModeClass = () => {
@@ -44,6 +46,6 @@ const environment: string = import.meta.env.MODE;
     <main>
       <slot />
     </main>
-    <Footer />
+    {!isChatPage && <Footer />}
   </body>
 </html>
