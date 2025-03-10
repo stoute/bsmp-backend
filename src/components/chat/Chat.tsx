@@ -1,24 +1,153 @@
 // src/components/chat/Chat.jsx
-import { useState, useEffect, useCallback, memo, useRef } from "react";
-import { ChatManager } from "@lib/ChatManager.ts";
+import { useState, useEffect, useCallback, memo, useRef, useMemo } from "react";
+import { BaseMessage } from "@langchain/core/messages";
+import { useStore } from "@nanostores/react";
+import { ChatManager } from "@lib/ChatManager";
+import { appState, chatManager } from "@lib/appStore";
 import { MarkdownRenderer } from "./MarkdownRenderer";
 import { MessageErrorBoundary } from "./MessageErrorBoundary";
 import type { IPromptTemplate } from "@types";
 import styles from "./Chat.module.css";
 
-const MessageContent = memo(({ message }: { message: any }) => {
-  const content =
-    typeof message.content === "string"
-      ? message.content
-      : message.content?.toString() || "";
-  if (!content) return null;
+export default function Chat() {
+  const chatManagerRef = useRef<ChatManager | null>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
+  const isRestoringRef = useRef(false);
+  const state = useStore(appState);
+
+  const [input, setInput] = useState("");
+  const [messages, setMessages] = useState<BaseMessage[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
+
+  // Memoize scroll functions to prevent recreation
+  const scrollToBottom = useCallback(() => {
+    if (messagesContainerRef.current) {
+      const container = messagesContainerRef.current;
+      container.scrollTop = container.scrollHeight;
+    }
+  }, []);
+  const scrollLastUserMessageToTop = useCallback(() => {
+    if (!messagesContainerRef.current || messages.length === 0) return;
+    // Give time for the DOM to update
+    setTimeout(() => {
+      const container = messagesContainerRef.current;
+      if (!container) return;
+
+      const messageElements = container.getElementsByClassName(styles.message);
+      const lastAiMessage = messageElements[messageElements.length - 1];
+      if (!lastAiMessage) return;
+
+      // Calculate the scroll position to show the AI message at the top
+      const containerRect = container.getBoundingClientRect();
+      const messageRect = lastAiMessage.getBoundingClientRect();
+      const scrollOffset =
+        messageRect.top - containerRect.top + container.scrollTop;
+
+      container.scrollTo({
+        top: scrollOffset,
+        behavior: "smooth",
+      });
+    }, 100);
+  }, [messages.length]); // Include messages.length to ensure we have the latest messages
+
+  // Initialize chat manager only once
+  useEffect(() => {
+    if (chatManagerRef.current) return;
+    const savedChat = state.currentChat;
+    isRestoringRef.current = savedChat?.messages?.length > 0;
+    // initialize chat manager
+    chatManagerRef.current = new ChatManager();
+    chatManager.set(chatManagerRef.current);
+    setMessages(chatManagerRef.current.getMessages());
+    setIsInitialized(true);
+  }, []); // Empty dependency array since this should only run once
+
+  useEffect(() => {
+    if (!chatManagerRef.current) return;
+    setTimeout(() => {
+      console.log(chatManagerRef.current.getMessages());
+      setMessages(chatManagerRef.current.getMessages());
+    }, 100);
+  }, [state.currentChat?.messages]);
+
+  // Handle scroll behavior when messages change
+  useEffect(() => {
+    if (!isInitialized || messages.length === 0) return;
+
+    if (isRestoringRef.current) {
+      setTimeout(scrollToBottom, 300);
+      isRestoringRef.current = false;
+    } else {
+      const lastMessage = messages[messages.length - 1];
+      if (lastMessage?._getType() === "ai") {
+        setTimeout(scrollLastUserMessageToTop, 100);
+      } else {
+        scrollToBottom();
+      }
+    }
+  }, [
+    state,
+    isInitialized,
+    messages,
+    scrollToBottom,
+    scrollLastUserMessageToTop,
+  ]);
+
+  const handleSubmit = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault();
+      if (!input.trim() || !chatManagerRef.current) return;
+
+      setIsLoading(true);
+      try {
+        await chatManagerRef.current.sendMessage(input);
+        setMessages(chatManagerRef.current.getMessages());
+        // scrollToBottom();
+        scrollLastUserMessageToTop();
+
+        setInput("");
+      } catch (error) {
+        console.error("Chat error:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [input, scrollToBottom],
+  );
+
+  const handleInputChange = useCallback((value: string) => {
+    setInput(value);
+  }, []);
+
+  if (!isInitialized) {
+    return null;
+  }
+
   return (
-    <div className="prose dark:prose-invert max-w-none">
-      <MarkdownRenderer blockMatch={{ output: content }} />
+    <div className={styles.chatContainer}>
+      <div ref={messagesContainerRef} className={styles.messages}>
+        {messages
+          .filter((message) => message._getType() !== "system")
+          .map((message, index) => (
+            <ChatMessage key={index} message={message} />
+          ))}
+        {isLoading && (
+          <div className={styles.message}>
+            <div className={styles.loading}>Thinking...</div>
+          </div>
+        )}
+      </div>
+
+      <ChatInput
+        input={input}
+        isLoading={isLoading}
+        onInputChange={handleInputChange}
+        onSubmit={handleSubmit}
+      />
     </div>
   );
-});
-MessageContent.displayName = "MessageContent";
+}
 
 const ChatMessage = memo(({ message }: { message: any }) => {
   const [isCopied, setIsCopied] = useState(false);
@@ -67,24 +196,22 @@ const ChatInput = memo(
   ({
     input,
     isLoading,
-    isTemplatesLoading,
     onInputChange,
     onSubmit,
   }: {
     input: string;
     isLoading: boolean;
-    isTemplatesLoading: boolean;
     onInputChange: (value: string) => void;
     onSubmit: (e: React.FormEvent) => void;
   }) => {
     const inputRef = useRef<HTMLInputElement>(null);
 
-    // Focus input when both loading states change from true to false
+    // Focus input when loading state changes from true to false
     useEffect(() => {
-      if (!isLoading && !isTemplatesLoading) {
+      if (!isLoading) {
         inputRef.current?.focus();
       }
-    }, [isLoading, isTemplatesLoading]);
+    }, [isLoading]);
 
     return (
       <form onSubmit={onSubmit} className={styles.inputForm}>
@@ -93,14 +220,10 @@ const ChatInput = memo(
           value={input}
           onChange={(e) => onInputChange(e.target.value)}
           placeholder="Ask something..."
-          disabled={isLoading || isTemplatesLoading}
+          disabled={isLoading}
           className={styles.input}
         />
-        <button
-          type="submit"
-          disabled={isLoading || isTemplatesLoading}
-          className={styles.button}
-        >
+        <button type="submit" disabled={isLoading} className={styles.button}>
           Send
         </button>
       </form>
@@ -109,83 +232,16 @@ const ChatInput = memo(
 );
 ChatInput.displayName = "ChatInput";
 
-type ChatProps = {
-  template?: IPromptTemplate;
-  model?: string;
-  isTemplatesLoading: boolean;
-};
-
-export default function Chat({
-  model,
-  template,
-  isTemplatesLoading,
-}: ChatProps) {
-  const [chatManager] = useState(() => new ChatManager(model, template));
-  const [input, setInput] = useState("");
-  const [messages, setMessages] = useState(chatManager.getMessages());
-  const [isLoading, setIsLoading] = useState(false);
-  const messagesContainerRef = useRef<HTMLDivElement>(null);
-
-  const scrollToBottom = () => {
-    if (messagesContainerRef.current) {
-      const { scrollHeight, clientHeight } = messagesContainerRef.current;
-      messagesContainerRef.current.scrollTop = scrollHeight - clientHeight;
-    }
-  };
-
-  // Scroll to bottom when messages change or loading state changes
-  useEffect(() => {
-    // Use requestAnimationFrame to ensure DOM has updated
-    requestAnimationFrame(() => {
-      scrollToBottom();
-    });
-  }, [messages, isLoading]);
-
-  const handleSubmit = useCallback(
-    async (e: React.FormEvent) => {
-      e.preventDefault();
-      if (!input.trim()) return;
-
-      setIsLoading(true);
-      try {
-        await chatManager.sendMessage(input);
-        setMessages(chatManager.getMessages());
-        setInput("");
-      } catch (error) {
-        console.error("Chat error:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    },
-    [input, chatManager],
-  );
-
-  const handleInputChange = useCallback((value: string) => {
-    setInput(value);
-  }, []);
-
+const MessageContent = memo(({ message }: { message: any }) => {
+  const content =
+    typeof message.content === "string"
+      ? message.content
+      : message.content?.toString() || "";
+  if (!content) return null;
   return (
-    <div className={styles.chatContainer}>
-      <div ref={messagesContainerRef} className={styles.messages}>
-        {messages.slice(1).map((message, index) => (
-          <ChatMessage key={index} message={message} />
-        ))}
-        {(isLoading || isTemplatesLoading) && (
-          <div className={styles.message}>
-            <div className={styles.loading}>
-              {isTemplatesLoading ? "Loading templates..." : "Thinking..."}
-            </div>
-          </div>
-        )}
-      </div>
-
-      <ChatInput
-        input={input}
-        isLoading={isLoading}
-        isTemplatesLoading={isTemplatesLoading}
-        onInputChange={handleInputChange}
-        onSubmit={handleSubmit}
-      />
+    <div className="prose dark:prose-invert max-w-none">
+      <MarkdownRenderer blockMatch={{ output: content }} />
     </div>
   );
-}
+});
+MessageContent.displayName = "MessageContent";

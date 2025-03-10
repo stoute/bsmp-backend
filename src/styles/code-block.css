@@ -1,10 +1,15 @@
 /* Base styles for code blocks */
 pre {
-  margin: 1rem 0;
-  padding: 1rem;
+  /*margin: 1rem 0;*/
+  /*padding: 1rem;*/
+  background: transparent;
+  margin: 0 0 0 0 !important;
+  padding: 0.5rem 0 !important;
   border-radius: 0.5rem;
   overflow-x: auto;
-
+}
+pre:has(code) {
+  padding: 1.5rem 0 !important;
 }
 
 code {

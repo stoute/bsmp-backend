@@ -1,5 +1,20 @@
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 
+export interface IPromptTemplate {
+  id: string; // UUID format
+  name: string;
+  description: string;
+  systemPrompt?: string;
+  template?: string; // Changed to optional
+  variables?: string[];
+  created_at: string; // ISO datetime format
+  updated_at: string; // ISO datetime format
+}
+
+export interface IParsedPromptTemplate extends IPromptTemplate {
+  chatPromptTemplate: ChatPromptTemplate;
+}
+
 export type Page = {
   TITLE: string;
   DESCRIPTION: string;
@@ -28,18 +43,3 @@ export type Socials = {
   TEXT: string;
   HREF: string;
 }[];
-
-export interface IPromptTemplate {
-  id: string; // UUID format
-  name: string;
-  description: string;
-  systemPrompt?: string;
-  template?: string; // Changed to optional
-  variables?: string[];
-  created_at: string; // ISO datetime format
-  updated_at: string; // ISO datetime format
-}
-
-export interface IParsedPromptTemplate extends IPromptTemplate {
-  chatPromptTemplate: ChatPromptTemplate;
-}

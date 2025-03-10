@@ -10,13 +10,14 @@ export const LLM_MODELS = [
 ];
 export const DEFAULT_MODEL = "openai/gpt-3.5-turbo";
 export const DEFAULT_TEMPLATE_ID = "be0a2289-88ca-42b5-860c-a97bae747362";
+export const DEFAULT_SYSTEM_MESSAGE = "You are a helpful assistant.";
 
 // Links
 export const LINKS: Links = [
-  {
-    TEXT: "Home",
-    HREF: "/",
-  },
+  // {
+  //   TEXT: "Home",
+  //   HREF: "/",
+  // },
   {
     TEXT: "Chat",
     HREF: "/chat",
