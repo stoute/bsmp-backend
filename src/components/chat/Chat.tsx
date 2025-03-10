@@ -1,6 +1,7 @@
 // src/components/chat/Chat.jsx
 import { useState, useEffect, useCallback, memo, useRef, useMemo } from "react";
 import { BaseMessage } from "@langchain/core/messages";
+import { useStore } from "@nanostores/react";
 import { ChatManager } from "@lib/ChatManager";
 import { appState, chatManager } from "@lib/appStore";
 import { MarkdownRenderer } from "./MarkdownRenderer";
@@ -12,6 +13,7 @@ export default function Chat() {
   const chatManagerRef = useRef<ChatManager | null>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const isRestoringRef = useRef(false);
+  const state = useStore(appState);
 
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<BaseMessage[]>([]);
@@ -25,10 +27,8 @@ export default function Chat() {
       container.scrollTop = container.scrollHeight;
     }
   }, []);
-
   const scrollLastUserMessageToTop = useCallback(() => {
     if (!messagesContainerRef.current || messages.length === 0) return;
-
     // Give time for the DOM to update
     setTimeout(() => {
       const container = messagesContainerRef.current;
@@ -54,7 +54,7 @@ export default function Chat() {
   // Initialize chat manager only once
   useEffect(() => {
     if (chatManagerRef.current) return;
-    const savedChat = appState.get().currentChat;
+    const savedChat = state.currentChat;
     isRestoringRef.current = savedChat?.messages?.length > 0;
     // initialize chat manager
     chatManagerRef.current = new ChatManager();
@@ -62,6 +62,14 @@ export default function Chat() {
     setMessages(chatManagerRef.current.getMessages());
     setIsInitialized(true);
   }, []); // Empty dependency array since this should only run once
+
+  useEffect(() => {
+    if (!chatManagerRef.current) return;
+    setTimeout(() => {
+      console.log(chatManagerRef.current.getMessages());
+      setMessages(chatManagerRef.current.getMessages());
+    }, 100);
+  }, [state.currentChat?.messages]);
 
   // Handle scroll behavior when messages change
   useEffect(() => {
@@ -78,7 +86,13 @@ export default function Chat() {
         scrollToBottom();
       }
     }
-  }, [isInitialized, messages, scrollToBottom, scrollLastUserMessageToTop]);
+  }, [
+    state,
+    isInitialized,
+    messages,
+    scrollToBottom,
+    scrollLastUserMessageToTop,
+  ]);
 
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
@@ -101,13 +115,6 @@ export default function Chat() {
     },
     [input, scrollToBottom],
   );
-
-  const handleClearChat = useCallback(() => {
-    if (!chatManagerRef.current) return;
-    chatManagerRef.current.clearMessages();
-    setMessages(chatManagerRef.current.getMessages());
-    setTimeout(scrollToBottom, 100);
-  }, [scrollToBottom]);
 
   const handleInputChange = useCallback((value: string) => {
     setInput(value);

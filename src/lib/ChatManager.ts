@@ -16,13 +16,13 @@ import { appState, type ChatState } from "@lib/appStore";
 import { DEFAULT_MODEL, DEFAULT_SYSTEM_MESSAGE } from "@consts";
 
 export class ChatManager {
-  private messages: BaseMessage[] = [];
   private llm: ChatOpenAI;
   private isLoading: boolean = false;
   private chatPromptTemplate?: ChatPromptTemplate;
   private model: string;
   private unsubscribe: (() => void) | null = null;
   public template?: IPromptTemplate;
+  public messages: BaseMessage[] = [];
 
   // Constructor called by Chat component
   constructor() {
@@ -107,13 +107,12 @@ export class ChatManager {
         template.systemPrompt || DEFAULT_SYSTEM_MESSAGE,
       );
       const humanTemplate = HumanMessagePromptTemplate.fromTemplate(
-        template.template || "{input}",
+        template.template || "",
       );
       this.chatPromptTemplate = ChatPromptTemplate.fromMessages([
         systemTemplate,
         humanTemplate,
       ]);
-
       // todo: Get required variables from the template
       const requiredVariables = this.chatPromptTemplate.inputVariables;
       if (requiredVariables.length > 0) {
@@ -122,28 +121,30 @@ export class ChatManager {
         );
       }
 
-      // push messages with new system prompt
-      let messages: BaseMessage[] = [
-        new SystemMessage(template.systemPrompt || DEFAULT_SYSTEM_MESSAGE),
-      ];
-
+      // Create new messages array with system message and description
+      const systemMessage = new SystemMessage(
+        template.systemPrompt || DEFAULT_SYSTEM_MESSAGE,
+      );
+      this.replaceSystemMessage(systemMessage);
+      const messages: BaseMessage[] = [systemMessage];
       if (template.description) {
         messages.push(new AIMessage(template.description));
       }
-      // this.messages = [...this.messages, ...messages];
-      this.messages = messages;
+      this.messages = [...this.messages, ...messages];
+      // this.messages = messages;
 
+      // Update app state
+      appState.setKey("selectedTemplate", template);
       appState.setKey("selectedTemplateId", template.id);
-      // Save state after setting messages
 
       this.saveState();
 
-      return;
+      return this.messages;
     } catch (error) {
       console.error("Error setting template:", error);
       // Fallback to default system message
       this.messages = [new SystemMessage(DEFAULT_SYSTEM_MESSAGE)];
-      // this.saveState();
+      this.saveState();
       throw error;
     }
   }
@@ -174,7 +175,7 @@ export class ChatManager {
     if (!savedChat) return;
     appState.setKey("selectedModel", savedChat.model);
     if (savedChat?.template) {
-      // appState.setKey("selectedTemplateId", savedChat.template.id);
+      appState.setKey("selectedTemplateId", savedChat.template.id);
       this.template = savedChat.template;
     }
     if (savedChat?.messages && Array.isArray(savedChat.messages)) {
