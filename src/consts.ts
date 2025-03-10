@@ -14,10 +14,10 @@ export const DEFAULT_SYSTEM_MESSAGE = "You are a helpful assistant.";
 
 // Links
 export const LINKS: Links = [
-  {
-    TEXT: "Home",
-    HREF: "/",
-  },
+  // {
+  //   TEXT: "Home",
+  //   HREF: "/",
+  // },
   {
     TEXT: "Chat",
     HREF: "/chat",
