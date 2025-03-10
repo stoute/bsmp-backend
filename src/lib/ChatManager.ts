@@ -30,7 +30,6 @@ export class ChatManager {
     this.llm = new ChatOpenAI({
       temperature: 0.7,
       configuration: {
-        // dangerouslyAllowBrowser: true,
         fetch: this.proxyFetchHandler,
       },
       model: this.model,
@@ -40,7 +39,14 @@ export class ChatManager {
     // Initialize with default system message
     this.messages = [new SystemMessage(DEFAULT_SYSTEM_MESSAGE)];
 
-    // Subscribe to appState model changes
+    // Setup state subscription
+    this.setupStateSubscription();
+
+    // Call async init
+    this.init(appState.get().selectedTemplate || undefined);
+  }
+
+  private setupStateSubscription() {
     this.unsubscribe = appState.subscribe((state) => {
       // Only update model if it's different and not already being updated
       if (
@@ -50,7 +56,6 @@ export class ChatManager {
       ) {
         this.updateModel(state.selectedModel);
       }
-
       // Only update template if it's different and not already being updated
       if (
         state.selectedTemplate &&
@@ -59,8 +64,6 @@ export class ChatManager {
         this.init(state.selectedTemplate);
       }
     });
-    // Call async init
-    this.init(appState.get().selectedTemplate || undefined);
   }
 
   public async init(template?: IPromptTemplate) {
@@ -127,15 +130,25 @@ export class ChatManager {
       );
       this.replaceSystemMessage(systemMessage);
       const messages: BaseMessage[] = [systemMessage];
+
       if (template.description) {
-        messages.push(new AIMessage(template.description));
+        const descriptionMessage = new AIMessage(template.description);
+        descriptionMessage.name = "description";
+        // Check if the description message already exists in this.messages
+        const descriptionExists = this.messages.some(
+          (msg) =>
+            msg._getType() === "ai" && msg.content === template.description,
+        );
+        if (!descriptionExists) {
+          messages.push(descriptionMessage);
+        }
       }
       this.messages = [...this.messages, ...messages];
       // this.messages = messages;
 
       // Update app state
-      appState.setKey("selectedTemplate", template);
-      appState.setKey("selectedTemplateId", template.id);
+      // appState.setKey("selectedTemplate", template);
+      // appState.setKey("selectedTemplateId", template.id);
 
       this.saveState();
 
