@@ -101,14 +101,8 @@ export class ChatManager {
       if (!template) {
         throw new Error("Template is required");
       }
-      // Set template and invoke LLM
-      let currentChat = appState.get().currentChat;
-      if (currentChat) {
-        currentChat.template = template;
-        appState.setKey("currentChat", { ...currentChat, template });
-      }
-      appState.setKey("selectedTemplateId", template.id);
       this.template = template;
+
       const systemTemplate = SystemMessagePromptTemplate.fromTemplate(
         template.systemPrompt || DEFAULT_SYSTEM_MESSAGE,
       );
@@ -129,23 +123,22 @@ export class ChatManager {
       }
 
       // push messages with new system prompt
-      let messages: BaseMessage[] = [];
+      let messages: BaseMessage[] = [
+        new SystemMessage(template.systemPrompt || DEFAULT_SYSTEM_MESSAGE),
+      ];
 
-      const newSystemMessage = new SystemMessage(
-        template.systemPrompt || DEFAULT_SYSTEM_MESSAGE,
-      );
-      this.replaceSystemMessage(newSystemMessage);
-
-      // messages.push(
-      //   new SystemMessage(template.systemPrompt || DEFAULT_SYSTEM_MESSAGE),
-      // );
       if (template.description) {
         messages.push(new AIMessage(template.description));
       }
-      this.messages = [...this.messages, ...messages];
+      // this.messages = [...this.messages, ...messages];
+      this.messages = messages;
 
+      appState.setKey("selectedTemplateId", template.id);
       // Save state after setting messages
-      // this.saveState();
+
+      this.saveState();
+
+      return;
     } catch (error) {
       console.error("Error setting template:", error);
       // Fallback to default system message
@@ -288,14 +281,17 @@ export class ChatManager {
     this.saveState();
   }
 
-  clearMessages() {
-    if (this.template?.systemPrompt) {
-      this.messages = [new SystemMessage(this.template.systemPrompt)];
-      this.saveState();
+  async clearMessages() {
+    appState.setKey("currentChat", undefined);
+    this.messages = [];
+    if (this.template) {
+      await this.init(this.template);
+      console.info("Clearing template chat", this.messages);
       return;
     }
     this.messages = [new SystemMessage(DEFAULT_SYSTEM_MESSAGE)];
-    this.saveState();
+    await this.init();
+    return;
   }
 
   /**

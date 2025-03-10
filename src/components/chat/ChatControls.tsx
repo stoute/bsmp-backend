@@ -1,7 +1,7 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { LLM_MODELS } from "@/consts";
 import type { IPromptTemplate } from "@types";
-import { appState } from "@lib/appStore";
+import { appState, chatManager } from "@lib/appStore";
 import {
   Select,
   SelectContent,
@@ -29,6 +29,12 @@ export default function ChatControls() {
     const storedModel = appState.get().selectedModel;
     return storedModel || DEFAULT_MODEL;
   });
+
+  const handleClearChat = useCallback(() => {
+    const manager = chatManager.get();
+    if (!manager) return;
+    manager.clearMessages();
+  }, []);
 
   // Sync with props only if there's no stored model
   useEffect(() => {
@@ -149,6 +155,15 @@ export default function ChatControls() {
             ))}
           </SelectContent>
         </Select>
+      </div>
+
+      <div className="ml-auto">
+        <button
+          onClick={handleClearChat}
+          className="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+        >
+          Clear Chat
+        </button>
       </div>
     </div>
   );

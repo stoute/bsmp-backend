@@ -2,7 +2,7 @@
 import { useState, useEffect, useCallback, memo, useRef, useMemo } from "react";
 import { BaseMessage } from "@langchain/core/messages";
 import { ChatManager } from "@lib/ChatManager";
-import { appState } from "@lib/appStore";
+import { appState, chatManager } from "@lib/appStore";
 import { MarkdownRenderer } from "./MarkdownRenderer";
 import { MessageErrorBoundary } from "./MessageErrorBoundary";
 import type { IPromptTemplate } from "@types";
@@ -56,8 +56,9 @@ export default function Chat() {
     if (chatManagerRef.current) return;
     const savedChat = appState.get().currentChat;
     isRestoringRef.current = savedChat?.messages?.length > 0;
-
+    // initialize chat manager
     chatManagerRef.current = new ChatManager();
+    chatManager.set(chatManagerRef.current);
     setMessages(chatManagerRef.current.getMessages());
     setIsInitialized(true);
   }, []); // Empty dependency array since this should only run once
@@ -118,14 +119,6 @@ export default function Chat() {
 
   return (
     <div className={styles.chatContainer}>
-      <div className="mb-2 flex justify-end">
-        <button
-          onClick={handleClearChat}
-          className="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-        >
-          Clear Chat
-        </button>
-      </div>
       <div ref={messagesContainerRef} className={styles.messages}>
         {messages
           .filter((message) => message._getType() !== "system")

@@ -1,6 +1,8 @@
 import { persistentAtom, persistentMap } from "@nanostores/persistent";
 import type { BaseMessage } from "@langchain/core/messages";
 import type { IPromptTemplate } from "@types";
+import type { ChatManager } from "./ChatManager";
+import { atom } from "nanostores";
 
 const getEnvironment = () => {
   if (typeof window !== "undefined") {
@@ -13,7 +15,7 @@ export type AppState = {
   apiBaseUrl: "/api" | "https://bsmp.netlify.app/api";
   environment: "development" | "production";
   selectedModel?: string;
-  selectedTemplate?: IPromptTemplate; // Add the full template object
+  selectedTemplate?: IPromptTemplate;
   selectedTemplateId?: string;
   currentChat?: ChatState;
 };
@@ -21,7 +23,7 @@ export type AppState = {
 export type ChatState = {
   model: string;
   templateId?: string;
-  template?: IPromptTemplate; // Add the full template object
+  template?: IPromptTemplate;
   messages: {
     role: string;
     content: string;
@@ -45,3 +47,6 @@ export const appState = persistentMap<AppState>(
 );
 
 export const isLoggedIn = persistentAtom<boolean>("is-logged-in:", false);
+
+// Add chatManager atom
+export const chatManager = atom<ChatManager | null>(null);
