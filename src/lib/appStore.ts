@@ -46,7 +46,8 @@ export const appState = persistentMap<AppState>(
   },
 );
 
-export const isLoggedIn = persistentAtom<boolean>("is-logged-in:", false);
-
-// Add chatManager atom
 export const chatManager = atom<ChatManager | null>(null);
+
+export const templateList = atom([]);
+
+export const isLoggedIn = persistentAtom<boolean>("is-logged-in:", false);

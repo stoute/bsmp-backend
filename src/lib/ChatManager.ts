@@ -14,6 +14,7 @@ import {
 import type { IPromptTemplate } from "@types";
 import { appState, type ChatState } from "@lib/appStore";
 import { DEFAULT_MODEL, DEFAULT_SYSTEM_MESSAGE } from "@consts";
+import { ChatParser } from "./ChatParser";
 
 export class ChatManager {
   private llm: ChatOpenAI;
@@ -23,9 +24,15 @@ export class ChatManager {
   private unsubscribe: (() => void) | null = null;
   public template?: IPromptTemplate;
   public messages: BaseMessage[] = [];
+  private parser: ChatParser;
 
   // Constructor called by Chat component
   constructor() {
+    this.parser = new ChatParser();
+    // Register any custom processors needed
+    this.parser.registerCodeProcessor();
+    this.parser.registerDocumentationTemplateProcessor();
+
     this.model = appState.get().selectedModel || DEFAULT_MODEL;
     this.llm = new ChatOpenAI({
       temperature: 0.7,
@@ -104,58 +111,39 @@ export class ChatManager {
       if (!template) {
         throw new Error("Template is required");
       }
-      this.template = template;
 
-      const systemTemplate = SystemMessagePromptTemplate.fromTemplate(
-        template.systemPrompt || DEFAULT_SYSTEM_MESSAGE,
-      );
-      const humanTemplate = HumanMessagePromptTemplate.fromTemplate(
-        template.template || "",
-      );
-      this.chatPromptTemplate = ChatPromptTemplate.fromMessages([
-        systemTemplate,
-        humanTemplate,
-      ]);
-      // todo: Get required variables from the template
-      const requiredVariables = this.chatPromptTemplate.inputVariables;
-      if (requiredVariables.length > 0) {
-        console.warn(
-          `Template requires variables: ${requiredVariables.join(", ")}`,
-        );
-      }
+      // Process the template
+      const processedTemplate = this.parser.processTemplate(template);
+      this.template = processedTemplate;
 
-      // Create new messages array with system message and description
+      // Create chat prompt template
+      this.chatPromptTemplate =
+        this.parser.createChatPromptTemplate(processedTemplate);
+
+      // Process messages
       const systemMessage = new SystemMessage(
-        template.systemPrompt || DEFAULT_SYSTEM_MESSAGE,
+        processedTemplate.systemPrompt || DEFAULT_SYSTEM_MESSAGE,
       );
+
       this.replaceSystemMessage(systemMessage);
       const messages: BaseMessage[] = [systemMessage];
 
-      if (template.description) {
-        const descriptionMessage = new AIMessage(template.description);
+      if (processedTemplate.description) {
+        const descriptionMessage = new AIMessage(processedTemplate.description);
         descriptionMessage.name = "description";
-        // Check if the description message already exists in this.messages
-        const descriptionExists = this.messages.some(
-          (msg) =>
-            msg._getType() === "ai" && msg.content === template.description,
-        );
-        if (!descriptionExists) {
-          messages.push(descriptionMessage);
-        }
+        messages.push(descriptionMessage);
       }
-      this.messages = [...this.messages, ...messages];
-      // this.messages = messages;
 
-      // Update app state
-      // appState.setKey("selectedTemplate", template);
-      // appState.setKey("selectedTemplateId", template.id);
+      // Process and filter messages
+      this.messages = this.parser.processMessages(
+        [...this.messages, ...messages],
+        template.id,
+      );
 
       this.saveState();
-
       return this.messages;
     } catch (error) {
       console.error("Error setting template:", error);
-      // Fallback to default system message
       this.messages = [new SystemMessage(DEFAULT_SYSTEM_MESSAGE)];
       this.saveState();
       throw error;
@@ -263,18 +251,40 @@ export class ChatManager {
       }
 
       const userMessage = new HumanMessage(processedInput);
-      this.messages.push(userMessage);
 
-      const validMessages = this.messages.filter(
-        (msg) => msg && msg.content && typeof msg.content === "string",
+      // Process the message before adding it
+      const processedMessage = this.parser.processMessage(
+        userMessage,
+        this.template?.id,
       );
+
+      if (!processedMessage) {
+        throw new Error("Message was filtered out by parser");
+      }
+
+      this.messages.push(processedMessage);
+
+      // Filter and process all messages before sending to LLM
+      const validMessages = this.parser.processMessages(
+        this.messages,
+        this.template?.id,
+      );
+
       if (validMessages.length === 0) {
         throw new Error("No valid messages to process");
       }
+
       const response = await this.llm.invoke(validMessages);
       if (response) {
-        this.messages.push(response);
-        this.saveState();
+        // Process the AI response
+        const processedResponse = this.parser.processMessage(
+          response,
+          this.template?.id,
+        );
+        if (processedResponse) {
+          this.messages.push(processedResponse);
+          this.saveState();
+        }
       }
       return response;
     } catch (error) {
