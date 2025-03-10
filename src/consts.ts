@@ -8,7 +8,6 @@ export const LLM_MODELS = [
   "deepseek/deepseek-r1-distill-llama-8b",
   // uncensored
   "perplexity/sonar-reasoning",
-  "gryphe/mythomist-7b",
   "thedrummer/unslopnemo-12b",
   "neversleep/noromaid-20b",
 ];
