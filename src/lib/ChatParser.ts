@@ -9,6 +9,7 @@ import {
   SystemMessagePromptTemplate,
   HumanMessagePromptTemplate,
 } from "@langchain/core/prompts";
+import { appState } from "./appStore";
 import type { IPromptTemplate } from "@types";
 
 type MessageProcessor = (message: BaseMessage) => BaseMessage | null;
