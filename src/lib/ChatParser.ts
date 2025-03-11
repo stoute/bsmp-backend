@@ -130,6 +130,8 @@ export class ChatParser {
   public processTemplate(template: IPromptTemplate): IPromptTemplate {
     // Apply template-specific processor if exists
     if (this.templateProcessors.has(template.id)) {
+      // fixme: er
+      // console.log(template.id);
       template = this.templateProcessors.get(template.id)!(template);
     }
 
@@ -150,26 +152,69 @@ export class ChatParser {
   ): ChatPromptTemplate {
     const processedTemplate = this.processTemplate(template);
 
-    const systemTemplate = SystemMessagePromptTemplate.fromTemplate(
+    // First sanitize the content
+    const systemPrompt = this.sanitizeTemplateContent(
       processedTemplate.systemPrompt,
     );
+    const humanPromptTemplate = processedTemplate.template || "{input}";
 
-    const humanTemplate = HumanMessagePromptTemplate.fromTemplate(
-      processedTemplate.template || "{input}",
-    );
+    // Create a safer version of the templates by properly escaping curly braces
+    const safeSystemPrompt = this.makeTemplateSafe(systemPrompt);
+    const safeHumanPrompt = this.makeTemplateSafe(humanPromptTemplate);
 
-    return ChatPromptTemplate.fromMessages([systemTemplate, humanTemplate]);
+    const systemMessageTemplate =
+      SystemMessagePromptTemplate.fromTemplate(safeSystemPrompt);
+    const humanMessageTemplate =
+      HumanMessagePromptTemplate.fromTemplate(safeHumanPrompt);
+
+    return ChatPromptTemplate.fromMessages([
+      systemMessageTemplate,
+      humanMessageTemplate,
+    ]);
   }
 
-  // Helper method to sanitize template content
+  private makeTemplateSafe(template: string): string {
+    if (!template) return "";
+
+    // Step 1: Temporarily replace valid placeholders
+    const placeholders: string[] = [];
+    const tempTemplate = template.replace(
+      /{([a-zA-Z_][a-zA-Z0-9_]*)}/g,
+      (match) => {
+        placeholders.push(match);
+        return `__PLACEHOLDER${placeholders.length - 1}__`;
+      },
+    );
+
+    // Step 2: Escape remaining curly braces
+    const escapedTemplate = tempTemplate
+      .replace(/{/g, "{{")
+      .replace(/}/g, "}}");
+
+    // Step 3: Restore valid placeholders
+    return placeholders.reduce((result, placeholder, index) => {
+      return result.replace(`__PLACEHOLDER${index}__`, placeholder);
+    }, escapedTemplate);
+  }
+
+  // Update sanitizeTemplateContent to be more thorough
   private sanitizeTemplateContent(content?: string): string {
     if (!content) return "";
 
     // Remove multiple consecutive newlines
-    content = content.replace(/\n{3,}/g, "\n\n");
+    let sanitized = content.replace(/\n{3,}/g, "\n\n");
+
+    // Remove zero-width spaces and other invisible characters
+    sanitized = sanitized.replace(/[\u200B-\u200D\uFEFF]/g, "");
+
+    // Normalize quotes and apostrophes
+    sanitized = sanitized.replace(/['']/g, "'").replace(/[""]/g, '"');
+
+    // Remove BOM if present
+    sanitized = sanitized.replace(/^\uFEFF/, "");
 
     // Trim whitespace
-    return content.trim();
+    return sanitized.trim();
   }
 
   // Example of adding a custom processor for code-related messages
