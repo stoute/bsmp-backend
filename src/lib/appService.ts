@@ -1,11 +1,19 @@
 // import packageJson from '../../package.json';
 // import configJson from '../app/app-config.json';
 import * as store from "@lib/appStore";
-import { type AppState, type ChatState } from "@lib/appStore";
+import { type AppState, type ChatState, openRouterModels } from "@lib/appStore";
 // import { type IPromptTemplate } from "@types";
 import * as config from "@consts";
+import type { OpenRouterModel } from "@lib/ai/types";
 
 const production: boolean = process.env.NODE_ENV === "production";
+
+declare global {
+  interface Window {
+    appService: AppService | null;
+    executeWhenReady: (callback: () => void) => void;
+  }
+}
 
 export class AppService {
   private static instance: AppService;
@@ -19,17 +27,41 @@ export class AppService {
   // public apikeyOpenAi = process.env.NEXT_PUBLIC_OPENAI_API_KEY as string;
 
   private constructor() {
-    // this.init().then(() => {
     console.log("AppService constructor");
-    //     console.log(this);
-    // });
   }
 
-  // public methods and properties
   async init() {
-    console.log("app init");
-    console.log(this);
-    this.initialized = true;
+    if (this.initialized) return;
+
+    try {
+      // Check if models are already loaded
+      console.log("openRouterModels", openRouterModels.get());
+      if (!openRouterModels.get()) {
+        const response = await fetch("https://openrouter.ai/api/v1/models", {
+          headers: {
+            "HTTP-Referer": window.location.href, // Required for OpenRouter API
+            "X-Title": this.name, // Optional, but recommended
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error(`Failed to fetch models: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        openRouterModels.set(data.data as OpenRouterModel[]);
+      }
+
+      // console.log("app init", this);
+      this.initialized = true;
+      return this;
+    } catch (error) {
+      console.error("Error during app initialization:", error);
+      // Still mark as initialized even if models fetch fails
+      // to prevent blocking the app
+      this.initialized = true;
+      return this;
+    }
   }
 
   debug(value: any = undefined): void {

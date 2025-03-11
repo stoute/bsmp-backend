@@ -8,13 +8,46 @@ interface Props {
 }
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
-
 const { title, description, image = "/open-graph.jpg" } = Astro.props;
 ---
 
+<!-- Define types first -->
+<script is:inline>
+  // Ensure window.appService exists before any other scripts run
+  window.appService = null;
+</script>
+
+<!-- Initialize global appService singleton-->
+<script>
+  // Dynamic import to avoid SSR issues
+  const initializeApp = async () => {
+    try {
+      const { appService } = await import("@lib/appService");
+      await appService.init();
+      window.appService = appService;
+      window.dispatchEvent(new CustomEvent("appservice:ready"));
+    } catch (error) {
+      console.error("Failed to initialize appService:", error);
+    }
+  };
+  // Run initialization
+  initializeApp();
+</script>
+
+<!-- Helper function for other scripts -->
+<script is:inline>
+  window.executeWhenReady = function (callback) {
+    if (window.appService?.initialized) {
+      callback();
+    } else {
+      window.addEventListener("appservice:ready", callback, { once: true });
+    }
+  };
+</script>
+
 <!-- Preload dark mode script -->
 <script is:inline>
-  (function () {
+  executeWhenReady(() => {
     const colorMode = document.documentElement.dataset.colorMode;
     if (colorMode === "dark") {
       document.documentElement.classList.add("dark");
@@ -29,7 +62,7 @@ const { title, description, image = "/open-graph.jpg" } = Astro.props;
         document.documentElement.style.backgroundColor = "black";
       }
     }
-  })();
+  });
 </script>
 
 <!-- Global Metadata -->
