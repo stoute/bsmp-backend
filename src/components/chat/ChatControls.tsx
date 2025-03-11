@@ -170,7 +170,7 @@ export default function ChatControls() {
             variant="outline"
             role="combobox"
             aria-expanded={open}
-            className="w-full justify-between sm:w-[200px]"
+            className="w-full justify-between border-zinc-200 bg-white sm:w-[200px] dark:border-zinc-700 dark:bg-zinc-900"
             disabled={isLoading}
           >
             {isLoading ? (
@@ -186,12 +186,12 @@ export default function ChatControls() {
             )}
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-full p-0 sm:w-[200px]">
+        <PopoverContent className="w-full border-zinc-200 bg-white p-0 sm:w-[200px] dark:border-zinc-700 dark:bg-zinc-900">
           <div className="flex flex-col">
-            <div className="flex items-center border-b px-3">
+            <div className="flex items-center border-b border-zinc-200 px-3 dark:border-zinc-700">
               <Search className="h-4 w-4 shrink-0 opacity-50" />
               <input
-                className="placeholder:text-muted-foreground flex h-10 w-full rounded-md bg-transparent py-3 text-sm outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                className="placeholder:text-muted-foreground flex h-10 w-full rounded-md bg-white py-3 text-sm outline-none disabled:cursor-not-allowed disabled:opacity-50 dark:bg-zinc-900"
                 placeholder="Search models..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}

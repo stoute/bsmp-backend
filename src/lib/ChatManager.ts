@@ -12,7 +12,8 @@ import {
   BaseMessage,
 } from "@langchain/core/messages";
 import type { IPromptTemplate } from "@types";
-import { appState, type ChatState } from "@lib/appStore";
+import { appService } from "@lib/appService.ts";
+import { appState, openRouterModels, type ChatState } from "@lib/appStore";
 import { DEFAULT_MODEL, DEFAULT_SYSTEM_MESSAGE } from "@consts";
 import { ChatParser } from "./ChatParser";
 
@@ -155,12 +156,12 @@ export class ChatManager {
     this.llm = new ChatOpenAI({
       temperature: 0.7,
       configuration: {
-        dangerouslyAllowBrowser: true,
         fetch: this.proxyFetchHandler,
       },
       model: newModel,
       apiKey: "none",
     });
+    appService.debug("Updated model to: " + newModel);
     this.saveState();
   }
   // Add cleanup method

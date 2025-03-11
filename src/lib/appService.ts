@@ -80,13 +80,17 @@ export class AppService {
   }
 
   debug(value: any = undefined): void {
-    console.log("debug");
+    console.log("");
+    console.log("--appService.debug()--");
     if (this.production) return;
     if (value) {
       console.log(value);
+      console.log("--");
       return;
     }
     console.log(this);
+    console.log("--");
+    console.log("");
   }
 
   public static getInstance(): AppService {
