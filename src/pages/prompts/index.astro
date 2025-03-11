@@ -7,14 +7,9 @@ import BottomLayout from "@layouts/BottomLayout.astro";
 import PromptTemplates from "@components/prompt-templates/PromptTemplates";
 ---
 
-<PageLayout title={"prompts"} description={"prompts"}>
-  <!--<TopLayout>-->
-  <!--  &lt;!&ndash;<div class="animate page-heading">&ndash;&gt;-->
-  <!--  &lt;!&ndash;  {"Prompts"}&ndash;&gt;-->
-  <!--  &lt;!&ndash;</div>&ndash;&gt;-->
-  <!--</TopLayout>-->
-  <BottomLayout>
-    <div class="animate pt-14">
+<PageLayout title={"Prompts"} description={"prompts"}>
+  <BottomLayout size="2xl">
+    <div class="animate pt-16">
       <PromptTemplates client:load />
     </div>
   </BottomLayout>

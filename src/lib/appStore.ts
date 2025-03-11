@@ -1,6 +1,5 @@
 import { persistentAtom, persistentMap } from "@nanostores/persistent";
-import type { BaseMessage } from "@langchain/core/messages";
-import type { OpenRouterModelIndex, OpenRouterModel } from "@lib/ai/types";
+import type { OpenRouterModelIndex } from "@lib/ai/types";
 import type { IPromptTemplate } from "@types";
 import type { ChatManager } from "./ChatManager";
 import { atom } from "nanostores";
@@ -35,6 +34,7 @@ export type ChatState = {
 export const appState = persistentMap<AppState>(
   "app-state:",
   {
+    // apiBaseUrl: "/api",
     apiBaseUrl: "https://bsmp.netlify.app/api",
     environment: getEnvironment(),
     selectedModel: undefined,
@@ -47,10 +47,6 @@ export const appState = persistentMap<AppState>(
   },
 );
 
-export const chatManager = atom<ChatManager | null>(null);
-
-export const templateList = atom([]);
-
 export const openRouterModels = persistentMap<OpenRouterModelIndex>(
   "open-router-models:",
   { updated: undefined, models: undefined },
@@ -59,5 +55,9 @@ export const openRouterModels = persistentMap<OpenRouterModelIndex>(
     decode: JSON.parse,
   },
 );
+
+export const chatManager = atom<ChatManager | null>(null);
+
+export const templateList = atom([]);
 
 export const isLoggedIn = persistentAtom<boolean>("is-logged-in:", false);

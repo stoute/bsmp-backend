@@ -12,6 +12,8 @@ export async function GET() {
         id: PromptTemplate.id,
         name: PromptTemplate.name,
         description: PromptTemplate.description,
+        created: PromptTemplate.created_at,
+        updated: PromptTemplate.updated_at,
       })
       .from(PromptTemplate);
     // Return an empty array if no prompt templates exist.

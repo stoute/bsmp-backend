@@ -374,14 +374,14 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
                     <FormLabel>Template</FormLabel>
                     <FormControl>
                       <Textarea
-                        placeholder="Write a short story about {{character}} in a {{setting}}."
+                        placeholder="Write a short story about {character} in a {setting}."
                         className="min-h-[100px] resize-none"
                         {...field}
                       />
                     </FormControl>
                     <FormDescription>
-                      The template with variables in double curly braces:{" "}
-                      {/* {{ variable }} */}
+                      The template with variables in single curly braces:{" "}
+                      {/* { variable } */}
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
