@@ -3,6 +3,7 @@ import PromptTemplateList from "@components/prompt-templates/PromptTemplateList.
 import PromptTemplateEditor from "@components/prompt-templates/PromptTemplateEditor.tsx";
 import { appState } from "@lib/appStore";
 import type { IPromptTemplate } from "@types";
+import { useAppService } from "@lib/hooks/useAppService";
 
 interface PromptTemplatesProps {
   initialTemplate?: IPromptTemplate;
@@ -24,6 +25,9 @@ const apiEndPoint = appState.get().apiBaseUrl + "/prompts/index.json";
 const PromptTemplates: React.FC<PromptTemplatesProps> = ({
   initialTemplate,
 }) => {
+  const { isReady } = useAppService();
+  if (!isReady) return null;
+
   const [selectedTemplate, setSelectedTemplate] = useState<
     IPromptTemplate | undefined
   >(initialTemplate);

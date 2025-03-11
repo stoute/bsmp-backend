@@ -47,22 +47,20 @@ const { title, description, image = "/open-graph.jpg" } = Astro.props;
 
 <!-- Preload dark mode script -->
 <script is:inline>
-  executeWhenReady(() => {
-    const colorMode = document.documentElement.dataset.colorMode;
-    if (colorMode === "dark") {
+  const colorMode = document.documentElement.dataset.colorMode;
+  if (colorMode === "dark") {
+    document.documentElement.classList.add("dark");
+    document.documentElement.style.backgroundColor = "black";
+  } else if (colorMode === "system") {
+    const prefersDark = window.matchMedia(
+      "(prefers-color-scheme: dark)",
+    ).matches;
+    const savedTheme = localStorage.theme;
+    if (savedTheme === "dark" || (!savedTheme && prefersDark)) {
       document.documentElement.classList.add("dark");
       document.documentElement.style.backgroundColor = "black";
-    } else if (colorMode === "system") {
-      const prefersDark = window.matchMedia(
-        "(prefers-color-scheme: dark)",
-      ).matches;
-      const savedTheme = localStorage.theme;
-      if (savedTheme === "dark" || (!savedTheme && prefersDark)) {
-        document.documentElement.classList.add("dark");
-        document.documentElement.style.backgroundColor = "black";
-      }
     }
-  });
+  }
 </script>
 
 <!-- Global Metadata -->

@@ -1,8 +1,13 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import { useStore } from "@nanostores/react";
-import { LLM_MODELS } from "@/consts";
 import type { IPromptTemplate } from "@types";
-import { appState, chatManager, templateList } from "@lib/appStore";
+import {
+  appState,
+  chatManager,
+  templateList,
+  openRouterModels,
+} from "@lib/appStore";
+import { useAppService } from "@lib/hooks/useAppService";
 import {
   Select,
   SelectContent,
@@ -12,6 +17,7 @@ import {
 } from "@components/ui/select";
 import { Label } from "@components/ui/label";
 import { DEFAULT_TEMPLATE_ID, DEFAULT_MODEL } from "@/consts";
+import { getMatchingOpenRouterModels } from "@lib/utils/modelUtils";
 
 export default function ChatControls() {
   const [templates, setTemplates] = useState<IPromptTemplate[]>([]);
@@ -25,12 +31,13 @@ export default function ChatControls() {
     const storedTemplateId = appState.get().selectedTemplateId;
     return storedTemplateId || DEFAULT_TEMPLATE_ID;
   });
-  //
-  // // Initialize from appState first
+
   const [selectedModel, setSelectedModel] = useState(() => {
     const storedModel = appState.get().selectedModel;
     return storedModel || DEFAULT_MODEL;
   });
+
+  const { isReady } = useAppService();
 
   const handleClearChat = useCallback(() => {
     const manager = chatManager.get();
@@ -115,6 +122,10 @@ export default function ChatControls() {
     }
   };
 
+  if (!isReady) return null;
+
+  const matchingModels = getMatchingOpenRouterModels();
+
   return (
     <div className="bg-card flex flex-col items-start gap-4 rounded-lg border p-4 sm:flex-row sm:items-center">
       <div className="flex w-full items-center gap-2 sm:w-auto">
@@ -154,9 +165,9 @@ export default function ChatControls() {
             <SelectValue placeholder="Select model" />
           </SelectTrigger>
           <SelectContent>
-            {LLM_MODELS.map((model) => (
-              <SelectItem key={model} value={model}>
-                {model.split("/")[1]}
+            {matchingModels.map((model) => (
+              <SelectItem key={model.id} value={model.id}>
+                {model.name || model.id.split("/")[1]}
               </SelectItem>
             ))}
           </SelectContent>
