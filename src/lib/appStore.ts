@@ -1,5 +1,6 @@
 import { persistentAtom, persistentMap } from "@nanostores/persistent";
 import type { BaseMessage } from "@langchain/core/messages";
+import type { OpenRouterModel } from "@lib/ai/types";
 import type { IPromptTemplate } from "@types";
 import type { ChatManager } from "./ChatManager";
 import { atom } from "nanostores";
@@ -49,5 +50,7 @@ export const appState = persistentMap<AppState>(
 export const chatManager = atom<ChatManager | null>(null);
 
 export const templateList = atom([]);
+
+export const openRouterModels = atom<OpenRouterModel[] | null>(null);
 
 export const isLoggedIn = persistentAtom<boolean>("is-logged-in:", false);
