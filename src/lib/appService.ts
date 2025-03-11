@@ -3,6 +3,7 @@
 import * as store from "@lib/appStore";
 import { type AppState, type ChatState, openRouterModels } from "@lib/appStore";
 // import { type IPromptTemplate } from "@types";
+import { type OpenRouterModelIndex } from "@lib/ai/types";
 import * as config from "@consts";
 import type { OpenRouterModel } from "@lib/ai/types";
 
@@ -35,30 +36,38 @@ export class AppService {
 
     try {
       // Check if models are already loaded
-      console.log("openRouterModels", openRouterModels.get());
-      if (!openRouterModels.get()) {
+      if (!openRouterModels.value) {
         const response = await fetch("https://openrouter.ai/api/v1/models", {
           headers: {
             "HTTP-Referer": window.location.href, // Required for OpenRouter API
             "X-Title": this.name, // Optional, but recommended
           },
         });
-
         if (!response.ok) {
-          throw new Error(`Failed to fetch models: ${response.statusText}`);
+          throw new Error(
+            `Failed to fetch Open Router models: ${response.statusText}`,
+          );
         }
-
         const data = await response.json();
-        openRouterModels.set(data.data as OpenRouterModel[]);
+        if (data && Array.isArray(data.data)) {
+          openRouterModels.set({
+            updated: new Date().toISOString(),
+            models: data,
+          });
+          console.log("Updated Open Router models:", data);
+        } else {
+          console.warn(
+            "Received unexpected data structure from OpenRouter API:",
+            data,
+          );
+        }
       }
-
-      // console.log("app init", this);
+      console.log("App initialized", this);
       this.initialized = true;
       return this;
     } catch (error) {
       console.error("Error during app initialization:", error);
       // Still mark as initialized even if models fetch fails
-      // to prevent blocking the app
       this.initialized = true;
       return this;
     }

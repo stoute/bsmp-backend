@@ -21,10 +21,6 @@ export const LINKS: Links = [
     TEXT: "Chat",
     HREF: "/chat",
   },
-  {
-    TEXT: "About",
-    HREF: "/about",
-  },
 ];
 export const LINKS_DEV: Links = [
   {
@@ -36,13 +32,17 @@ export const LINKS_DEV: Links = [
     HREF: "/contact",
   },
   {
+    TEXT: "About",
+    HREF: "/about",
+  },
+  {
     TEXT: "Projects",
     HREF: "/projects",
   },
-  {
-    TEXT: "Blog",
-    HREF: "/blog",
-  },
+  // {
+  //   TEXT: "Blog",
+  //   HREF: "/blog",
+  // },
 ]; // Global
 export const SITE: Site = {
   TITLE: "BSMP",

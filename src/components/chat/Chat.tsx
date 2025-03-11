@@ -4,12 +4,14 @@ import { BaseMessage } from "@langchain/core/messages";
 import { useStore } from "@nanostores/react";
 import { ChatManager } from "@lib/ChatManager";
 import { appState, chatManager } from "@lib/appStore";
+import { useAppService } from "@lib/hooks/useAppService";
 import { MarkdownRenderer } from "./MarkdownRenderer";
 import { MessageErrorBoundary } from "./MessageErrorBoundary";
 import type { IPromptTemplate } from "@types";
 import styles from "./Chat.module.css";
 
 export default function Chat() {
+  const { appService, isReady } = useAppService();
   const chatManagerRef = useRef<ChatManager | null>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const isRestoringRef = useRef(false);
@@ -18,7 +20,6 @@ export default function Chat() {
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<BaseMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [isInitialized, setIsInitialized] = useState(false);
 
   // Memoize scroll functions to prevent recreation
   const scrollToBottom = useCallback(() => {
@@ -51,17 +52,17 @@ export default function Chat() {
     }, 100);
   }, [messages.length]); // Include messages.length to ensure we have the latest messages
 
-  // Initialize chat manager only once
+  // Initialize chat manager only when appService is ready
   useEffect(() => {
-    if (chatManagerRef.current) return;
+    if (!isReady || chatManagerRef.current) return;
+
     const savedChat = state.currentChat;
     isRestoringRef.current = savedChat?.messages?.length > 0;
     // initialize chat manager
     chatManagerRef.current = new ChatManager();
     chatManager.set(chatManagerRef.current);
     setMessages(chatManagerRef.current.getMessages());
-    setIsInitialized(true);
-  }, []); // Empty dependency array since this should only run once
+  }, [isReady]);
 
   useEffect(() => {
     if (!chatManagerRef.current) return;
@@ -73,7 +74,7 @@ export default function Chat() {
 
   // Handle scroll behavior when messages change
   useEffect(() => {
-    if (!isInitialized || messages.length === 0) return;
+    if (!isReady || messages.length === 0) return;
 
     if (isRestoringRef.current) {
       setTimeout(scrollToBottom, 300);
@@ -86,13 +87,7 @@ export default function Chat() {
         scrollToBottom();
       }
     }
-  }, [
-    state,
-    isInitialized,
-    messages,
-    scrollToBottom,
-    scrollLastUserMessageToTop,
-  ]);
+  }, [state, isReady, messages, scrollToBottom, scrollLastUserMessageToTop]);
 
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
@@ -120,8 +115,8 @@ export default function Chat() {
     setInput(value);
   }, []);
 
-  if (!isInitialized) {
-    return null;
+  if (!isReady || !chatManagerRef.current) {
+    return <div className={styles.loading}></div>;
   }
 
   return (

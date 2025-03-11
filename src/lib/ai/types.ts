@@ -1,3 +1,8 @@
+export interface OpenRouterModelIndex {
+  updated: string;
+  models: OpenRouterModel[];
+}
+
 export interface OpenRouterModel {
   id: string;
   name: string;
