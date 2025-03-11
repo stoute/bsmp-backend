@@ -67,7 +67,7 @@ export default function Chat() {
   useEffect(() => {
     if (!chatManagerRef.current) return;
     setTimeout(() => {
-      console.log(chatManagerRef.current.getMessages());
+      // console.log(chatManagerRef.current.getMessages());
       setMessages(chatManagerRef.current.getMessages());
     }, 100);
   }, [state.currentChat?.messages]);

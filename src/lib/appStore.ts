@@ -51,6 +51,13 @@ export const chatManager = atom<ChatManager | null>(null);
 
 export const templateList = atom([]);
 
-export const openRouterModels = persistentMap<OpenRouterModelIndex>(null);
+export const openRouterModels = persistentMap<OpenRouterModelIndex>(
+  "open-router-models:",
+  { updated: undefined, models: undefined },
+  {
+    encode: JSON.stringify,
+    decode: JSON.parse,
+  },
+);
 
 export const isLoggedIn = persistentAtom<boolean>("is-logged-in:", false);

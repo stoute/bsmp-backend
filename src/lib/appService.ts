@@ -36,7 +36,13 @@ export class AppService {
 
     try {
       // Check if models are already loaded
-      if (!openRouterModels.value) {
+      const openRouter = openRouterModels.get();
+      const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+      const lastUpdated = openRouter?.updated
+        ? new Date(openRouter.updated)
+        : null;
+
+      if (!lastUpdated || lastUpdated < oneHourAgo) {
         const response = await fetch("https://openrouter.ai/api/v1/models", {
           headers: {
             "HTTP-Referer": window.location.href, // Required for OpenRouter API
