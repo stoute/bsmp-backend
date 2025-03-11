@@ -6,11 +6,22 @@ export function getMatchingOpenRouterModels(): OpenRouterModel[] {
   const orModels = openRouterModels.get().models;
   if (!orModels?.data) return [];
 
-  return LLM_MODELS.reduce((matches: OpenRouterModel[], llmModel) => {
+  const matches = new Set<OpenRouterModel>();
+
+  // Add models that match LLM_MODELS
+  LLM_MODELS.forEach((llmModel) => {
     const found = orModels.data.find(
       (model: OpenRouterModel) => model.id === llmModel,
     );
-    if (found) matches.push(found);
-    return matches;
-  }, []);
+    if (found) matches.add(found);
+  });
+
+  // Add models with 'free' in their name
+  orModels.data.forEach((model: OpenRouterModel) => {
+    if (model.name.toLowerCase().includes("free")) {
+      matches.add(model);
+    }
+  });
+
+  return Array.from(matches);
 }
