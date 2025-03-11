@@ -58,9 +58,9 @@ export class AppService {
         if (data && Array.isArray(data.data)) {
           openRouterModels.set({
             updated: new Date().toISOString(),
-            models: data,
+            models: data.data,
           });
-          console.log("Updated Open Router models:", data);
+          console.log("Updated Open Router models:", data.data);
         } else {
           console.warn(
             "Received unexpected data structure from OpenRouter API:",

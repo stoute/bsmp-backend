@@ -14,7 +14,11 @@ import {
 import type { IPromptTemplate } from "@types";
 import { appService } from "@lib/appService.ts";
 import { appState, openRouterModels, type ChatState } from "@lib/appStore";
-import { DEFAULT_MODEL, DEFAULT_SYSTEM_MESSAGE } from "@consts";
+import {
+  DEFAULT_MODEL,
+  DEFAULT_MODEL_FREE,
+  DEFAULT_SYSTEM_MESSAGE,
+} from "@consts";
 import { ChatParser } from "./ChatParser";
 
 export class ChatManager {
@@ -34,7 +38,12 @@ export class ChatManager {
     this.parser.registerCodeProcessor();
     this.parser.registerDocumentationTemplateProcessor();
 
-    this.model = appState.get().selectedModel || DEFAULT_MODEL;
+    let defaultModel = DEFAULT_MODEL;
+    if (appService.state.environment === "production") {
+      defaultModel = DEFAULT_MODEL_FREE;
+    }
+
+    this.model = appState.get().selectedModel || defaultModel;
     this.llm = new ChatOpenAI({
       temperature: 0.7,
       configuration: {

@@ -2,7 +2,7 @@ import type { Site, Page, Links, Socials } from "@types";
 
 export const LLM_MODELS = [
   "google/gemini-2.0-flash-lite-001",
-  "google/gemini-2.0-flash-001",
+  // "google/gemini-2.0-flash-001",
   "openai/gpt-3.5-turbo",
   "openai/gpt-4o-mini",
   "deepseek/deepseek-r1-distill-llama-8b",
@@ -11,7 +11,8 @@ export const LLM_MODELS = [
   "thedrummer/unslopnemo-12b",
   "neversleep/noromaid-20b",
 ];
-export const DEFAULT_MODEL = "openai/gpt-3.5-turbo";
+export const DEFAULT_MODEL = "google/gemini-2.0-flash-lite-001";
+export const DEFAULT_MODEL_FREE = "mistralai/mistral-7b-instruct";
 export const DEFAULT_TEMPLATE_ID = "be0a2289-88ca-42b5-860c-a97bae747362";
 export const DEFAULT_SYSTEM_MESSAGE = "You are a helpful assistant.";
 

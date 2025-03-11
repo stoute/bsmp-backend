@@ -170,7 +170,7 @@ export default function ChatControls() {
             variant="outline"
             role="combobox"
             aria-expanded={open}
-            className="w-full justify-between border-zinc-200 bg-white sm:w-[200px] dark:border-zinc-700 dark:bg-zinc-900"
+            className="w-full justify-between border-zinc-200 bg-white sm:w-[250px] dark:border-zinc-700 dark:bg-zinc-900"
             disabled={isLoading}
           >
             {isLoading ? (
@@ -186,7 +186,7 @@ export default function ChatControls() {
             )}
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-full border-zinc-200 bg-white p-0 sm:w-[200px] dark:border-zinc-700 dark:bg-zinc-900">
+        <PopoverContent className="w-full border-zinc-200 bg-white p-0 sm:w-[250px] dark:border-zinc-700 dark:bg-zinc-900">
           <div className="flex flex-col">
             <div className="flex items-center border-b border-zinc-200 px-3 dark:border-zinc-700">
               <Search className="h-4 w-4 shrink-0 opacity-50" />
@@ -235,13 +235,13 @@ export default function ChatControls() {
   return (
     <div className="bg-card flex flex-col items-start gap-4 rounded-lg border p-4 sm:flex-row sm:items-center">
       <div className="flex w-full items-center gap-2 sm:w-auto">
-        <Label htmlFor="template-select">Templates</Label>
+        <Label htmlFor="template-select">Template</Label>
         <Select
           value={selectedTemplateId}
           onValueChange={handleTemplateChange}
           disabled={loading}
         >
-          <SelectTrigger id="template-select" className="w-full sm:w-[200px]">
+          <SelectTrigger id="template-select" className="w-full sm:w-[250px]">
             <SelectValue placeholder="Select template" />
           </SelectTrigger>
           <SelectContent>
