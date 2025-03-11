@@ -1,12 +1,8 @@
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { useStore } from "@nanostores/react";
 import type { IPromptTemplate } from "@types";
-import {
-  appState,
-  chatManager,
-  templateList,
-  openRouterModels,
-} from "@lib/appStore";
+import type { OpenRouterModel } from "@lib/ai/types";
+import { appState, chatManager, templateList } from "@lib/appStore";
 import { useAppService } from "@lib/hooks/useAppService";
 import {
   Select,
@@ -18,34 +14,57 @@ import {
 import { Label } from "@components/ui/label";
 import { DEFAULT_TEMPLATE_ID, DEFAULT_MODEL } from "@/consts";
 import { getMatchingOpenRouterModels } from "@lib/utils/modelUtils";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+} from "@components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@components/ui/popover";
+import { Button } from "@components/ui/button";
+import { Check, ChevronsUpDown, Search } from "lucide-react";
+import { cn } from "@lib/utils";
 
 export default function ChatControls() {
+  // Group all useState hooks together at the top
   const [templates, setTemplates] = useState<IPromptTemplate[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const initialLoadRef = useRef(true);
-  const templateListStore = useStore(templateList);
-
-  // Initialize from appState or props
+  const [open, setOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [models, setModels] = useState<OpenRouterModel[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [selectedTemplateId, setSelectedTemplateId] = useState(() => {
     const storedTemplateId = appState.get().selectedTemplateId;
     return storedTemplateId || DEFAULT_TEMPLATE_ID;
   });
-
   const [selectedModel, setSelectedModel] = useState(() => {
     const storedModel = appState.get().selectedModel;
     return storedModel || DEFAULT_MODEL;
   });
 
+  // Filter models based on search query
+  const filteredModels = useMemo(() => {
+    if (!searchQuery) return models;
+    const query = searchQuery.toLowerCase();
+    return models.filter((model) =>
+      (model.name?.toLowerCase() || model.id.toLowerCase()).includes(query),
+    );
+  }, [models, searchQuery]);
+
+  // Refs
+  const initialLoadRef = useRef(true);
+  const templateListStore = useStore(templateList);
+
+  // App service hook
   const { isReady } = useAppService();
 
-  const handleClearChat = useCallback(() => {
-    const manager = chatManager.get();
-    if (!manager) return;
-    manager.clearMessages();
-  }, []);
-
-  // Sync with props only if there's no stored model
+  // Group all useEffect hooks together
   useEffect(() => {
     const storedModel = appState.get().selectedModel;
     const storedTemplateId = appState.get().selectedTemplateId;
@@ -56,15 +75,6 @@ export default function ChatControls() {
       setSelectedTemplateId(storedTemplateId);
     }
   }, []);
-
-  const handleModelChange = async (model: string) => {
-    try {
-      setSelectedModel(model);
-      appState.setKey("selectedModel", model);
-    } catch (err) {
-      console.error("Error changing model:", err);
-    }
-  };
 
   useEffect(() => {
     const fetchTemplates = async () => {
@@ -88,7 +98,6 @@ export default function ChatControls() {
     };
 
     fetchTemplates().then(() => {
-      // Only fetch stored template on initial load if there's no current chat
       if (initialLoadRef.current) {
         const currentChat = appState.get().currentChat;
         const storedTemplateId = appState.get().selectedTemplateId;
@@ -98,14 +107,42 @@ export default function ChatControls() {
         }
         initialLoadRef.current = false;
       }
-      if (templateListStore) {
-        // templateListStore.
-        // ccnsole.log("templateListStore", templateListStore);
-      }
     });
   }, []);
 
-  const handleTemplateChange = async (templateId: string) => {
+  useEffect(() => {
+    if (!isReady) return;
+
+    try {
+      const matchingModels = getMatchingOpenRouterModels();
+      // Ensure we always have an array, even if empty
+      setModels(Array.isArray(matchingModels) ? matchingModels : []);
+    } catch (error) {
+      console.error("Error loading models:", error);
+      setModels([]);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [isReady]);
+
+  // Callbacks
+  const handleClearChat = useCallback(() => {
+    const manager = chatManager.get();
+    if (!manager) return;
+    manager.clearMessages();
+  }, []);
+
+  const handleModelChange = useCallback(async (model: string) => {
+    try {
+      setSelectedModel(model);
+      appState.setKey("selectedModel", model);
+      setOpen(false);
+    } catch (err) {
+      console.error("Error changing model:", err);
+    }
+  }, []);
+
+  const handleTemplateChange = useCallback(async (templateId: string) => {
     try {
       setSelectedTemplateId(templateId);
       const response = await fetch(
@@ -120,11 +157,80 @@ export default function ChatControls() {
     } catch (err) {
       console.error("Error fetching template:", err);
     }
-  };
+  }, []);
 
   if (!isReady) return null;
 
-  const matchingModels = getMatchingOpenRouterModels();
+  const modelSection = (
+    <div className="flex w-full items-center gap-2 sm:w-auto">
+      <Label htmlFor="model-select">Model</Label>
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger asChild>
+          <Button
+            variant="outline"
+            role="combobox"
+            aria-expanded={open}
+            className="w-full justify-between sm:w-[200px]"
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              "Loading models..."
+            ) : (
+              <>
+                {selectedModel
+                  ? models.find((model) => model.id === selectedModel)?.name ||
+                    selectedModel.split("/")[1]
+                  : "Select model..."}
+                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+              </>
+            )}
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-full p-0 sm:w-[200px]">
+          <div className="flex flex-col">
+            <div className="flex items-center border-b px-3">
+              <Search className="h-4 w-4 shrink-0 opacity-50" />
+              <input
+                className="placeholder:text-muted-foreground flex h-10 w-full rounded-md bg-transparent py-3 text-sm outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                placeholder="Search models..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+            <div className="max-h-[300px] overflow-y-auto">
+              {filteredModels.length === 0 ? (
+                <div className="text-muted-foreground relative flex cursor-default items-center rounded-sm px-2 py-1.5 text-sm select-none">
+                  No models found.
+                </div>
+              ) : (
+                filteredModels.map((model) => (
+                  <div
+                    key={model.id}
+                    className={cn(
+                      "hover:bg-accent hover:text-accent-foreground relative flex cursor-default items-center rounded-sm px-2 py-1.5 text-sm outline-none select-none",
+                      selectedModel === model.id &&
+                        "bg-accent text-accent-foreground",
+                    )}
+                    onClick={() => handleModelChange(model.id)}
+                  >
+                    <Check
+                      className={cn(
+                        "mr-2 h-4 w-4",
+                        selectedModel === model.id
+                          ? "opacity-100"
+                          : "opacity-0",
+                      )}
+                    />
+                    {model.name || model.id.split("/")[1]}
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        </PopoverContent>
+      </Popover>
+    </div>
+  );
 
   return (
     <div className="bg-card flex flex-col items-start gap-4 rounded-lg border p-4 sm:flex-row sm:items-center">
@@ -158,21 +264,7 @@ export default function ChatControls() {
         </Select>
       </div>
 
-      <div className="flex w-full items-center gap-2 sm:w-auto">
-        <Label htmlFor="model-select">Model</Label>
-        <Select value={selectedModel} onValueChange={handleModelChange}>
-          <SelectTrigger id="model-select" className="w-full sm:w-[200px]">
-            <SelectValue placeholder="Select model" />
-          </SelectTrigger>
-          <SelectContent>
-            {matchingModels.map((model) => (
-              <SelectItem key={model.id} value={model.id}>
-                {model.name || model.id.split("/")[1]}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
+      {modelSection}
 
       <div className="ml-auto">
         <button
