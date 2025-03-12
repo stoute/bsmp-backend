@@ -155,6 +155,7 @@ class ChatManager {
       await this.init(template);
     }
     // Initialize with default system message
+    appState.setKey("selectedTemplateId", DEFAULT_TEMPLATE_ID);
     this.messages = [new SystemMessage(DEFAULT_SYSTEM_MESSAGE)];
     await this.init();
   }

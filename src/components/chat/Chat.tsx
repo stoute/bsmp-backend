@@ -219,15 +219,14 @@ const ChatMessage = ({ message }: { message: any }) => {
 };
 ChatMessage.displayName = "ChatMessage";
 
-const MessageContent = ({ message }: { message: any }) => {
-  console.log("r");
+const MessageContent = memo(({ message }: { message: any }) => {
   const content =
     typeof message.content === "string"
       ? message.content
       : message.content?.toString() || "";
   if (!content) return null;
 
-  // console.log(message);
+  // custom description message
   const template: IPromptTemplate = message.additional_kwargs.template;
   if (template?.description) {
     return (
@@ -245,4 +244,6 @@ const MessageContent = ({ message }: { message: any }) => {
       <MarkdownRenderer blockMatch={{ output: content }} />
     </div>
   );
-};
+});
+
+MessageContent.displayName = "MessageContent";

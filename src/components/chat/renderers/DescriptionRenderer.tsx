@@ -15,8 +15,8 @@ export const DescriptionRenderer: LLMOutputComponent<Props> = ({
   template,
 }) => {
   return (
-    <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-4 dark:border-yellow-900/50 dark:bg-yellow-900/20">
-      <div className="flex items-center gap-2">
+    <div className="animate-fade-in">
+      <div className="flex items-center">
         <img
           src={"images/logo-light.svg"}
           className="block h-8 w-auto dark:hidden"
