@@ -34,8 +34,7 @@ export default function ChatControls() {
   const [models, setModels] = useState<OpenRouterModel[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedTemplateId, setSelectedTemplateId] = useState(() => {
-    const storedTemplateId = appState.get().selectedTemplateId;
-    return storedTemplateId || DEFAULT_TEMPLATE_ID;
+    return appState.get().selectedTemplateId || DEFAULT_TEMPLATE_ID;
   });
   const [selectedModel, setSelectedModel] = useState(() => {
     const storedModel = appState.get().selectedModel;
@@ -119,6 +118,15 @@ export default function ChatControls() {
     }
   }, [isReady]);
 
+  // Add subscription to appState changes
+  useEffect(() => {
+    const unsubscribe = appState.subscribe((state) => {
+      setSelectedTemplateId(state.selectedTemplateId || DEFAULT_TEMPLATE_ID);
+    });
+
+    return () => unsubscribe();
+  }, []); // Empty dependency array since we want to set up the subscription once
+
   // Callbacks
   const handleNewChat = useCallback(() => {
     chatManager.newChat(appState.get().selectedTemplateId);
@@ -136,9 +144,15 @@ export default function ChatControls() {
 
   const handleTemplateChange = useCallback(async (templateId: string) => {
     try {
+      setSelectedTemplateId(templateId); // Update local state immediately
+      appState.setKey("selectedTemplateId", templateId);
       await chatManager.newChat(templateId);
     } catch (err) {
       console.error("Error fetching template:", err);
+      // Revert to previous template ID on error
+      setSelectedTemplateId(
+        appState.get().selectedTemplateId || DEFAULT_TEMPLATE_ID,
+      );
     }
   }, []);
 
