@@ -120,8 +120,8 @@ export default function ChatControls() {
   }, [isReady]);
 
   // Callbacks
-  const handleClearChat = useCallback(() => {
-    chatManager.clearChat();
+  const handleNewChat = useCallback(() => {
+    chatManager.newChat(appState.get().selectedTemplateId);
   }, []);
 
   const handleModelChange = useCallback(async (model: string) => {
@@ -251,10 +251,10 @@ export default function ChatControls() {
 
       <div className="ml-auto">
         <button
-          onClick={handleClearChat}
+          onClick={handleNewChat}
           className="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
         >
-          Clear Chat
+          New Chat
         </button>
       </div>
     </div>

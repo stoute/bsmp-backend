@@ -264,23 +264,10 @@ class ChatManager {
     await this.saveState();
   }
 
-  async clearChat() {
+  async newChat(templateId?: string) {
     await this.clearMessages();
     this.cleanup();
     appState.setKey("currentChat", undefined);
-    const selectedTemplateId = appState.get().selectedTemplateId;
-    console.log("selectedTemplateId", selectedTemplateId);
-    if (selectedTemplateId) {
-      appState.setKey("selectedTemplate", undefined);
-      await this.newChat(selectedTemplateId);
-    } else {
-      this.messages = [new SystemMessage(DEFAULT_SYSTEM_MESSAGE)];
-      await this.init();
-    }
-  }
-
-  async newChat(templateId?: string) {
-    await this.clearMessages();
     if (templateId) {
       const response = await fetch(
         `${appState.get().apiBaseUrl}/prompts/${templateId}.json`,
