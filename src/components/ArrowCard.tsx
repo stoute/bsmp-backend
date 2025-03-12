@@ -27,15 +27,14 @@ export default function ArrowCard({ entry, pill }: Props) {
 
         <div className="line-clamp-2 text-sm">{entry.data.summary}</div>
         <ul className="mt-2 flex flex-wrap gap-1">
-          {entry.data.tags.map(
-            (
-              tag: string, // this line has an error; Parameter 'tag' implicitly has an 'any' type.ts(7006)
-            ) => (
-              <li className="rounded-sm bg-black/5 px-1 py-0.5 text-xs text-black/75 uppercase dark:bg-white/20 dark:text-white/75">
-                {tag}
-              </li>
-            ),
-          )}
+          {entry.data.tags.map((tag: string) => (
+            <li
+              key={tag}
+              className="rounded-sm bg-black/5 px-1 py-0.5 text-xs text-black/75 uppercase dark:bg-white/20 dark:text-white/75"
+            >
+              {tag}
+            </li>
+          ))}
         </ul>
       </div>
       <svg
