@@ -5,9 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6db5ad0e-5635-4336-a0ae-8b285de92988" name="Changes" comment="feat: theme button toggle">
+      <change afterPath="$PROJECT_DIR$/src/components/chat/renderers/DescriptionRenderer.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/AugmentWebviewStateStore.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/AugmentWebviewStateStore.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/chat/MarkdownRenderer.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/chat/MarkdownRenderer.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/chat/Chat.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/chat/Chat.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/chat/ChatControls.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/chat/ChatControls.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/chat/CodeBlockRenderer.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/chat/renderers/CodeBlockRenderer.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/chat/MarkdownRenderer.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/chat/renderers/MarkdownRenderer.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/ChatManager.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/ChatManager.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -55,7 +60,7 @@
   &quot;keyToString&quot;: {
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;develop&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;feat-custom-renderers&quot;,
     &quot;last_opened_file_path&quot;: &quot;/Users/bobstoute/Git/@bsmp/bsmp-backend/src/pages&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
@@ -90,11 +95,11 @@
       <recent name="$PROJECT_DIR$/src/pages/api/prompts" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/components/chat/renderers" />
       <recent name="$PROJECT_DIR$/src/lib/ai" />
       <recent name="$PROJECT_DIR$/src/pages" />
       <recent name="$PROJECT_DIR$" />
       <recent name="$PROJECT_DIR$/src/components" />
-      <recent name="$PROJECT_DIR$/src/lib" />
     </key>
   </component>
   <component name="RunManager" selected="npm.dev:network">
@@ -211,7 +216,7 @@
       <workItem from="1741518505014" duration="3796000" />
       <workItem from="1741554574954" duration="13872000" />
       <workItem from="1741629730913" duration="7877000" />
-      <workItem from="1741762507765" duration="702000" />
+      <workItem from="1741762507765" duration="5053000" />
     </task>
     <task id="LOCAL-00001" summary="refactor: PromptTemplateTable to PromptTemplate">
       <option name="closed" value="true" />

@@ -129,7 +129,7 @@ export default function ChatControls() {
   const handleClearChat = useCallback(() => {
     const manager = chatManager.get();
     if (!manager) return;
-    manager.clearMessages();
+    manager.clearChat();
   }, []);
 
   const handleModelChange = useCallback(async (model: string) => {
@@ -144,7 +144,9 @@ export default function ChatControls() {
 
   const handleTemplateChange = useCallback(async (templateId: string) => {
     try {
-      setSelectedTemplateId(templateId);
+      // const manager = chatManager.get();
+      // if (!manager) return;
+      // manager.newChat(templateId);
       const response = await fetch(
         `${appState.get().apiBaseUrl}/prompts/${templateId}.json`,
       );

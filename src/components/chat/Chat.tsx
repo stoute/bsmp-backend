@@ -5,10 +5,11 @@ import { useStore } from "@nanostores/react";
 import { ChatManager } from "@lib/ChatManager";
 import { appState, chatManager } from "@lib/appStore";
 import { useAppService } from "@lib/hooks/useAppService";
-import { MarkdownRenderer } from "./MarkdownRenderer";
+import { MarkdownRenderer } from "./renderers/MarkdownRenderer.tsx";
 import { MessageErrorBoundary } from "./MessageErrorBoundary";
 import type { IPromptTemplate } from "@types";
 import styles from "./Chat.module.css";
+import { DescriptionRenderer } from "./renderers/DescriptionRenderer";
 
 export default function Chat() {
   const { appService, isReady } = useAppService();
@@ -228,15 +229,25 @@ const ChatInput = memo(
 ChatInput.displayName = "ChatInput";
 
 const MessageContent = memo(({ message }: { message: any }) => {
+  if (message.name === "description") {
+    return (
+      <DescriptionRenderer
+        blockMatch={{ output: message.content }}
+        message={message}
+      />
+    );
+  }
+
   const content =
     typeof message.content === "string"
       ? message.content
       : message.content?.toString() || "";
+
   if (!content) return null;
+
   return (
     <div className="prose dark:prose-invert max-w-none">
       <MarkdownRenderer blockMatch={{ output: content }} />
     </div>
   );
 });
-MessageContent.displayName = "MessageContent";
