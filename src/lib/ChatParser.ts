@@ -28,7 +28,7 @@ export class ChatParser {
   private registerDefaultProcessors() {
     // Default system message processor
     this.registerMessageProcessor("system", (message: BaseMessage) => {
-      if (message._getType() !== "system") return message;
+      if (message.getType() !== "system") return message;
       // Ensure system messages don't contain certain patterns
       const content = message.content.toString();
       if (content.includes("```")) {
@@ -39,7 +39,7 @@ export class ChatParser {
 
     // Default AI message processor
     this.registerMessageProcessor("ai", (message: BaseMessage) => {
-      if (message._getType() !== "ai") return message;
+      if (message.getType() !== "ai") return message;
       let content = message.content.toString();
       // remove content between <think> tags
       content = content.replace(/(<think>)[\s\S]*?(<\/think>)/g, "$1$2");
@@ -50,7 +50,7 @@ export class ChatParser {
 
     // Default human message processor
     this.registerMessageProcessor("human", (message: BaseMessage) => {
-      if (message._getType() !== "human") return message;
+      if (message.getType() !== "human") return message;
       let content = message.content.toString().trim();
       // content = content.replaceAll("piet", "jan");
       return new HumanMessage(content);
@@ -93,6 +93,12 @@ export class ChatParser {
     message: BaseMessage,
     templateId?: string,
   ): BaseMessage | null {
+    // Allow template-description messages to pass through
+    // if (message.getType() === "template-description") {
+    //   return message;
+    // }
+
+    // Process other message types
     // Apply template-specific processor if exists
     if (templateId && this.messageProcessors.has(templateId)) {
       const processed = this.messageProcessors.get(templateId)!(message);
@@ -101,7 +107,7 @@ export class ChatParser {
     }
 
     // Apply type-specific processor
-    const typeProcessor = this.messageProcessors.get(message._getType());
+    const typeProcessor = this.messageProcessors.get(message.getType());
     if (typeProcessor) {
       const processed = typeProcessor(message);
       if (!processed) return null;
@@ -121,9 +127,13 @@ export class ChatParser {
     messages: BaseMessage[],
     templateId?: string,
   ): BaseMessage[] {
-    return messages
-      .map((msg) => this.processMessage(msg, templateId))
-      .filter((msg): msg is BaseMessage => msg !== null);
+    // Filter out template-description messages when processing for LLM
+    return messages.filter((msg) => {
+      // if (msg.getType() === "template-description") {
+      //   return false;
+      // }
+      return true;
+    });
   }
 
   // Process a template

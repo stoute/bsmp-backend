@@ -75,7 +75,7 @@ export default function Chat() {
       isRestoringRef.current = false;
     } else {
       const lastMessage = messages[messages.length - 1];
-      if (lastMessage?._getType() === "ai") {
+      if (lastMessage?.getType() === "ai") {
         setTimeout(scrollLastUserMessageToTop, 100);
       } else {
         scrollToBottom();
@@ -115,7 +115,7 @@ export default function Chat() {
     <div className={styles.chatContainer}>
       <div ref={messagesContainerRef} className={styles.messages}>
         {messages
-          .filter((message) => message._getType() !== "system")
+          .filter((message) => message.getType() !== "system")
           .map((message, index) => (
             <ChatMessage key={index} message={message} />
           ))}
@@ -195,7 +195,7 @@ const ChatMessage = ({ message }: { message: any }) => {
   return (
     <div
       className={`${styles.message} ${
-        message._getType() === "human" ? styles.human : styles.ai
+        message.getType() === "human" ? styles.human : styles.ai
       } group relative`}
     >
       <button
@@ -208,7 +208,7 @@ const ChatMessage = ({ message }: { message: any }) => {
         </svg>
       </button>
       <MessageErrorBoundary>
-        {message._getType() === "human" ? (
+        {message.getType() === "human" ? (
           <div className={styles.userMessage}>{message.content}</div>
         ) : (
           <MessageContent message={message} />
@@ -220,17 +220,21 @@ const ChatMessage = ({ message }: { message: any }) => {
 ChatMessage.displayName = "ChatMessage";
 
 const MessageContent = ({ message }: { message: any }) => {
-  // console.log(message);
   const content =
     typeof message.content === "string"
       ? message.content
       : message.content?.toString() || "";
   if (!content) return null;
 
-  if (message._getType() === "template-description") {
+  // console.log(message);
+  const template: IPromptTemplate = message.additional_kwargs.template;
+  if (template?.description) {
     return (
       <div className="prose dark:prose-invert max-w-none">
-        <DescriptionRenderer blockMatch={{ output: content }} />
+        <DescriptionRenderer
+          blockMatch={{ output: content }}
+          template={template}
+        />
       </div>
     );
   }

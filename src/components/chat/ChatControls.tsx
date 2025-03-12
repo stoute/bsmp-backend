@@ -16,13 +16,6 @@ import { Label } from "@components/ui/label";
 import { DEFAULT_TEMPLATE_ID, DEFAULT_MODEL } from "@/consts";
 import { getMatchingOpenRouterModels } from "@lib/utils/modelUtils";
 import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-} from "@components/ui/command";
-import {
   Popover,
   PopoverContent,
   PopoverTrigger,

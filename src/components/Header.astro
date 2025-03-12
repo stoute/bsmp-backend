@@ -4,8 +4,8 @@ import { cn } from "@lib/utils";
 const { pathname } = Astro.url;
 const subpath = pathname.match(/[^/]+/g);
 import Container from "@components/Container.astro";
-import LogoLight from "/public/images/logo-light.svg";
-import LogoDark from "/public/images/logo-dark.svg";
+import LogoLight from "@images/logo-light.svg";
+import LogoDark from "@images/logo-dark.svg";
 
 interface Props {
   colorMode?: "light" | "dark" | "system";

@@ -73,39 +73,20 @@ class ChatManager {
       ) {
         this.updateModel(state.selectedModel);
       }
-      // Only update template if it's different and not already being updated
-      // if (
-      //   state.selectedTemplate &&
-      //   state.selectedTemplate.id !== this.template?.id
-      // ) {
-      //   this.init(state.selectedTemplate);
-      // }
     });
   }
 
   public async init(template?: IPromptTemplate) {
+    console.log("ChatManager init", template);
+    console.log("messages", this.messages);
     try {
       await this.restoreState();
-      let currentChat = appState.get().currentChat;
-      const storedTemplateId = currentChat?.template?.id;
-      // template has changed
-
-      if (template && template.id !== storedTemplateId) {
+      if (
+        template &&
+        appState.get().currentChat?.template?.id !== template.id
+      ) {
         await this.setTemplate(template);
       }
-
-      this.messages.map((msg) => {
-        const type = msg._getType();
-        if (type === "human") {
-          // console.log("Human: ", msg.content);
-        } else if (type === "ai") {
-          // console.log("AI: ", msg.content);
-        } else {
-          // console.log("System: ", msg.content);
-        }
-      });
-
-      await this.saveState();
     } catch (error) {
       console.error("Error during initialization:", error);
       // Fallback to default system message
@@ -114,11 +95,11 @@ class ChatManager {
   }
 
   async setTemplate(template: IPromptTemplate) {
+    console.log("ChatManager setTemplate", template);
     try {
       if (!template) {
         throw new Error("Template is required");
       }
-
       // todo:Process the template
       const processedTemplate = this.parser.processTemplate(template);
       this.template = processedTemplate;
@@ -136,43 +117,21 @@ class ChatManager {
       this.replaceSystemMessage(systemMessage);
       let messages: BaseMessage[] = [systemMessage];
 
-      // fixme: custom message
+      // custom description message
       if (processedTemplate.description) {
-        // class CustomMessage extends AIMessage {
-        //   constructor(content, additional_kwargs = {}) {
-        //     super(content);
-        //     this.additional_kwargs = additional_kwargs;
-        //   }
-        //   _getType(): string {
-        //     return "template-description";
-        //   }
-        // }
-        // const descriptionMessage = new CustomMessage(
-        //   processedTemplate.description,
-        //   {
-        //     name: "template-description",
-        //     id: processedTemplate.id,
-        //   },
-        // );
         const descriptionMessage = new AIMessage({
           content: processedTemplate.description,
+          id: "template-description",
           additional_kwargs: {
-            name: "template-description",
-            id: processedTemplate.id,
+            template,
           },
         });
-        descriptionMessage._getType = () => {
-          return "template-description";
-        };
+        descriptionMessage.getType = () => "template-description";
+
         messages.push(descriptionMessage);
       }
       // todo:Process and filter messages
-      this.messages = this.parser.processMessages(
-        // [...this.messages, ...messages],
-        messages,
-        template.id,
-      );
-      console.log(this.messages);
+      this.messages = this.parser.processMessages(messages, template.id);
       this.saveState();
       return this.messages;
     } catch (error) {
@@ -213,58 +172,30 @@ class ChatManager {
       this.template = savedChat.template;
     }
     if (savedChat?.messages && Array.isArray(savedChat.messages)) {
-      const restoredMessages = savedChat.messages
-        .filter((msg) => msg && msg.role && msg.content) // Ensure valid messages
-        .map((msg) => {
-          switch (msg.role.toLowerCase()) {
-            case "system":
-              return new SystemMessage(msg.content);
-            case "assistant":
-            case "ai":
-              return new AIMessage(msg.content);
-            case "human":
-            case "user":
-              return new HumanMessage(msg.content);
-            default:
-              console.warn(
-                `Unknown message role: ${msg.role}, defaulting to human`,
-              );
-              return new HumanMessage(msg.content);
-          }
-        });
-
+      const restoredMessages = savedChat.messages;
       if (restoredMessages.length > 0) {
+        restoredMessages.forEach((msg: BaseMessage) => {
+          // @ts-ignore
+          msg.getType = () => msg.role;
+        });
         this.messages = restoredMessages;
       }
     }
   }
 
   private saveState() {
+    const serializedMessages = this.messages.map((msg) => {
+      return {
+        role: msg.getType(),
+        content: msg.content,
+        additional_kwargs: msg.additional_kwargs,
+      };
+    });
     const chatState: ChatState = {
       model: this.model,
       templateId: this.template?.id,
       template: this.template,
-      messages: this.messages.map((msg: BaseMessage) => {
-        // Map _getType() values to consistent role names
-        let role: string;
-        switch (msg._getType()) {
-          case "ai":
-            role = "assistant";
-            break;
-          case "human":
-            role = "human";
-            break;
-          case "system":
-            role = "system";
-            break;
-          default:
-            role = "human";
-        }
-        return {
-          role,
-          content: msg.content,
-        };
-      }),
+      messages: serializedMessages,
     };
     appState.setKey("currentChat", chatState);
   }
@@ -275,16 +206,8 @@ class ChatManager {
     this.isLoading = true;
     try {
       let processedInput = input;
-      // if (this.chatPromptTemplate && variables) {
-      //   const formatted = await this.chatPromptTemplate.formatMessages({
-      //     input,
-      //     ...variables,
-      //   });
-      //   processedInput = formatted[formatted.length - 1].content;
-      // }
       const userMessage = new HumanMessage(processedInput);
 
-      // Process the message before adding it
       const processedMessage = this.parser.processMessage(
         userMessage,
         this.template?.id,
@@ -296,18 +219,18 @@ class ChatManager {
 
       this.messages.push(processedMessage);
 
-      // Filter and process all messages before sending to LLM
-      const validMessages = this.parser.processMessages(
-        this.messages,
-        this.template?.id,
-      );
+      // Filter out template-description messages before sending to LLM
+      const validMessages = this.messages.filter((msg) => {
+        const type = msg.getType();
+        return type !== "template-description";
+      });
+
       if (validMessages.length === 0) {
         throw new Error("No valid messages to process");
       }
 
       const response = await this.llm.invoke(validMessages);
       if (response) {
-        // Process the AI response
         const processedResponse = this.parser.processMessage(
           response,
           this.template?.id,
@@ -345,20 +268,19 @@ class ChatManager {
     await this.clearMessages();
     this.cleanup();
     appState.setKey("currentChat", undefined);
-    // if (this.template) {
-    //   await this.init(this.template);
-    //   console.info("Clearing template chat", this.messages);
-    //   appService.debug(appState.value);
-    //   return;
-    // }
-    this.messages = [new SystemMessage(DEFAULT_SYSTEM_MESSAGE)];
-    await this.init();
-
-    return;
+    const selectedTemplateId = appState.get().selectedTemplateId;
+    console.log("selectedTemplateId", selectedTemplateId);
+    if (selectedTemplateId) {
+      appState.setKey("selectedTemplate", undefined);
+      await this.newChat(selectedTemplateId);
+    } else {
+      this.messages = [new SystemMessage(DEFAULT_SYSTEM_MESSAGE)];
+      await this.init();
+    }
   }
 
   async newChat(templateId?: string) {
-    await this.clearChat();
+    await this.clearMessages();
     if (templateId) {
       const response = await fetch(
         `${appState.get().apiBaseUrl}/prompts/${templateId}.json`,
@@ -380,7 +302,7 @@ class ChatManager {
    */
   public replaceSystemMessage(systemMessage?: SystemMessage) {
     // Remove all existing system messages
-    this.messages = this.messages.filter((msg) => msg._getType() !== "system");
+    this.messages = this.messages.filter((msg) => msg.getType() !== "system");
     // Insert the new system message at the beginning
     if (systemMessage) {
       this.messages.unshift(systemMessage);
