@@ -252,9 +252,31 @@ export default function ChatControls() {
       <div className="ml-auto">
         <button
           onClick={handleNewChat}
-          className="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+          aria-label="Start new chat"
+          className={cn(
+            "flex",
+            "size-9 items-center justify-center rounded-full p-2",
+            "bg-transparent hover:bg-black/5 dark:hover:bg-white/20",
+            "stroke-current hover:stroke-black dark:hover:stroke-white",
+            "border border-black/10 dark:border-white/25",
+            "transition-colors duration-300 ease-in-out",
+          )}
         >
-          New Chat
+          <svg
+            width="48"
+            height="48"
+            viewBox="0 0 48 48"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              fill="none"
+              stroke="currentColor"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="4"
+              d="m24.06 10l-.036 28M10 24h28"
+            />
+          </svg>
         </button>
       </div>
     </div>

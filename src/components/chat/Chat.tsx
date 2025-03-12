@@ -220,6 +220,7 @@ const ChatMessage = ({ message }: { message: any }) => {
 ChatMessage.displayName = "ChatMessage";
 
 const MessageContent = ({ message }: { message: any }) => {
+  console.log("r");
   const content =
     typeof message.content === "string"
       ? message.content

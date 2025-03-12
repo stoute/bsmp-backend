@@ -18,6 +18,7 @@ import {
   DEFAULT_MODEL,
   DEFAULT_MODEL_FREE,
   DEFAULT_SYSTEM_MESSAGE,
+  DEFAULT_TEMPLATE_ID,
 } from "@consts";
 import { ChatParser } from "./ChatParser";
 
@@ -52,15 +53,13 @@ class ChatManager {
       model: this.model,
       apiKey: "none",
     });
-
-    // Initialize with default system message
-    this.messages = [new SystemMessage(DEFAULT_SYSTEM_MESSAGE)];
-
-    // Setup state subscription
     this.setupStateSubscription();
-
-    // Call async init
-    this.init(appState.get().selectedTemplate || undefined);
+    this.restoreState();
+    if (appState.get().currentChat) {
+      this.init(appState.get().currentChat?.template || undefined);
+    } else {
+      this.newChat(DEFAULT_TEMPLATE_ID);
+    }
   }
 
   private setupStateSubscription() {
@@ -77,8 +76,6 @@ class ChatManager {
   }
 
   public async init(template?: IPromptTemplate) {
-    console.log("ChatManager init", template);
-    console.log("messages", this.messages);
     try {
       await this.restoreState();
       if (
@@ -95,7 +92,6 @@ class ChatManager {
   }
 
   async setTemplate(template: IPromptTemplate) {
-    console.log("ChatManager setTemplate", template);
     try {
       if (!template) {
         throw new Error("Template is required");
@@ -109,7 +105,7 @@ class ChatManager {
         this.parser.createChatPromptTemplate(processedTemplate);
 
       // Process messages
-      this.cleanup();
+      this.cleanupSubscriptions();
       this.setupStateSubscription();
       const systemMessage = new SystemMessage(
         processedTemplate.systemPrompt || DEFAULT_SYSTEM_MESSAGE,
@@ -142,6 +138,27 @@ class ChatManager {
     }
   }
 
+  async newChat(templateId?: string) {
+    await this.clearMessages();
+    this.cleanupSubscriptions();
+    appState.setKey("currentChat", undefined);
+    if (templateId) {
+      const response = await fetch(
+        `${appState.get().apiBaseUrl}/prompts/${templateId}.json`,
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch template");
+      }
+      const template: IPromptTemplate = await response.json();
+      appState.setKey("selectedTemplate", template);
+      appState.setKey("selectedTemplateId", template.id);
+      await this.init(template);
+    }
+    // Initialize with default system message
+    this.messages = [new SystemMessage(DEFAULT_SYSTEM_MESSAGE)];
+    await this.init();
+  }
+
   private updateModel(newModel: string) {
     this.model = newModel;
     this.llm = new ChatOpenAI({
@@ -155,8 +172,8 @@ class ChatManager {
     appService.debug("Updated model to: " + newModel);
     this.saveState();
   }
-  // Add cleanup method
-  public cleanup() {
+
+  public cleanupSubscriptions() {
     if (this.unsubscribe) {
       this.unsubscribe();
       this.unsubscribe = null;
@@ -262,25 +279,6 @@ class ChatManager {
   async clearMessages() {
     this.messages = [];
     await this.saveState();
-  }
-
-  async newChat(templateId?: string) {
-    await this.clearMessages();
-    this.cleanup();
-    appState.setKey("currentChat", undefined);
-    if (templateId) {
-      const response = await fetch(
-        `${appState.get().apiBaseUrl}/prompts/${templateId}.json`,
-      );
-      if (!response.ok) {
-        throw new Error("Failed to fetch template");
-      }
-      const template: IPromptTemplate = await response.json();
-      appState.setKey("selectedTemplate", template);
-      appState.setKey("selectedTemplateId", template.id);
-      await this.init(template);
-    }
-    await this.init();
   }
 
   /**
