@@ -2,7 +2,8 @@ import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { useStore } from "@nanostores/react";
 import type { IPromptTemplate } from "@types";
 import type { OpenRouterModel } from "@lib/ai/types";
-import { appState, chatManager, templateList } from "@lib/appStore";
+import { appState, templateList } from "@lib/appStore";
+import { chatManager } from "@lib/ChatManager";
 import { useAppService } from "@lib/hooks/useAppService";
 import {
   Select,
@@ -127,9 +128,7 @@ export default function ChatControls() {
 
   // Callbacks
   const handleClearChat = useCallback(() => {
-    const manager = chatManager.get();
-    if (!manager) return;
-    manager.clearChat();
+    chatManager.clearChat();
   }, []);
 
   const handleModelChange = useCallback(async (model: string) => {
@@ -144,18 +143,7 @@ export default function ChatControls() {
 
   const handleTemplateChange = useCallback(async (templateId: string) => {
     try {
-      // const manager = chatManager.get();
-      // if (!manager) return;
-      // manager.newChat(templateId);
-      const response = await fetch(
-        `${appState.get().apiBaseUrl}/prompts/${templateId}.json`,
-      );
-      if (!response.ok) {
-        throw new Error("Failed to fetch template");
-      }
-      const template: IPromptTemplate = await response.json();
-      appState.setKey("selectedTemplate", template);
-      appState.setKey("selectedTemplateId", template.id);
+      await chatManager.newChat(templateId);
     } catch (err) {
       console.error("Error fetching template:", err);
     }

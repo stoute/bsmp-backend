@@ -1,7 +1,7 @@
 import { persistentAtom, persistentMap } from "@nanostores/persistent";
 import type { OpenRouterModelIndex } from "@lib/ai/types";
 import type { IPromptTemplate } from "@types";
-import type { ChatManager } from "./ChatManager";
+// import type { ChatManager } from "./ChatManager";
 import { atom } from "nanostores";
 
 const getEnvironment = () => {
@@ -56,7 +56,7 @@ export const openRouterModels = persistentMap<OpenRouterModelIndex>(
   },
 );
 
-export const chatManager = atom<ChatManager | null>(null);
+// export const chatManager = atom<ChatManager | null>(null);
 
 export const templateList = atom([]);
 

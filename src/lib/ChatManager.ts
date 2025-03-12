@@ -21,7 +21,8 @@ import {
 } from "@consts";
 import { ChatParser } from "./ChatParser";
 
-export class ChatManager {
+class ChatManager {
+  private static instance: ChatManager;
   private llm: ChatOpenAI;
   private isLoading: boolean = false;
   private chatPromptTemplate?: ChatPromptTemplate;
@@ -31,8 +32,7 @@ export class ChatManager {
   public messages: BaseMessage[] = [];
   private parser: ChatParser;
 
-  // Constructor called by Chat component
-  constructor() {
+  private constructor() {
     this.parser = new ChatParser();
     // Register any custom processors needed
     this.parser.registerCodeProcessor();
@@ -74,12 +74,12 @@ export class ChatManager {
         this.updateModel(state.selectedModel);
       }
       // Only update template if it's different and not already being updated
-      if (
-        state.selectedTemplate &&
-        state.selectedTemplate.id !== this.template?.id
-      ) {
-        this.init(state.selectedTemplate);
-      }
+      // if (
+      //   state.selectedTemplate &&
+      //   state.selectedTemplate.id !== this.template?.id
+      // ) {
+      //   this.init(state.selectedTemplate);
+      // }
     });
   }
 
@@ -89,12 +89,9 @@ export class ChatManager {
       let currentChat = appState.get().currentChat;
       const storedTemplateId = currentChat?.template?.id;
       // template has changed
-      if (currentChat?.template && !template) {
-        await this.setTemplate(currentChat.template);
-      } else {
-        if (template) {
-          await this.setTemplate(template);
-        }
+
+      if (template && template.id !== storedTemplateId) {
+        await this.setTemplate(template);
       }
 
       this.messages.map((msg) => {
@@ -122,7 +119,7 @@ export class ChatManager {
         throw new Error("Template is required");
       }
 
-      // Process the template
+      // todo:Process the template
       const processedTemplate = this.parser.processTemplate(template);
       this.template = processedTemplate;
 
@@ -131,25 +128,51 @@ export class ChatManager {
         this.parser.createChatPromptTemplate(processedTemplate);
 
       // Process messages
+      this.cleanup();
+      this.setupStateSubscription();
       const systemMessage = new SystemMessage(
         processedTemplate.systemPrompt || DEFAULT_SYSTEM_MESSAGE,
       );
-
       this.replaceSystemMessage(systemMessage);
-      const messages: BaseMessage[] = [systemMessage];
+      let messages: BaseMessage[] = [systemMessage];
 
+      // fixme
       if (processedTemplate.description) {
-        const descriptionMessage = new AIMessage(processedTemplate.description);
-        descriptionMessage.name = "description";
+        class CustomMessage extends BaseMessage {
+          constructor(content, additional_kwargs = {}) {
+            super(content);
+            this.additional_kwargs = additional_kwargs;
+          }
+          _getType(): string {
+            return "template-description";
+          }
+        }
+        const descriptionMessage = new CustomMessage(
+          processedTemplate.description,
+          {
+            name: "template-description",
+            id: processedTemplate.id,
+          },
+        );
+        // const descriptionMessage = new AIMessage({
+        //   content: processedTemplate.description,
+        //   additional_kwargs: {
+        //     name: "template-description",
+        //     id: processedTemplate.id,
+        //   },
+        // });
+        // descriptionMessage._getType = () => {
+        //   return "template-description";
+        // };
         messages.push(descriptionMessage);
       }
-
-      // Process and filter messages
+      // todo:Process and filter messages
       this.messages = this.parser.processMessages(
-        [...this.messages, ...messages],
+        // [...this.messages, ...messages],
+        messages,
         template.id,
       );
-
+      console.log(this.messages);
       this.saveState();
       return this.messages;
     } catch (error) {
@@ -252,14 +275,13 @@ export class ChatManager {
     this.isLoading = true;
     try {
       let processedInput = input;
-      if (this.chatPromptTemplate && variables) {
-        const formatted = await this.chatPromptTemplate.formatMessages({
-          input,
-          ...variables,
-        });
-        processedInput = formatted[formatted.length - 1].content;
-      }
-
+      // if (this.chatPromptTemplate && variables) {
+      //   const formatted = await this.chatPromptTemplate.formatMessages({
+      //     input,
+      //     ...variables,
+      //   });
+      //   processedInput = formatted[formatted.length - 1].content;
+      // }
       const userMessage = new HumanMessage(processedInput);
 
       // Process the message before adding it
@@ -279,7 +301,6 @@ export class ChatManager {
         this.messages,
         this.template?.id,
       );
-
       if (validMessages.length === 0) {
         throw new Error("No valid messages to process");
       }
@@ -316,16 +337,41 @@ export class ChatManager {
   }
 
   async clearMessages() {
-    appState.setKey("currentChat", undefined);
     this.messages = [];
-    if (this.template) {
-      await this.init(this.template);
-      console.info("Clearing template chat", this.messages);
-      return;
-    }
+    await this.saveState();
+  }
+
+  async clearChat() {
+    await this.clearMessages();
+    this.cleanup();
+    appState.setKey("currentChat", undefined);
+    // if (this.template) {
+    //   await this.init(this.template);
+    //   console.info("Clearing template chat", this.messages);
+    //   appService.debug(appState.value);
+    //   return;
+    // }
     this.messages = [new SystemMessage(DEFAULT_SYSTEM_MESSAGE)];
     await this.init();
+
     return;
+  }
+
+  async newChat(templateId?: string) {
+    await this.clearChat();
+    if (templateId) {
+      const response = await fetch(
+        `${appState.get().apiBaseUrl}/prompts/${templateId}.json`,
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch template");
+      }
+      const template: IPromptTemplate = await response.json();
+      appState.setKey("selectedTemplate", template);
+      appState.setKey("selectedTemplateId", template.id);
+      await this.init(template);
+    }
+    await this.init();
   }
 
   /**
@@ -368,4 +414,13 @@ export class ChatManager {
 
     return response;
   };
+
+  public static getInstance(): ChatManager {
+    if (!ChatManager.instance) {
+      ChatManager.instance = new ChatManager();
+    }
+    return ChatManager.instance;
+  }
 }
+
+export const chatManager = ChatManager.getInstance();

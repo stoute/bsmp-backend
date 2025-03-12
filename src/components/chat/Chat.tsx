@@ -2,8 +2,8 @@
 import { useState, useEffect, useCallback, memo, useRef, useMemo } from "react";
 import { BaseMessage } from "@langchain/core/messages";
 import { useStore } from "@nanostores/react";
-import { ChatManager } from "@lib/ChatManager";
-import { appState, chatManager } from "@lib/appStore";
+import { chatManager } from "@lib/ChatManager";
+import { appState } from "@lib/appStore";
 import { useAppService } from "@lib/hooks/useAppService";
 import { MarkdownRenderer } from "./renderers/MarkdownRenderer.tsx";
 import { MessageErrorBoundary } from "./MessageErrorBoundary";
@@ -13,7 +13,6 @@ import { DescriptionRenderer } from "./renderers/DescriptionRenderer";
 
 export default function Chat() {
   const { appService, isReady } = useAppService();
-  const chatManagerRef = useRef<ChatManager | null>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const isRestoringRef = useRef(false);
   const state = useStore(appState);
@@ -55,21 +54,15 @@ export default function Chat() {
 
   // Initialize chat manager only when appService is ready
   useEffect(() => {
-    if (!isReady || chatManagerRef.current) return;
-
+    if (!isReady) return;
     const savedChat = state.currentChat;
     isRestoringRef.current = savedChat?.messages?.length > 0;
-    // initialize chat manager
-    chatManagerRef.current = new ChatManager();
-    chatManager.set(chatManagerRef.current);
-    setMessages(chatManagerRef.current.getMessages());
+    setMessages(chatManager.getMessages());
   }, [isReady]);
 
   useEffect(() => {
-    if (!chatManagerRef.current) return;
     setTimeout(() => {
-      // console.log(chatManagerRef.current.getMessages());
-      setMessages(chatManagerRef.current.getMessages());
+      setMessages(chatManager.getMessages());
     }, 100);
   }, [state.currentChat?.messages]);
 
@@ -93,15 +86,13 @@ export default function Chat() {
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
       e.preventDefault();
-      if (!input.trim() || !chatManagerRef.current) return;
+      if (!input.trim()) return;
 
       setIsLoading(true);
       try {
-        await chatManagerRef.current.sendMessage(input);
-        setMessages(chatManagerRef.current.getMessages());
-        // scrollToBottom();
+        await chatManager.sendMessage(input);
+        setMessages(chatManager.getMessages());
         scrollLastUserMessageToTop();
-
         setInput("");
       } catch (error) {
         console.error("Chat error:", error);
@@ -109,14 +100,14 @@ export default function Chat() {
         setIsLoading(false);
       }
     },
-    [input, scrollToBottom],
+    [input, scrollLastUserMessageToTop],
   );
 
   const handleInputChange = useCallback((value: string) => {
     setInput(value);
   }, []);
 
-  if (!isReady || !chatManagerRef.current) {
+  if (!isReady) {
     return <div className={styles.loading}></div>;
   }
 
@@ -229,21 +220,22 @@ const ChatInput = memo(
 ChatInput.displayName = "ChatInput";
 
 const MessageContent = memo(({ message }: { message: any }) => {
-  if (message.name === "description") {
-    return (
-      <DescriptionRenderer
-        blockMatch={{ output: message.content }}
-        message={message}
-      />
-    );
-  }
-
+  console.log(message);
+  console.log(message._getType());
   const content =
     typeof message.content === "string"
       ? message.content
       : message.content?.toString() || "";
-
   if (!content) return null;
+
+  // fixme: custom props set in chatManager are undefined
+  if (message._getType() === "template-description") {
+    return (
+      <div className="prose dark:prose-invert max-w-none">
+        <DescriptionRenderer blockMatch={{ output: content }} />
+      </div>
+    );
+  }
 
   return (
     <div className="prose dark:prose-invert max-w-none">
