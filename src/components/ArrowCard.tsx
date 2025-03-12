@@ -43,22 +43,14 @@ export default function ArrowCard({ entry, pill }: Props) {
         height="20"
         viewBox="0 0 24 24"
         fill="none"
-        stroke-width="2.5"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
         className="stroke-current group-hover:stroke-black dark:group-hover:stroke-white"
       >
-        <line
-          x1="5"
-          y1="12"
-          x2="19"
-          y2="12"
-          className="translate-x-4 scale-x-0 transition-all duration-300 ease-in-out group-hover:translate-x-1 group-hover:scale-x-100"
-        />
-        <polyline
-          points="12 5 19 12 12 19"
-          className="translate-x-0 transition-all duration-300 ease-in-out group-hover:translate-x-1"
-        />
+        <line x1="5" y1="12" x2="19" y2="12" />
+        <line x1="12" y1="5" x2="19" y2="12" />
+        <line x1="12" y1="19" x2="19" y2="12" />
       </svg>
     </a>
   );

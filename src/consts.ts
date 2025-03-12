@@ -41,10 +41,11 @@ export const LINKS_DEV: Links = [
     TEXT: "Projects",
     HREF: "/projects",
   },
-  // {
-  //   TEXT: "Blog",
-  //   HREF: "/blog",
-  // },
+
+  {
+    TEXT: "Blog",
+    HREF: "/blog",
+  },
 ]; // Global
 export const SITE: Site = {
   TITLE: "BSMP",

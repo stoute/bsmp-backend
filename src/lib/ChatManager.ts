@@ -136,34 +136,34 @@ class ChatManager {
       this.replaceSystemMessage(systemMessage);
       let messages: BaseMessage[] = [systemMessage];
 
-      // fixme
+      // fixme: custom message
       if (processedTemplate.description) {
-        class CustomMessage extends BaseMessage {
-          constructor(content, additional_kwargs = {}) {
-            super(content);
-            this.additional_kwargs = additional_kwargs;
-          }
-          _getType(): string {
-            return "template-description";
-          }
-        }
-        const descriptionMessage = new CustomMessage(
-          processedTemplate.description,
-          {
-            name: "template-description",
-            id: processedTemplate.id,
-          },
-        );
-        // const descriptionMessage = new AIMessage({
-        //   content: processedTemplate.description,
-        //   additional_kwargs: {
+        // class CustomMessage extends AIMessage {
+        //   constructor(content, additional_kwargs = {}) {
+        //     super(content);
+        //     this.additional_kwargs = additional_kwargs;
+        //   }
+        //   _getType(): string {
+        //     return "template-description";
+        //   }
+        // }
+        // const descriptionMessage = new CustomMessage(
+        //   processedTemplate.description,
+        //   {
         //     name: "template-description",
         //     id: processedTemplate.id,
         //   },
-        // });
-        // descriptionMessage._getType = () => {
-        //   return "template-description";
-        // };
+        // );
+        const descriptionMessage = new AIMessage({
+          content: processedTemplate.description,
+          additional_kwargs: {
+            name: "template-description",
+            id: processedTemplate.id,
+          },
+        });
+        descriptionMessage._getType = () => {
+          return "template-description";
+        };
         messages.push(descriptionMessage);
       }
       // todo:Process and filter messages
