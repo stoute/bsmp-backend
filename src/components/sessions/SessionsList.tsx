@@ -73,8 +73,8 @@ export default function SessionsList() {
       appState.setKey("currentChat", session);
       appState.setKey("selectedModel", session.metadata?.model);
       appState.setKey("selectedTemplateId", session.metadata?.template?.id);
-      setOpen(false);
       window.location.href = '/chat';
+      setOpen(false);
     } catch (err) {
       console.error("Error loading session:", err);
       setError("Failed to load session");
