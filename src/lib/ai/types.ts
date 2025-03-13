@@ -1,4 +1,5 @@
-import { type BaseMessage } from "@langchain/core/messages";
+import { ChatPromptTemplate } from "@langchain/core/prompts";
+import type { BaseMessage } from "@langchain/core/messages";
 
 export type Message = BaseMessage & {
   role: "system" | "user" | "assistant"; // Role of the message sender
@@ -12,6 +13,29 @@ export type ChatSession = {
   updated_at?: string; // Optional ISO 8601 timestamp when the session was last updated
   messages: Message[]; // Array of messages exchanged in the session
   metadata?: Record<string, any>; // Optional metadata about the session
+};
+
+export interface IPromptTemplate {
+  id: string; // UUID format
+  name: string;
+  description: string;
+  systemPrompt?: string;
+  template?: string; // Changed to optional
+  variables?: string[];
+  created_at: string; // ISO datetime format
+  updated_at: string; // ISO datetime format
+}
+
+export type ChatState = ChatSession & {
+  model: string;
+  templateId?: string;
+  template?: IPromptTemplate;
+  metadata: {
+    templateId?: string;
+    template?: IPromptTemplate;
+    topic: string;
+    model: string;
+  };
 };
 
 // example

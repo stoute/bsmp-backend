@@ -1,22 +1,21 @@
 export const prerender = false;
-
 import { v4 as uuid } from "uuid";
-import { PromptTemplate, db, eq, and } from "astro:db";
-import type { IPromptTemplate } from "@types";
+import { ChatSession, db, eq, and, column } from "astro:db";
+import type { ChatState } from "@lib/ai/types";
 
-// GET /api/prompts/[id]: Retrieves a specific prompt template by its id.
+// GET /api/prompts/[id]: Retrieves a specific session by its id.
 export async function GET({ params }: { params: { id: string } }) {
   try {
     const { id } = params;
     const prompt = await db
       .select()
-      .from(PromptTemplate)
-      .where(eq(PromptTemplate.id, id))
-      // .where(`${PromptTemplateTable.id} = ${id}`);
+      .from(ChatSession)
+      .where(eq(ChatSession.id, id))
+      // .where(`${ChatStateTable.id} = ${id}`);
       .get();
     if (!prompt) {
       return new Response(
-        JSON.stringify({ message: "Prompt template not found" }),
+        JSON.stringify({ message: "ChatSession not found" }),
         {
           status: 404,
           headers: {
@@ -35,7 +34,7 @@ export async function GET({ params }: { params: { id: string } }) {
   } catch (error) {
     console.error("Database error:", error);
     return new Response(
-      JSON.stringify({ message: "Failed to retrieve prompt template" }),
+      JSON.stringify({ message: "Failed to retrieve ChatSession" }),
       {
         status: 500,
         headers: {
@@ -46,7 +45,7 @@ export async function GET({ params }: { params: { id: string } }) {
   }
 }
 
-// PUT /api/prompts/[id]: Updates an existing prompt template.
+// PUT /api/sessions/[id]: Updates an existing prompt template.
 export async function PUT({
   request,
   params,
@@ -57,12 +56,10 @@ export async function PUT({
   try {
     const { id } = params;
     const requestBody = await request.json();
+    // Validate the request body against a partial ChatState interface (all fields optional).
+    const { messages, metadata } = requestBody;
 
-    // Validate the request body against a partial PromptTemplate interface (all fields optional).
-    const { name, description, systemPrompt, template, variables } =
-      requestBody;
-
-    if (!name && !description && !systemPrompt && !template && !variables) {
+    if (!messages && !metadata) {
       return new Response(JSON.stringify({ message: "No fields to update" }), {
         status: 400,
         headers: {
@@ -74,25 +71,22 @@ export async function PUT({
     // Set updated_at to the current ISO datetime.
     const now = new Date().toISOString();
 
-    const updatedPrompt: Partial<IPromptTemplate> = {
-      name,
-      description,
-      systemPrompt,
-      template,
-      variables,
+    const updatedPrompt: Partial<ChatState> = {
+      messages,
+      metadata,
       updated_at: now,
     };
 
     // Update the prompt template in the database.
     const result = await db
-      .update(PromptTemplate)
+      .update(ChatSession)
       .set(updatedPrompt)
-      .where(eq(PromptTemplate.id, id))
+      .where(eq(ChatSession.id, id))
       .run();
 
     if (result.changes === 0) {
       return new Response(
-        JSON.stringify({ message: "Prompt template not found" }),
+        JSON.stringify({ message: "ChatSession not found" }),
         {
           status: 404,
           headers: {
@@ -103,14 +97,14 @@ export async function PUT({
     }
 
     // Retrieve the updated prompt template from the database.
-    const updatedPromptTemplate = await db
+    const updatedChatState = await db
       .select()
-      .from(PromptTemplate)
-      .where(eq(PromptTemplate.id, id))
+      .from(ChatSession)
+      .where(eq(ChatSession.id, id))
       .get();
 
     // Return a 200 status code upon successful update, including the updated prompt template in the response body.
-    return new Response(JSON.stringify(updatedPromptTemplate), {
+    return new Response(JSON.stringify(updatedChatState), {
       status: 200,
       headers: {
         "Content-Type": "application/json",
@@ -119,7 +113,7 @@ export async function PUT({
   } catch (error) {
     console.error("Database error:", error);
     return new Response(
-      JSON.stringify({ message: "Failed to update prompt template" }),
+      JSON.stringify({ message: "Failed to update ChatSession" }),
       {
         status: 500,
         headers: {
@@ -137,13 +131,13 @@ export async function DELETE({ params }: { params: { id: string } }) {
 
     // Delete the prompt template from the database.
     const result = await db
-      .delete(PromptTemplate)
-      .where(eq(PromptTemplate.id, id))
+      .delete(ChatSession)
+      .where(eq(ChatSession.id, id))
       .run();
 
     if (result.changes === 0) {
       return new Response(
-        JSON.stringify({ message: "Prompt template not found" }),
+        JSON.stringify({ message: "ChatSession not found" }),
         {
           status: 404,
           headers: {
@@ -160,7 +154,7 @@ export async function DELETE({ params }: { params: { id: string } }) {
   } catch (error) {
     console.error("Database error:", error);
     return new Response(
-      JSON.stringify({ message: "Failed to delete prompt template" }),
+      JSON.stringify({ message: "Failed to delete ChatSession" }),
       {
         status: 500,
         headers: {
@@ -172,10 +166,10 @@ export async function DELETE({ params }: { params: { id: string } }) {
 }
 
 // export async function getStaticPaths() {
-//   const posts = await db.select().from(PromptTemplate);
+//   const items = await db.select().from(ChatSession);
 //   let arr = [];
-//   posts.map((post) => {
-//     arr.push({ params: { id: post.id } });
+//   items.map((item) => {
+//     arr.push({ params: { id: item.id } });
 //   });
 //   return arr;
 //   // todo: should work like this?

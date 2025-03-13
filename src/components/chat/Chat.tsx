@@ -7,7 +7,7 @@ import { appState } from "@lib/appStore";
 import { useAppService } from "@lib/hooks/useAppService";
 import { MarkdownRenderer } from "./renderers/MarkdownRenderer.tsx";
 import { MessageErrorBoundary } from "./MessageErrorBoundary";
-import type { IPromptTemplate } from "@types";
+import type { IPromptTemplate } from "@lib/ai/types";
 import styles from "./Chat.module.css";
 import { DescriptionRenderer } from "./renderers/DescriptionRenderer";
 

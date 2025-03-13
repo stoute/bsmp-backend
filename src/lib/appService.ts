@@ -4,7 +4,7 @@ import * as store from "@lib/appStore";
 import { type AppState, type ChatState, openRouterModels } from "@lib/appStore";
 // import { type IPromptTemplate } from "@types";
 import { type OpenRouterModelIndex } from "@lib/ai/types";
-import * as config from "@consts";
+import * as constants from "@consts";
 import type { OpenRouterModel } from "@lib/ai/types";
 
 const production: boolean = process.env.NODE_ENV === "production";
@@ -18,12 +18,12 @@ declare global {
 
 export class AppService {
   private static instance: AppService;
-  public name = config.SITE.TITLE;
+  public name = constants.SITE.TITLE;
   public store = store;
   public state: AppState = store.appState;
   public initialized: boolean = false;
   public production: boolean = production;
-  public config: any = config;
+  public constants: any = constants;
   // public version: string = packageJson.version;
   // public apikeyOpenAi = process.env.NEXT_PUBLIC_OPENAI_API_KEY as string;
 

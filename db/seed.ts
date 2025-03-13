@@ -1,10 +1,10 @@
 import { db, PromptTemplate, Comment, Author, Test } from "astro:db";
 import { v4 as uuidv4 } from "uuid";
 
-import data from "./seed-templates.json";
+import templates from "./seed-templates.json";
 
 export default async function () {
-  const promptTemplates = data;
+  const promptTemplates = templates;
 
   await db.insert(PromptTemplate).values(promptTemplates);
 

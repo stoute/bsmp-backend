@@ -4,24 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6db5ad0e-5635-4336-a0ae-8b285de92988" name="Changes" comment="feat: theme button toggle">
-      <change afterPath="$PROJECT_DIR$/db/seed-templates.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/pages/api/sessions/[id].json.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/pages/api/sessions/index.json.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/pages/api/sessions/list.json.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/AugmentWebviewStateStore.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/AugmentWebviewStateStore.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/db/config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/db/config.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/db/seed.ts" beforeDir="false" afterPath="$PROJECT_DIR$/db/seed.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/chat/Chat.module.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/chat/Chat.module.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/chat/Chat.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/chat/Chat.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/ChatManager.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/ChatManager.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/ChatParser.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/ChatParser.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/ai/types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/ai/types.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/appStore.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/appStore.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/api/prompts/index.json.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/api/prompts/index.json.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/api/prompts/list.json.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/api/prompts/list.json.ts" afterDir="false" />
-    </list>
+    <list default="true" id="b8fe9b82-77df-411c-be1e-37994586ba8d" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -30,35 +13,11 @@
   <component name="ComposerSettings">
     <execution />
   </component>
-  <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
-  </component>
-  <component name="GitHubPullRequestSearchHistory">{
-  &quot;lastFilter&quot;: {
-    &quot;state&quot;: &quot;OPEN&quot;,
-    &quot;assignee&quot;: &quot;stoute&quot;
-  }
-}</component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/stoute/bsmp-backend.git&quot;,
-    &quot;accountId&quot;: &quot;cc6d4433-b90f-47d3-b237-8632449963e3&quot;
-  }
-}</component>
-  <component name="KubernetesApiProvider">{
-  &quot;isMigrated&quot;: true
-}</component>
   <component name="PhpWorkspaceProjectConfiguration" interpreter_name="PHP Mamp 7.0.2" />
-  <component name="ProblemsViewState">
-    <option name="selectedTabId" value="CurrentFile" />
-  </component>
-  <component name="ProjectColorInfo">{
-  &quot;associatedIndex&quot;: 4
-}</component>
-  <component name="ProjectId" id="2tcDtvUwuPimNa5QHBNWJsjn3Zj" />
-  <component name="ProjectLevelVcsManager">
-    <ConfirmationsSetting value="2" id="Add" />
-  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 0
+}]]></component>
+  <component name="ProjectId" id="2uGEa5Xh5Vhuhr0hbltmVQhxzOw" />
   <component name="ProjectViewState">
     <option name="autoscrollFromSource" value="true" />
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -67,21 +26,12 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "feat-custom-renderers",
-    "last_opened_file_path": "/Users/bobstoute/Git/@bsmp/bsmp-backend/src/pages/api",
+    "last_opened_file_path": "/Users/bobstoute/Git/@bsmp/bsmp-backend",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "pnpm",
-    "npm.build.executor": "Run",
-    "npm.db-push-remote.executor": "Run",
-    "npm.dev.executor": "Run",
-    "npm.dev:network.executor": "Run",
-    "prettierjs.PrettierConfiguration.Package": "/Users/bobstoute/Git/@bsmp/bsmp-backend/node_modules/prettier",
-    "settings.editor.selected.configurable": "preferences.pluginManager",
-    "ts.external.directory.path": "/Users/bobstoute/Git/@bsmp/bsmp-backend/node_modules/typescript/lib",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -94,230 +44,27 @@
       </map>
     </option>
   </component>
-  <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/src/pages/api" />
-      <recent name="$PROJECT_DIR$/src/pages" />
-      <recent name="$PROJECT_DIR$/src/layouts" />
-      <recent name="$PROJECT_DIR$/src/pages/auth" />
-      <recent name="$PROJECT_DIR$/public" />
-    </key>
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/src/components/chat/renderers" />
-      <recent name="$PROJECT_DIR$/src/lib/ai" />
-      <recent name="$PROJECT_DIR$/src/pages" />
-      <recent name="$PROJECT_DIR$" />
-      <recent name="$PROJECT_DIR$/src/components" />
-    </key>
-  </component>
-  <component name="RunManager" selected="npm.dev:network">
-    <configuration name="build" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
-      <package-json value="$PROJECT_DIR$/package.json" />
-      <command value="run" />
-      <scripts>
-        <script value="build" />
-      </scripts>
-      <node-interpreter value="project" />
-      <envs />
-      <method v="2" />
-    </configuration>
-    <configuration name="build" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
-      <package-json value="$PROJECT_DIR$/package.json" />
-      <command value="run" />
-      <scripts>
-        <script value="build" />
-      </scripts>
-      <node-interpreter value="project" />
-      <envs />
-      <method v="2" />
-    </configuration>
-    <configuration name="db-push-remote" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
-      <package-json value="$PROJECT_DIR$/package.json" />
-      <command value="run" />
-      <scripts>
-        <script value="db-push-remote" />
-      </scripts>
-      <node-interpreter value="project" />
-      <envs />
-      <method v="2" />
-    </configuration>
-    <configuration name="db-push-remote" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
-      <package-json value="$PROJECT_DIR$/package.json" />
-      <command value="run" />
-      <scripts>
-        <script value="db-push-remote" />
-      </scripts>
-      <node-interpreter value="project" />
-      <envs />
-      <method v="2" />
-    </configuration>
-    <configuration name="dev" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
-      <package-json value="$PROJECT_DIR$/package.json" />
-      <command value="run" />
-      <scripts>
-        <script value="dev" />
-      </scripts>
-      <node-interpreter value="project" />
-      <envs />
-      <method v="2" />
-    </configuration>
-    <configuration name="dev" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
-      <package-json value="$PROJECT_DIR$/package.json" />
-      <command value="run" />
-      <scripts>
-        <script value="dev" />
-      </scripts>
-      <node-interpreter value="project" />
-      <envs />
-      <method v="2" />
-    </configuration>
-    <configuration name="dev:network" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
-      <package-json value="$PROJECT_DIR$/package.json" />
-      <command value="run" />
-      <scripts>
-        <script value="dev:network" />
-      </scripts>
-      <node-interpreter value="project" />
-      <envs />
-      <method v="2" />
-    </configuration>
-    <configuration name="dev:network" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
-      <package-json value="$PROJECT_DIR$/package.json" />
-      <command value="run" />
-      <scripts>
-        <script value="dev:network" />
-      </scripts>
-      <node-interpreter value="project" />
-      <envs />
-      <method v="2" />
-    </configuration>
-    <recent_temporary>
-      <list>
-        <item itemvalue="npm.dev:network" />
-        <item itemvalue="npm.db-push-remote" />
-        <item itemvalue="npm.dev" />
-        <item itemvalue="npm.build" />
-      </list>
-    </recent_temporary>
-  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-d6986cc7102b-76f8388c3a79-JavaScript-PS-243.24978.50" />
-        <option value="bundled-php-predefined-a98d8de5180a-fbeb0b58ac0f-com.jetbrains.php.sharedIndexes-PS-243.24978.50" />
+        <option value="bundled-js-predefined-d6986cc7102b-1632447f56bf-JavaScript-PS-243.25659.45" />
+        <option value="bundled-php-predefined-a98d8de5180a-1ec7b7818973-com.jetbrains.php.sharedIndexes-PS-243.25659.45" />
       </set>
     </attachedChunks>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="6db5ad0e-5635-4336-a0ae-8b285de92988" name="Changes" comment="" />
-      <created>1740642686598</created>
+      <changelist id="b8fe9b82-77df-411c-be1e-37994586ba8d" name="Changes" comment="" />
+      <created>1741866571182</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1740642686598</updated>
-      <workItem from="1740642687856" duration="59974000" />
-      <workItem from="1740897085267" duration="103573000" />
-      <workItem from="1741204589637" duration="4717000" />
-      <workItem from="1741263643966" duration="34564000" />
-      <workItem from="1741422351511" duration="601000" />
-      <workItem from="1741518505014" duration="3796000" />
-      <workItem from="1741554574954" duration="13872000" />
-      <workItem from="1741629730913" duration="7877000" />
-      <workItem from="1741762507765" duration="15429000" />
-      <workItem from="1741795071005" duration="3426000" />
-      <workItem from="1741798860476" duration="21426000" />
-      <workItem from="1741855516448" duration="54000" />
-      <workItem from="1741855604624" duration="3320000" />
+      <updated>1741866571182</updated>
+      <workItem from="1741866572494" duration="604000" />
     </task>
-    <task id="LOCAL-00001" summary="refactor: PromptTemplateTable to PromptTemplate">
-      <option name="closed" value="true" />
-      <created>1740668207054</created>
-      <option name="number" value="00001" />
-      <option name="presentableId" value="LOCAL-00001" />
-      <option name="project" value="LOCAL" />
-      <updated>1740668207054</updated>
-    </task>
-    <task id="LOCAL-00002" summary="fix: keep focus on chat input">
-      <option name="closed" value="true" />
-      <created>1741275256231</created>
-      <option name="number" value="00002" />
-      <option name="presentableId" value="LOCAL-00002" />
-      <option name="project" value="LOCAL" />
-      <updated>1741275256231</updated>
-    </task>
-    <task id="LOCAL-00003" summary="fix: removed input focus styling">
-      <option name="closed" value="true" />
-      <created>1741276660313</created>
-      <option name="number" value="00003" />
-      <option name="presentableId" value="LOCAL-00003" />
-      <option name="project" value="LOCAL" />
-      <updated>1741276660313</updated>
-    </task>
-    <task id="LOCAL-00004" summary="feat: color mode per page. default is system">
-      <option name="closed" value="true" />
-      <created>1741282102243</created>
-      <option name="number" value="00004" />
-      <option name="presentableId" value="LOCAL-00004" />
-      <option name="project" value="LOCAL" />
-      <updated>1741282102243</updated>
-    </task>
-    <task id="LOCAL-00005" summary="feat: color mode logo">
-      <option name="closed" value="true" />
-      <created>1741283631374</created>
-      <option name="number" value="00005" />
-      <option name="presentableId" value="LOCAL-00005" />
-      <option name="project" value="LOCAL" />
-      <updated>1741283631374</updated>
-    </task>
-    <task id="LOCAL-00006" summary="feat: color mode logo">
-      <option name="closed" value="true" />
-      <created>1741284247794</created>
-      <option name="number" value="00006" />
-      <option name="presentableId" value="LOCAL-00006" />
-      <option name="project" value="LOCAL" />
-      <updated>1741284247794</updated>
-    </task>
-    <task id="LOCAL-00007" summary="feat: theme button toggle">
-      <option name="closed" value="true" />
-      <created>1741285488219</created>
-      <option name="number" value="00007" />
-      <option name="presentableId" value="LOCAL-00007" />
-      <option name="project" value="LOCAL" />
-      <updated>1741285488219</updated>
-    </task>
-    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
-  </component>
-  <component name="VcsManagerConfiguration">
-    <MESSAGE value="refactor: PromptTemplateTable to PromptTemplate" />
-    <MESSAGE value="fix: keep focus on chat input" />
-    <MESSAGE value="fix: removed input focus styling" />
-    <MESSAGE value="feat: color mode per page. default is system" />
-    <MESSAGE value="feat: color mode logo" />
-    <MESSAGE value="feat: theme button toggle" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat: theme button toggle" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/src/lib/proxyFetchHandler.ts</url>
-          <line>4</line>
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/src/components/chat/ChatControls.tsx</url>
-          <option name="timeStamp" value="2" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
-  </component>
-  <component name="XSLT-Support.FileAssociations.UIState">
-    <expand />
-    <select />
   </component>
 </project>

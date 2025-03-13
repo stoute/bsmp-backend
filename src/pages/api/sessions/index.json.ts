@@ -1,14 +1,13 @@
 export const prerender = false;
-
 import { v4 as uuid } from "uuid";
-import { db, PromptTemplate, ChatState } from "astro:db";
-import type { IPromptTemplate } from "@lib/prompt-template/PromptTemplate";
+import { db, ChatState } from "astro:db";
+import type { ChatState } from "@lib/ai/type";
 
-// GET /api/prompts: Retrieves all prompt templates.
+// GET /api/sessions: Retrieves all sessions.
 export async function GET() {
   try {
-    const prompts = await db.select().from(PromptTemplate).all();
-    // Return an empty array if no prompt templates exist.
+    const prompts = await db.select().from(ChatState).all();
+    // Return an empty array if no sessions exist.
     return new Response(JSON.stringify(prompts || []), {
       status: 200,
       headers: {
@@ -18,7 +17,7 @@ export async function GET() {
   } catch (error) {
     console.error("Database error:", error);
     return new Response(
-      JSON.stringify({ message: "Failed to retrieve prompt templates" }),
+      JSON.stringify({ message: "Failed to retrieve sessions" }),
       {
         status: 500,
         headers: {
@@ -36,11 +35,9 @@ export async function POST({ request }: { request: Request }) {
 
     console.log(requestBody);
 
-    // Validate the request body against the PromptTemplate interface.
-    const { name, description, systemPrompt, template, variables } =
-      requestBody;
-    if (!name) {
-      // Remove template check
+    // Validate the request body against the ChatState interface.
+    const { messages, metadata } = requestBody;
+    if (!messages) {
       return new Response(
         JSON.stringify({ message: "Missing required fields" }),
         {
@@ -52,26 +49,23 @@ export async function POST({ request }: { request: Request }) {
       );
     }
 
-    // Automatically generate a UUID for the id field and set created_at and updated_at to the current ISO datetime.
+    // Generate new UUID and timestamps
     const id = uuid();
     const now = new Date().toISOString();
 
-    const newPrompt: IPromptTemplate = {
+    const newChatState: ChatState = {
       id,
-      name,
-      description: description || "",
-      systemPrompt: systemPrompt || "",
-      template,
-      variables: variables || [],
+      messages,
+      metadata,
       created_at: now,
       updated_at: now,
     };
 
-    // Create the new prompt template in the database.
-    await db.insert(PromptTemplate).values(newPrompt).run();
+    // Create the new chat session in the database
+    await db.insert(ChatState).values(newChatState).run();
 
-    // Return a 201 status code upon successful creation, including the newly created prompt template in the response body.
-    return new Response(JSON.stringify(newPrompt), {
+    // Return the newly created chat session
+    return new Response(JSON.stringify(newChatState), {
       status: 201,
       headers: {
         "Content-Type": "application/json",
@@ -80,7 +74,7 @@ export async function POST({ request }: { request: Request }) {
   } catch (error) {
     console.error("Database error:", error);
     return new Response(
-      JSON.stringify({ message: "Failed to create prompt template" }),
+      JSON.stringify({ message: "Failed to create ChatSession" }),
       {
         status: 500,
         headers: {

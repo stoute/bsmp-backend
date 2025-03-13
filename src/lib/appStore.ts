@@ -1,8 +1,13 @@
 import { persistentAtom, persistentMap } from "@nanostores/persistent";
-import type { Message, OpenRouterModelIndex } from "@lib/ai/types";
-import type { IPromptTemplate } from "@types";
-import type { ChatSession } from "@lib/ai/types";
+import type {
+  Message,
+  OpenRouterModelIndex,
+  ChatSession,
+  ChatState,
+} from "@lib/ai/types";
+import type { IPromptTemplate } from "@lib/aitypes";
 import { atom } from "nanostores";
+import { API_BASE_URL, API_BASE_URL_DEV } from "@consts";
 
 const getEnvironment = () => {
   if (typeof window !== "undefined") {
@@ -12,7 +17,7 @@ const getEnvironment = () => {
 };
 
 export type AppState = {
-  apiBaseUrl: "/api" | "https://bsmp.netlify.app/api";
+  apiBaseUrl: string;
   environment: "development" | "production";
   selectedModel?: string;
   selectedTemplate?: IPromptTemplate;
@@ -44,8 +49,8 @@ export type ChatState = ChatSession & {
 export const appState = persistentMap<AppState>(
   "app-state:",
   {
-    apiBaseUrl: "/api",
-    // apiBaseUrl: "https://bsmp.netlify.app/api",
+    apiBaseUrl:
+      getEnvironment() === "development" ? API_BASE_URL_DEV : API_BASE_URL,
     environment: getEnvironment(),
     selectedModel: undefined,
     selectedTemplateId: undefined,

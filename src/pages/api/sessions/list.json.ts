@@ -1,23 +1,23 @@
 export const prerender = false;
+import { db, ChatSession } from "astro:db";
 
-import { v4 as uuid } from "uuid";
-import { db, PromptTemplate } from "astro:db";
-import type { IPromptTemplate } from "@lib/prompt-template/PromptTemplate";
-
-// GET /api/prompts: Retrieves all prompt templates.
+// GET /api/sessions: Retrieves all ChatState items.
 export async function GET() {
   try {
-    const prompts = await db
+    const items = await db
       .select({
-        id: PromptTemplate.id,
-        name: PromptTemplate.name,
-        description: PromptTemplate.description,
-        created: PromptTemplate.created_at,
-        updated: PromptTemplate.updated_at,
+        id: ChatSession.id,
+        // todo: only get metadata.topic
+        metadata: ChatSession.metadata,
+        created: ChatSession.created_at,
+        updated: ChatSession.updated_at,
       })
-      .from(PromptTemplate);
+      .from(ChatState);
+      items.forEach((item) => {
+        item.metadata = {topic: item.metadata.topic}
+      });
     // Return an empty array if no prompt templates exist.
-    return new Response(JSON.stringify(prompts || []), {
+    return new Response(JSON.stringify(items || []), {
       status: 200,
       headers: {
         "Content-Type": "application/json",
@@ -26,7 +26,7 @@ export async function GET() {
   } catch (error) {
     console.error("Database error:", error);
     return new Response(
-      JSON.stringify({ message: "Failed to retrieve prompt templates" }),
+      JSON.stringify({ message: "Failed to retrieve ChatSession" }),
       {
         status: 500,
         headers: {

@@ -33,9 +33,6 @@ export async function GET() {
 export async function POST({ request }: { request: Request }) {
   try {
     const requestBody = await request.json();
-
-    console.log(requestBody);
-
     // Validate the request body against the PromptTemplate interface.
     const { name, description, systemPrompt, template, variables } =
       requestBody;

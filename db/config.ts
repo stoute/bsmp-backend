@@ -16,7 +16,7 @@ const PromptTemplate = defineTable({
   },
 });
 
-const ChatState = defineTable({
+const ChatSession = defineTable({
   columns: {
     id: column.text({ primaryKey: true }),
     model: column.text(),
@@ -60,5 +60,5 @@ const Author = defineTable({
 
 // https://astro.build/db/config
 export default defineDb({
-  tables: { PromptTemplate, Comment, Author, ChatState },
+  tables: { PromptTemplate, ChatSession, Comment, Author },
 });

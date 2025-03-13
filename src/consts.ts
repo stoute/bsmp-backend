@@ -17,6 +17,10 @@ export const DEFAULT_MODEL_FREE = "mistralai/mistral-7b-instruct";
 export const DEFAULT_TEMPLATE_ID = "be0a2289-88ca-42b5-860c-a97bae747362";
 export const DEFAULT_SYSTEM_MESSAGE = "You are a helpful assistant.";
 
+export const API_BASE_URL = "/api";
+// export const API_BASE_URL_DEV = "https://bsmp.netlify.app/api";
+export const API_BASE_URL_DEV = "/api";
+
 // Links
 export const LINKS: Links = [
   {
