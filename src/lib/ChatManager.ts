@@ -234,7 +234,7 @@ class ChatManager {
     }
   }
 
-  private saveState() {
+  private async saveState() {
     const serializedMessages = this.messages.map((msg) => {
       return { ...msg, ...{ role: msg.getType() } };
     });
@@ -243,9 +243,6 @@ class ChatManager {
       topic =
         "Topic: " + serializedMessages[1]?.content.slice(0, 120 - 3) + "...";
     const chatState: ChatState = {
-      // model: this.model,
-      // templateId: this.template?.id,
-      // template: this.template,
       messages: serializedMessages,
       metadata: {
         topic,
@@ -253,13 +250,35 @@ class ChatManager {
         templateId: this.template?.id,
         template: this.template,
       },
-
-
     };
 
+    const currentChat = appState.get().currentChat;
+    if (currentChat?.id || chatState.messages.length > 2) {
+      try {
+        const baseUrl = appState.get().apiBaseUrl;
+        const response = await fetch(`${baseUrl}/sessions/${currentChat.id}.json`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(chatState),
+        });
 
+        if (!response.ok) {
+          throw new Error('Failed to update chat session');
+        }
 
-    appState.setKey("currentChat", chatState);
+        const updatedSession = await response.json();
+        appState.setKey("currentChat", updatedSession);
+      } catch (error) {
+        console.error('Error saving chat state:', error);
+        // Still update local state even if server update fails
+        appState.setKey("currentChat", chatState);
+      }
+    } else {
+      // No existing session ID, just update local state
+      appState.setKey("currentChat", chatState);
+    }
   }
 
   async sendMessage(input: string, variables?: Record<string, string>) {
@@ -300,6 +319,7 @@ class ChatManager {
         if (processedResponse) {
           this.messages.push(processedResponse);
           this.saveState();
+
         }
       }
       return response;
