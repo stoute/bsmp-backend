@@ -7,12 +7,24 @@ export type Message = BaseMessage & {
   metadata?: Record<string, any>; // Optional metadata for the message (e.g., token usage)
 };
 
-export type ChatSession = {
+type ChatSession = {
   id: string; // Unique identifier for the chat session
   created_at: string; // ISO 8601 timestamp when the session was created
   updated_at?: string; // Optional ISO 8601 timestamp when the session was last updated
   messages: Message[]; // Array of messages exchanged in the session
   metadata?: Record<string, any>; // Optional metadata about the session
+};
+
+export type ChatState = ChatSession & {
+  model: string;
+  templateId?: string;
+  template?: IPromptTemplate;
+  metadata: {
+    templateId?: string;
+    template?: IPromptTemplate;
+    topic: string;
+    model: string;
+  };
 };
 
 export interface IPromptTemplate {
@@ -26,17 +38,7 @@ export interface IPromptTemplate {
   updated_at: string; // ISO datetime format
 }
 
-export type ChatState = ChatSession & {
-  model: string;
-  templateId?: string;
-  template?: IPromptTemplate;
-  metadata: {
-    templateId?: string;
-    template?: IPromptTemplate;
-    topic: string;
-    model: string;
-  };
-};
+
 
 // example
 // const chatSession: ChatSession = {

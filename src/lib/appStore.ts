@@ -1,8 +1,6 @@
 import { persistentAtom, persistentMap } from "@nanostores/persistent";
 import type {
-  Message,
   OpenRouterModelIndex,
-  ChatSession,
   ChatState,
 } from "@lib/ai/types";
 import type { IPromptTemplate } from "@lib/aitypes";
@@ -23,26 +21,8 @@ export type AppState = {
   selectedTemplate?: IPromptTemplate;
   selectedTemplateId?: string;
   currentChat?: ChatState;
-};
-
-// export type ChatSession = {
-//     session_id: string; // Unique identifier for the chat session
-//     created_at: string; // ISO 8601 timestamp when the session was created
-//     updated_at?: string; // Optional ISO 8601 timestamp when the session was last updated
-//     messages: Message[]; // Array of messages exchanged in the session
-//     metadata?: Record<string, any>; // Optional metadata about the session
-// };
-
-export type ChatState = ChatSession & {
-  model: string;
-  templateId?: string;
-  template?: IPromptTemplate;
-  metadata: {
-    templateId?: string;
-    template?: IPromptTemplate;
-    topic: string;
-    model: string;
-  };
+  currentSession?: ChatState;
+  currentSessionId?: string;
 };
 
 // Specify the serializer/deserializer for the persistent store

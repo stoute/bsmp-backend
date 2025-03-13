@@ -1,7 +1,8 @@
 // import packageJson from '../../package.json';
 // import configJson from '../app/app-config.json';
 import * as store from "@lib/appStore";
-import { type AppState, type ChatState, openRouterModels } from "@lib/appStore";
+import { type ChatState, } from "@lib/ai/types";
+import { type AppState, openRouterModels } from "@lib/appStore";
 // import { type IPromptTemplate } from "@types";
 import { type OpenRouterModelIndex } from "@lib/ai/types";
 import * as constants from "@consts";
@@ -28,7 +29,7 @@ export class AppService {
   // public apikeyOpenAi = process.env.NEXT_PUBLIC_OPENAI_API_KEY as string;
 
   private constructor() {
-    console.log("AppService constructor");
+    // console.log("AppService constructor");
   }
 
   async init() {
@@ -70,12 +71,10 @@ export class AppService {
       }
       console.log("App initialized", this);
       this.initialized = true;
-      return this;
     } catch (error) {
       console.error("Error during app initialization:", error);
       // Still mark as initialized even if models fetch fails
       this.initialized = true;
-      return this;
     }
   }
 

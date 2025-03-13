@@ -11,10 +11,10 @@ import {
   AIMessage,
   BaseMessage,
 } from "@langchain/core/messages";
-import type { IPromptTemplate } from "@types";
 import type { Message } from "@lib/ai/types";
 import { appService } from "@lib/appService.ts";
-import { appState, openRouterModels, type ChatState } from "@lib/appStore";
+import {  type ChatState, type IPromptTemplate } from "@lib/ai/types";
+import { appState, openRouterModels } from "@lib/appStore";
 import {
   DEFAULT_MODEL,
   DEFAULT_MODEL_FREE,
@@ -56,11 +56,8 @@ class ChatManager {
     });
     this.setupStateSubscription();
     this.restoreState();
-    if (appState.get().currentChat) {
-      this.init(appState.get().currentChat?.template || undefined);
-    } else {
-      this.newChat(DEFAULT_TEMPLATE_ID);
-    }
+    if (!appState.get().currentChat) this.newChat(DEFAULT_TEMPLATE_ID);
+
   }
 
   private setupStateSubscription() {
@@ -77,14 +74,10 @@ class ChatManager {
   }
 
   public async init(template?: IPromptTemplate) {
+    console.log("init", template);
     try {
       await this.restoreState();
-      if (
-        template &&
-        appState.get().currentChat?.template?.id !== template.id
-      ) {
-        await this.setTemplate(template);
-      }
+      await this.setTemplate(template);
     } catch (error) {
       console.error("Error during initialization:", error);
       // Fallback to default system message
@@ -143,18 +136,57 @@ class ChatManager {
     await this.clearMessages();
     this.cleanupSubscriptions();
     appState.setKey("currentChat", undefined);
+
     if (templateId) {
-      const response = await fetch(
-        `${appState.get().apiBaseUrl}/prompts/${templateId}.json`,
-      );
-      if (!response.ok) {
-        throw new Error("Failed to fetch template");
+      try {
+        const baseUrl = appState.get().apiBaseUrl;
+        let fetchUrl = new URL(`/api/prompts/${templateId}.json`, window.location.origin).toString();
+
+        const response = await fetch(fetchUrl);
+        if (!response.ok) {
+          throw new Error(`Failed to fetch template: ${response.statusText}`);
+        }
+
+        const template: IPromptTemplate = await response.json();
+        if (!template) {
+          throw new Error('Template not found');
+        }
+
+        const chatState: Partial<ChatState> = {
+          messages: [],
+          metadata: {
+            templateId: template.id,
+            template: template,
+            topic: template.name || "",
+            model: this.model,
+          },
+        };
+
+        // Save chat state to server
+        const saveResponse = await fetch(`${baseUrl}/sessions/index.json`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(chatState),
+        });
+
+        if (!saveResponse.ok) {
+          throw new Error('Failed to save chat session');
+        }
+
+        const savedSession = await saveResponse.json();
+        appState.setKey("currentChat", savedSession);
+        appState.setKey("selectedTemplate", template);
+        appState.setKey("selectedTemplateId", template.id);
+        await this.init(template);
+        return;
+      } catch (error) {
+        console.error('Error in newChat:', error);
+        // Fall through to default initialization
       }
-      const template: IPromptTemplate = await response.json();
-      appState.setKey("selectedTemplate", template);
-      appState.setKey("selectedTemplateId", template.id);
-      await this.init(template);
     }
+
     // Initialize with default system message
     appState.setKey("selectedTemplateId", DEFAULT_TEMPLATE_ID);
     this.messages = [new SystemMessage(DEFAULT_SYSTEM_MESSAGE)];
@@ -211,17 +243,22 @@ class ChatManager {
       topic =
         "Topic: " + serializedMessages[1]?.content.slice(0, 120 - 3) + "...";
     const chatState: ChatState = {
-      model: this.model,
-      templateId: this.template?.id,
-      template: this.template,
+      // model: this.model,
+      // templateId: this.template?.id,
+      // template: this.template,
       messages: serializedMessages,
       metadata: {
-        templateId: this.template?.id,
-        template: this.template,
         topic,
         model: this.model,
+        templateId: this.template?.id,
+        template: this.template,
       },
+
+
     };
+
+
+
     appState.setKey("currentChat", chatState);
   }
 

@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { useStore } from "@nanostores/react";
-import type { IPromptTemplate } from "@types";
+import type { IPromptTemplate } from "@lib/ai/types";
 import type { OpenRouterModel } from "@lib/ai/types";
 import { appState, templateList } from "@lib/appStore";
 import { chatManager } from "@lib/ChatManager";

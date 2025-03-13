@@ -19,15 +19,15 @@ const PromptTemplate = defineTable({
 const ChatSession = defineTable({
   columns: {
     id: column.text({ primaryKey: true }),
-    model: column.text(),
-    templateId: column.text({ optional: true }),
+    //model: column.text(),
+    //templateId: column.text({ optional: true }),
     messages: column.json(), // Array of Message objects
     metadata: column.json({
       default: {
-        template: null,
-        templateId: null,
         topic: "",
         model: "",
+        template: null,
+        templateId: null,
       },
     }),
     created_at: column.text(), // fixme: use column.date()
