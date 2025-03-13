@@ -140,7 +140,7 @@ class ChatManager {
     if (templateId) {
       try {
         const baseUrl = appState.get().apiBaseUrl;
-        let fetchUrl = new URL(`/api/prompts/${templateId}.json`, window.location.origin).toString();
+        let fetchUrl = new URL(baseUrl+`/prompts/${templateId}.json`, window.location.origin).toString();
 
         const response = await fetch(fetchUrl);
         if (!response.ok) {
@@ -151,9 +151,8 @@ class ChatManager {
         if (!template) {
           throw new Error('Template not found');
         }
-
         const chatState: Partial<ChatState> = {
-          messages: [],
+          messages: this.messages,
           metadata: {
             templateId: template.id,
             template: template,
@@ -163,20 +162,20 @@ class ChatManager {
         };
 
         // Save chat state to server
-        const saveResponse = await fetch(`${baseUrl}/sessions/index.json`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(chatState),
-        });
+        // const saveResponse = await fetch(`${baseUrl}/sessions/index.json`, {
+        //   method: 'POST',
+        //   headers: {
+        //     'Content-Type': 'application/json',
+        //   },
+        //   body: JSON.stringify(chatState),
+        // });
+        //
+        // if (!saveResponse.ok) {
+        //   throw new Error('Failed to save chat session');
+        // }
+        // const savedSession = await saveResponse.json();
 
-        if (!saveResponse.ok) {
-          throw new Error('Failed to save chat session');
-        }
-
-        const savedSession = await saveResponse.json();
-        appState.setKey("currentChat", savedSession);
+        appState.setKey("currentChat", chatState);
         appState.setKey("selectedTemplate", template);
         appState.setKey("selectedTemplateId", template.id);
         await this.init(template);
@@ -191,27 +190,6 @@ class ChatManager {
     appState.setKey("selectedTemplateId", DEFAULT_TEMPLATE_ID);
     this.messages = [new SystemMessage(DEFAULT_SYSTEM_MESSAGE)];
     await this.init();
-  }
-
-  private updateModel(newModel: string) {
-    this.model = newModel;
-    this.llm = new ChatOpenAI({
-      temperature: 0.7,
-      configuration: {
-        fetch: this.proxyFetchHandler,
-      },
-      model: newModel,
-      apiKey: "none",
-    });
-    appService.debug("Updated model to: " + newModel);
-    this.saveState();
-  }
-
-  public cleanupSubscriptions() {
-    if (this.unsubscribe) {
-      this.unsubscribe();
-      this.unsubscribe = null;
-    }
   }
 
   private async restoreState() {
@@ -242,7 +220,7 @@ class ChatManager {
     if (serializedMessages.length > 2)
       topic =
         "Topic: " + serializedMessages[1]?.content.slice(0, 120 - 3) + "...";
-    const chatState: ChatState = {
+    const chatState: Partial<ChatState> = {
       messages: serializedMessages,
       metadata: {
         topic,
@@ -251,13 +229,27 @@ class ChatManager {
         template: this.template,
       },
     };
+    // const chatState: Partial<ChatState> = {
+    //   messages: this.messages,
+    //   metadata: {
+    //     templateId: template.id,
+    //     template: template,
+    //     topic: template.name || "",
+    //     model: this.model,
+    //   },
+    // };
 
+    // POST or PUT
     const currentChat = appState.get().currentChat;
-    if (currentChat?.id || chatState.messages.length > 2) {
+
+    const method = currentChat?.id ? 'PUT' : 'POST';
+    let url = `${appState.get().apiBaseUrl}/sessions/index.json`;
+    if(method === 'PUT') url = url.replace("index", currentChat.id);
+    console.log("method", method);
+    if (this.messages.length > 2) {
       try {
-        const baseUrl = appState.get().apiBaseUrl;
-        const response = await fetch(`${baseUrl}/sessions/${currentChat.id}.json`, {
-          method: 'PUT',
+        const response = await fetch(url, {
+          method: method,
           headers: {
             'Content-Type': 'application/json',
           },
@@ -318,8 +310,7 @@ class ChatManager {
         );
         if (processedResponse) {
           this.messages.push(processedResponse);
-          this.saveState();
-
+          // this.saveState();
         }
       }
       return response;
@@ -328,8 +319,23 @@ class ChatManager {
       this.messages.pop();
       throw error;
     } finally {
+      this.saveState();
       this.isLoading = false;
     }
+  }
+
+  private updateModel(newModel: string) {
+    this.model = newModel;
+    this.llm = new ChatOpenAI({
+      temperature: 0.7,
+      configuration: {
+        fetch: this.proxyFetchHandler,
+      },
+      model: newModel,
+      apiKey: "none",
+    });
+    appService.debug("Updated model to: " + newModel);
+    this.saveState();
   }
 
   getMessages(): Message[] {
@@ -344,6 +350,13 @@ class ChatManager {
   async clearMessages() {
     this.messages = [];
     await this.saveState();
+  }
+
+  public cleanupSubscriptions() {
+    if (this.unsubscribe) {
+      this.unsubscribe();
+      this.unsubscribe = null;
+    }
   }
 
   /**
