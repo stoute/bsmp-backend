@@ -11,10 +11,11 @@ import {
 } from "@langchain/core/prompts";
 import { appState } from "./appStore";
 import type { IPromptTemplate } from "@types";
+import type { Message } from "@lib/ai/types";
 
-type MessageProcessor = (message: BaseMessage) => BaseMessage | null;
+type MessageProcessor = (message: Message) => Message | null;
 type TemplateProcessor = (template: IPromptTemplate) => IPromptTemplate;
-type MessageFilter = (message: BaseMessage) => boolean;
+type MessageFilter = (message: Message) => boolean;
 
 export class ChatParser {
   private messageProcessors: Map<string, MessageProcessor> = new Map();
@@ -27,7 +28,7 @@ export class ChatParser {
 
   private registerDefaultProcessors() {
     // Default system message processor
-    this.registerMessageProcessor("system", (message: BaseMessage) => {
+    this.registerMessageProcessor("system", (message: Message) => {
       if (message.getType() !== "system") return message;
       // Ensure system messages don't contain certain patterns
       const content = message.content.toString();
@@ -38,7 +39,7 @@ export class ChatParser {
     });
 
     // Default AI message processor
-    this.registerMessageProcessor("ai", (message: BaseMessage) => {
+    this.registerMessageProcessor("ai", (message: Message) => {
       if (message.getType() !== "ai") return message;
       let content = message.content.toString();
       // remove content between <think> tags
@@ -49,7 +50,7 @@ export class ChatParser {
     });
 
     // Default human message processor
-    this.registerMessageProcessor("human", (message: BaseMessage) => {
+    this.registerMessageProcessor("human", (message: Message) => {
       if (message.getType() !== "human") return message;
       let content = message.content.toString().trim();
       // content = content.replaceAll("piet", "jan");
@@ -57,7 +58,7 @@ export class ChatParser {
     });
 
     // Add default message filter
-    this.addMessageFilter((message: BaseMessage) => {
+    this.addMessageFilter((message: Message) => {
       /* Example usage:
         Input messages:
         - new AIMessage("  ") -> filtered out (returns false)
@@ -89,10 +90,7 @@ export class ChatParser {
   }
 
   // Process a single message
-  public processMessage(
-    message: BaseMessage,
-    templateId?: string,
-  ): BaseMessage | null {
+  public processMessage(message: Message, templateId?: string): Message | null {
     // Allow template-description messages to pass through
     // if (message.getType() === "template-description") {
     //   return message;
@@ -123,10 +121,7 @@ export class ChatParser {
   }
 
   // Process an array of messages
-  public processMessages(
-    messages: BaseMessage[],
-    templateId?: string,
-  ): BaseMessage[] {
+  public processMessages(messages: Message[], templateId?: string): Message[] {
     // Filter out template-description messages when processing for LLM
     return messages.filter((msg) => {
       // if (msg.getType() === "template-description") {
@@ -229,7 +224,7 @@ export class ChatParser {
 
   // Example of adding a custom processor for code-related messages
   public registerCodeProcessor() {
-    this.registerMessageProcessor("code", (message: BaseMessage) => {
+    this.registerMessageProcessor("code", (message: Message) => {
       const content = message.content.toString();
 
       // Extract code blocks

@@ -12,6 +12,7 @@ import {
   BaseMessage,
 } from "@langchain/core/messages";
 import type { IPromptTemplate } from "@types";
+import type { Message } from "@lib/ai/types";
 import { appService } from "@lib/appService.ts";
 import { appState, openRouterModels, type ChatState } from "@lib/appStore";
 import {
@@ -30,7 +31,7 @@ class ChatManager {
   private model: string;
   private unsubscribe: (() => void) | null = null;
   public template?: IPromptTemplate;
-  public messages: BaseMessage[] = [];
+  public messages: Message[] = [];
   private parser: ChatParser;
 
   private constructor() {
@@ -68,7 +69,7 @@ class ChatManager {
       if (
         state.selectedModel &&
         state.selectedModel !== this.model &&
-        state.selectedModel !== appState.get().currentChat?.model
+        state.selectedModel !== appState.get().currentChat?.metadata.model
       ) {
         this.updateModel(state.selectedModel);
       }
@@ -111,7 +112,7 @@ class ChatManager {
         processedTemplate.systemPrompt || DEFAULT_SYSTEM_MESSAGE,
       );
       this.replaceSystemMessage(systemMessage);
-      let messages: BaseMessage[] = [systemMessage];
+      let messages: Message[] = [systemMessage];
 
       // custom description message
       if (processedTemplate.description) {
@@ -192,7 +193,7 @@ class ChatManager {
     if (savedChat?.messages && Array.isArray(savedChat.messages)) {
       const restoredMessages = savedChat.messages;
       if (restoredMessages.length > 0) {
-        restoredMessages.forEach((msg: BaseMessage) => {
+        restoredMessages.forEach((msg: Message) => {
           // @ts-ignore
           msg.getType = () => msg.role;
         });
@@ -203,17 +204,23 @@ class ChatManager {
 
   private saveState() {
     const serializedMessages = this.messages.map((msg) => {
-      return {
-        role: msg.getType(),
-        content: msg.content,
-        additional_kwargs: msg.additional_kwargs,
-      };
+      return { ...msg, ...{ role: msg.getType() } };
     });
+    let topic = "Chat template: " + this.template?.name;
+    if (serializedMessages.length > 2)
+      topic =
+        "Topic: " + serializedMessages[1]?.content.slice(0, 120 - 3) + "...";
     const chatState: ChatState = {
       model: this.model,
       templateId: this.template?.id,
       template: this.template,
       messages: serializedMessages,
+      metadata: {
+        templateId: this.template?.id,
+        template: this.template,
+        topic,
+        model: this.model,
+      },
     };
     appState.setKey("currentChat", chatState);
   }
@@ -268,11 +275,11 @@ class ChatManager {
     }
   }
 
-  getMessages(): BaseMessage[] {
+  getMessages(): Message[] {
     return this.messages;
   }
 
-  setMessages(messages: BaseMessage[]) {
+  setMessages(messages: Message[]) {
     this.messages = messages;
     this.saveState();
   }

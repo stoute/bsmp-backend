@@ -2,7 +2,7 @@ export const prerender = false;
 
 import { v4 as uuid } from "uuid";
 import { db, PromptTemplate } from "astro:db";
-import type { IPromptTemplate } from "@lib/prompt-template/PromptTemplate";
+import type { IPromptTemplate } from "@types";
 
 // GET /api/prompts: Retrieves all prompt templates.
 export async function GET() {

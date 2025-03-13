@@ -200,10 +200,10 @@ const ChatMessage = ({ message }: { message: any }) => {
     >
       <button
         onClick={() => handleCopy(message.content)}
-        className="absolute top-2 right-2 opacity-0 transition-opacity duration-200 group-hover:opacity-100"
+        className="absolute top-1 right-1 opacity-0 transition-opacity duration-200 group-hover:opacity-100"
         aria-label={isCopied ? "Copied!" : "Copy message"}
       >
-        <svg className="h-4 w-4 text-current opacity-70 hover:opacity-100">
+        <svg className="h-3.5 w-3.5 text-current opacity-70 hover:opacity-100">
           <use href={isCopied ? "/copy.svg#filled" : "/copy.svg#empty"} />
         </svg>
       </button>

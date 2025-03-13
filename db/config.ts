@@ -16,6 +16,27 @@ const PromptTemplate = defineTable({
   },
 });
 
+const ChatState = defineTable({
+  columns: {
+    id: column.text({ primaryKey: true }),
+    model: column.text(),
+    templateId: column.text({ optional: true }),
+    messages: column.json(), // Array of Message objects
+    metadata: column.json({
+      default: {
+        template: null,
+        templateId: null,
+        topic: "",
+        model: "",
+      },
+    }),
+    created_at: column.text(), // fixme: use column.date()
+    updated_at: column.text(),
+    // created_at: column.date({ default: () => new Date() }),
+    // updated_at: column.date({ default: () => new Date() }),
+  },
+});
+
 const Comment = defineTable({
   columns: {
     id: column.number({ primaryKey: true }),
@@ -39,5 +60,5 @@ const Author = defineTable({
 
 // https://astro.build/db/config
 export default defineDb({
-  tables: { PromptTemplate, Comment, Author },
+  tables: { PromptTemplate, Comment, Author, ChatState },
 });
