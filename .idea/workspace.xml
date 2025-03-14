@@ -5,76 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8cf7e9a9-1ddf-43bf-8ddd-96d96e27722b" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/db/seed-templates.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/_seed-templates.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src-design/project-analysis.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/components/chat/renderers/DescriptionRenderer.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/components/sessions/SessionsList.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/components/ui/command.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/components/ui/dialog.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/components/ui/popover.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/lib/ChatParser.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/lib/ai/types.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/lib/appService.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/lib/hooks/useAppService.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/lib/hooks/useLLMOutput.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/lib/utils/dbUtils.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/lib/utils/modelUtils.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/pages/about.astro" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/pages/api/sessions/[id].json.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/pages/api/sessions/index.json.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/pages/api/sessions/list.json.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/AugmentWebviewStateStore.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/AugmentWebviewStateStore.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/prettier.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/prettier.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/db/config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/db/config.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/db/seed.ts" beforeDir="false" afterPath="$PROJECT_DIR$/db/seed.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pnpm-lock.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pnpm-lock.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src-design/prompt-template-schema-advanced.json" beforeDir="false" afterPath="$PROJECT_DIR$/src-design/prompt-template-schema-advanced.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/ArrowCard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ArrowCard.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/BaseHead.astro" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/BaseHead.astro" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/Blog.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Blog.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/Drawer.astro" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Drawer.astro" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/Footer.astro" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Footer.astro" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/Header.astro" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Header.astro" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/Projects.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Projects.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/chat/Chat.module.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/chat/Chat.module.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/chat/Chat.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/chat/Chat.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/chat/ChatControls.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/chat/ChatControls.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/chat/ChatTemplates.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/chat/ChatTemplates.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/chat/CodeBlockRenderer.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/chat/renderers/CodeBlockRenderer.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/chat/MarkdownRenderer.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/chat/renderers/MarkdownRenderer.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/prompt-templates/PromptTemplateEditor.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/prompt-templates/PromptTemplateEditor.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/prompt-templates/PromptTemplates.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/prompt-templates/PromptTemplates.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/consts.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/consts.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/layouts/BottomLayout.astro" beforeDir="false" afterPath="$PROJECT_DIR$/src/layouts/BottomLayout.astro" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/layouts/PageLayout.astro" beforeDir="false" afterPath="$PROJECT_DIR$/src/layouts/PageLayout.astro" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/ChatManager.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/ChatManager.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/appStore.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/appStore.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/middleware-utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/middleware-utils.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/utils.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/middleware.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/middleware.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/api/ai-o.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/api/prompts/index.json.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/api/prompts/index.json.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/api/prompts/list.json.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/api/prompts/list.json.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/blog/[...slug].astro" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/blog/[...slug].astro" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/blog/index.astro" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/blog/index.astro" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/chat/index.astro" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/chat.astro" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/index.astro" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/index.astro" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/legal/[...slug].astro" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/legal/[...slug].astro" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/projects/[...slug].astro" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/projects/[...slug].astro" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/projects/index.astro" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/projects/index.astro" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/prompts/index.astro" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/prompts/index.astro" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/search/index.astro" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/search/index.astro" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/styles/code-block.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/styles/code-block.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/styles/global.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/styles/global.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/types.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tailwind.config.mjs" beforeDir="false" afterPath="$PROJECT_DIR$/tailwind.config.mjs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -116,7 +49,7 @@
   "keyToString": {
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "Merging feat-auth",
+    "git-widget-placeholder": "feat-auth",
     "last_opened_file_path": "/Users/bobstoute/Git/@bsmp/bsmp-backend/db",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",

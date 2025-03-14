@@ -64,6 +64,36 @@ const navigationLinks =
       <div class="buttons absolute top-1/2 right-0 flex -translate-y-1/2 gap-1">
         <SessionsList client:load />
 
+        <!-- Login button - only visible when not logged in -->
+        <a
+          id="login-button"
+          href="/auth/login"
+          aria-label="Login to your account"
+          class={cn(
+            "hidden md:flex",
+            "size-9 rounded-full p-2 items-center justify-center",
+            "bg-transparent hover:bg-black/5 dark:hover:bg-white/20",
+            "stroke-current hover:stroke-black dark:hover:stroke-white",
+            "border border-black/10 dark:border-white/25",
+            "transition-colors duration-300 ease-in-out",
+          )}
+        >
+          <!-- Replace with inline SVG that will definitely work -->
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="size-full"
+          >
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+        </a>
+
         <button
           id="header-theme-button"
           onclick="changeTheme()"
@@ -131,6 +161,7 @@ const navigationLinks =
 </style>
 
 <script is:inline>
+  // Existing drawer functions remain unchanged
   function toggleDrawer() {
     const drawer = document.getElementById("drawer");
     const drawerButton = document.getElementById("header-drawer-button");
@@ -143,6 +174,34 @@ const navigationLinks =
     drawerButton?.addEventListener("click", toggleDrawer);
   }
 
-  document.addEventListener("astro:after-swap", initializeDrawerButton);
+  // Add login button visibility logic
+  function updateLoginButtonVisibility() {
+    const loginButton = document.getElementById("login-button");
+    const isLoggedIn = localStorage.getItem("is-logged-in:") === "true";
+
+    if (loginButton) {
+      if (isLoggedIn) {
+        loginButton.style.display = "none";
+      } else {
+        loginButton.style.display = "flex";
+      }
+    }
+  }
+
+  // Initialize and set up event listeners
+  document.addEventListener("astro:after-swap", () => {
+    initializeDrawerButton();
+    updateLoginButtonVisibility();
+  });
+
+  // Run on initial load
   initializeDrawerButton();
+  updateLoginButtonVisibility();
+
+  // Listen for storage changes to update button visibility
+  window.addEventListener("storage", (event) => {
+    if (event.key === "is-logged-in:") {
+      updateLoginButtonVisibility();
+    }
+  });
 </script>
