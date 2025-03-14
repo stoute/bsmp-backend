@@ -1,5 +1,4 @@
 import { sequence } from "astro:middleware";
-
 import {
   errorHandler,
   logger,
@@ -13,9 +12,9 @@ import {
 
 export const onRequest = sequence(
   errorHandler, // 1. Catch all errors
-  logger, // 2. Log request and response
-  cors, // 3. Handle CORS (including OPTIONS requests)
-  securityHeaders, // 4. Set security headers on all responses
+  // logger, // 2. Log request and response
+  // cors, // 3. Handle CORS (including OPTIONS requests)
+  // securityHeaders, // 4. Set security headers on all responses
   // auth, // 5. Check authentication (commented out to avoid auth issues during development)
   // rateLimit, // 6. Enforce rate limits
   // validation, // 7. Validate request body for API routes
