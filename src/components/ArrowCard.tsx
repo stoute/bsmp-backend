@@ -27,15 +27,14 @@ export default function ArrowCard({ entry, pill }: Props) {
 
         <div className="line-clamp-2 text-sm">{entry.data.summary}</div>
         <ul className="mt-2 flex flex-wrap gap-1">
-          {entry.data.tags.map(
-            (
-              tag: string, // this line has an error; Parameter 'tag' implicitly has an 'any' type.ts(7006)
-            ) => (
-              <li className="rounded-sm bg-black/5 px-1 py-0.5 text-xs text-black/75 uppercase dark:bg-white/20 dark:text-white/75">
-                {tag}
-              </li>
-            ),
-          )}
+          {entry.data.tags.map((tag: string) => (
+            <li
+              key={tag}
+              className="rounded-sm bg-black/5 px-1 py-0.5 text-xs text-black/75 uppercase dark:bg-white/20 dark:text-white/75"
+            >
+              {tag}
+            </li>
+          ))}
         </ul>
       </div>
       <svg
@@ -44,22 +43,14 @@ export default function ArrowCard({ entry, pill }: Props) {
         height="20"
         viewBox="0 0 24 24"
         fill="none"
-        stroke-width="2.5"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
         className="stroke-current group-hover:stroke-black dark:group-hover:stroke-white"
       >
-        <line
-          x1="5"
-          y1="12"
-          x2="19"
-          y2="12"
-          className="translate-x-4 scale-x-0 transition-all duration-300 ease-in-out group-hover:translate-x-1 group-hover:scale-x-100"
-        />
-        <polyline
-          points="12 5 19 12 12 19"
-          className="translate-x-0 transition-all duration-300 ease-in-out group-hover:translate-x-1"
-        />
+        <line x1="5" y1="12" x2="19" y2="12" />
+        <line x1="12" y1="5" x2="19" y2="12" />
+        <line x1="12" y1="19" x2="19" y2="12" />
       </svg>
     </a>
   );

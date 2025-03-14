@@ -3,6 +3,7 @@ import PromptTemplateList from "@components/prompt-templates/PromptTemplateList.
 import PromptTemplateEditor from "@components/prompt-templates/PromptTemplateEditor.tsx";
 import { appState } from "@lib/appStore";
 import type { IPromptTemplate } from "@types";
+import { useAppService } from "@lib/hooks/useAppService";
 
 interface PromptTemplatesProps {
   initialTemplate?: IPromptTemplate;
@@ -24,15 +25,19 @@ const apiEndPoint = appState.get().apiBaseUrl + "/prompts/index.json";
 const PromptTemplates: React.FC<PromptTemplatesProps> = ({
   initialTemplate,
 }) => {
+  // Move all useState declarations to the top
   const [selectedTemplate, setSelectedTemplate] = useState<
     IPromptTemplate | undefined
   >(initialTemplate);
   const [selectedId, setSelectedId] = useState<string | undefined>(() => {
     return appState.get().selectedTemplateId || initialTemplate?.id;
   });
+
+  // Move useAppService hook here, before any conditional returns
+  const { isReady } = useAppService();
   const listRef = useRef<{ fetchPromptTemplates: () => Promise<void> }>();
 
-  // Fetch the selected template when component mounts or selectedId changes
+  // Effects after all hooks
   useEffect(() => {
     const fetchSelectedTemplate = async () => {
       if (!selectedId) {
@@ -54,10 +59,12 @@ const PromptTemplates: React.FC<PromptTemplatesProps> = ({
     fetchSelectedTemplate();
   }, [selectedId]);
 
-  // Update appState whenever selectedId changes
   useEffect(() => {
     appState.setKey("selectedTemplateId", selectedId);
   }, [selectedId]);
+
+  // Move the conditional return after all hooks are declared
+  if (!isReady) return null;
 
   const handleSelectTemplate = (template: IPromptTemplate) => {
     setSelectedTemplate(template);

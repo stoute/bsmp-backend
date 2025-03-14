@@ -1,30 +1,34 @@
 ---
-import { type CollectionEntry, getCollection } from "astro:content"
-import PageLayout from "@layouts/PageLayout.astro"
-import TopLayout from "@layouts/TopLayout.astro"
-import BottomLayout from "@layouts/BottomLayout.astro"
-import ArticleTopLayout from "@layouts/ArticleTopLayout.astro"
-import ArticleBottomLayout from "@layouts/ArticleBottomLayout.astro"
+export const prerender = true;
+import { type CollectionEntry, getCollection } from "astro:content";
+import PageLayout from "@layouts/PageLayout.astro";
+import TopLayout from "@layouts/TopLayout.astro";
+import BottomLayout from "@layouts/BottomLayout.astro";
+import ArticleTopLayout from "@layouts/ArticleTopLayout.astro";
+import ArticleBottomLayout from "@layouts/ArticleBottomLayout.astro";
 
 // Create the static blog pages
 export async function getStaticPaths() {
-	const posts = await getCollection("blog")
-	return posts.map((post) => ({
-		params: { slug: post.slug },
-		props: post,
-	}))
+  const posts = await getCollection("blog");
+  return posts.map((post) => ({
+    params: { slug: post.slug },
+    props: { post }, // Change: Pass post as a named prop
+  }));
 }
 
 // Get the requested post
-type Props = CollectionEntry<"blog">
-const post = Astro.props
-const { title, summary } = post.data
+type Props = {
+  post: CollectionEntry<"blog">; // Change: Update type to match new prop structure
+};
+
+const { post } = Astro.props; // Change: Destructure the named post prop
+const { title, summary } = post.data;
 ---
 
 <PageLayout title={title} description={summary}>
   <TopLayout>
     <div class="animate">
-      <ArticleTopLayout entry={post}/>
+      <ArticleTopLayout entry={post} />
     </div>
   </TopLayout>
   <BottomLayout>

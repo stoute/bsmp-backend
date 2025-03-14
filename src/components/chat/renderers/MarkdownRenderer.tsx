@@ -1,7 +1,7 @@
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { type LLMOutputComponent } from "@llm-ui/react";
-import { useShiki } from "@lib/hooks/useShiki";
+import { useShiki } from "@lib/hooks/useShiki.ts";
 
 export const MarkdownRenderer: LLMOutputComponent = ({ blockMatch }) => {
   const markdown = blockMatch.output;
@@ -47,14 +47,6 @@ export const MarkdownRenderer: LLMOutputComponent = ({ blockMatch }) => {
             const html = highlighter.codeToHtml(code, {
               lang,
               theme,
-              // fixme: shiki line wrap
-              // decorations: [
-              //   {
-              //     start: { line: 0, character: 0 },
-              //     end: { line: 0, character: 50 },
-              //     properties: { class: "wrapped-line" },
-              //   },
-              // ],
             });
 
             return (

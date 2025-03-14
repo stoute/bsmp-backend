@@ -1,11 +1,15 @@
 ---
-import { SITE, LINKS, SOCIALS } from "@consts";
-import { cn, parseLinks } from "@lib/utils";
+import { SITE, LINKS, LINKS_DEV, SOCIALS } from "@consts";
+import { cn } from "@lib/utils";
 const { pathname } = Astro.url;
 const subpath = pathname.match(/[^/]+/g);
 
 const EMAIL: any = SOCIALS.find((SOCIAL) => SOCIAL.NAME === "Email");
 const environment: string = import.meta.env.MODE;
+
+// Handle links based on environment
+const navigationLinks =
+  environment === "development" ? [...LINKS, ...LINKS_DEV] : LINKS;
 ---
 
 <div
@@ -14,20 +18,20 @@ const environment: string = import.meta.env.MODE;
 >
   <nav class="flex flex-col items-center space-y-2">
     {
-      parseLinks(LINKS, environment).map((LINK, index) => (
+      navigationLinks.map((LINK) => (
         <a
-          href={LINKS[index].HREF}
+          href={LINK.HREF}
           class={cn(
             "flex items-center justify-center rounded-full px-3 py-1",
             "text-current hover:text-black dark:hover:text-white",
             "hover:bg-black/5 dark:hover:bg-white/20",
             "transition-colors duration-300 ease-in-out",
             pathname === LINK.HREF || "/" + subpath?.[0] === LINK.HREF
-              ? "pointer-events-none bg-black text-white dark:bg-white dark:text-black"
+              ? "bg-black text-white dark:bg-white dark:text-black"
               : "",
           )}
         >
-          {LINKS[index].TEXT}
+          {LINK.TEXT}
         </a>
       ))
     }

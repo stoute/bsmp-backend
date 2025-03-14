@@ -21,18 +21,6 @@ export function readingTime(html: string) {
   return `${readingTimeMinutes} min read`;
 }
 
-export function parseLinks(links: Links[], environment: string): Links[] {
-  let arr: Links[] = [];
-  links.map((link) => {
-    if (environment === "production" && link["DISABLED"] === "production") {
-      return;
-    } else {
-      arr.push(link);
-    }
-  });
-  return arr;
-}
-
 export function isRunningOnLocalhost(): boolean {
   if (typeof window === "undefined") {
     // If window is not available, we are not in a browser
@@ -45,4 +33,14 @@ export function isRunningOnLocalhost(): boolean {
     hostname === "[::1]" || // IPv6 loopback
     hostname.startsWith("127.") // Any 127.x.x.x IP range
   );
+}
+
+export function clearLocalStorage(reloadPage: boolean = false): void {
+  if (typeof window !== "undefined") {
+    localStorage.clear();
+    if (reloadPage) {
+      window.location.reload();
+    }
+    console.log("Local storage cleared successfully");
+  }
 }

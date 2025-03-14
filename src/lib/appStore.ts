@@ -1,26 +1,49 @@
-// import { atom, map } from "nanostores";
 import { persistentAtom, persistentMap } from "@nanostores/persistent";
-
-const getEnvironment = () => {
-  if (typeof window !== "undefined") {
-    return document.documentElement.dataset.environment;
-  }
-};
+import type {
+  OpenRouterModelIndex,
+  ChatState,
+} from "@lib/ai/types";
+import type { IPromptTemplate } from "@lib/aitypes";
+import { atom } from "nanostores";
 
 export type AppState = {
-  apiBaseUrl: "/api" | "https://bsmp.netlify.app/api";
+  apiBaseUrl: string;
   environment: "development" | "production";
   selectedModel?: string;
+  selectedTemplate?: IPromptTemplate;
   selectedTemplateId?: string;
+  currentChat?: ChatState;
+  currentSession?: ChatState;
+  currentSessionId?: string;
 };
 
-export const appState = persistentMap<AppState>("appState", {
-  // apiBaseUrl: "/api",
-  apiBaseUrl: "https://bsmp.netlify.app/api",
-  // environment: if(typeof window === "undefined") document.documentElement.dataset.environment,
-  environment: getEnvironment(),
-  selectedModel: "openai/gpt-3.5-turbo",
-  selectedTemplateId: "default",
-});
+// Specify the serializer/deserializer for the persistent store
+export const appState = persistentMap<AppState>(
+  "app-state:",
+  {
+    apiBaseUrl: undefined as any,
+    environment: undefined as any,
+    selectedModel: undefined,
+    selectedTemplateId: undefined,
+    currentChat: undefined,
+  },
+  {
+    encode: JSON.stringify,
+    decode: JSON.parse,
+  },
+);
 
-export const isLoggedIn = persistentAtom("isLoggedIn", false);
+export const openRouterModels = persistentMap<OpenRouterModelIndex>(
+  "open-router-models:",
+  { updated: undefined, models: undefined },
+  {
+    encode: JSON.stringify,
+    decode: JSON.parse,
+  },
+);
+
+// export const chatManager = atom<ChatManager | null>(null);
+
+export const templateList = atom([]);
+
+export const isLoggedIn = persistentAtom<boolean>("is-logged-in:", false);

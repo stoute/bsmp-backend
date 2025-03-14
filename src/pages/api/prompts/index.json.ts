@@ -2,7 +2,7 @@ export const prerender = false;
 
 import { v4 as uuid } from "uuid";
 import { db, PromptTemplate } from "astro:db";
-import type { IPromptTemplate } from "@lib/prompt-template/PromptTemplate";
+import type { IPromptTemplate } from "@types";
 
 // GET /api/prompts: Retrieves all prompt templates.
 export async function GET() {
@@ -33,9 +33,6 @@ export async function GET() {
 export async function POST({ request }: { request: Request }) {
   try {
     const requestBody = await request.json();
-
-    console.log(requestBody);
-
     // Validate the request body against the PromptTemplate interface.
     const { name, description, systemPrompt, template, variables } =
       requestBody;

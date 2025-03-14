@@ -1,33 +1,49 @@
-![Astro Sphere Lighthouse Score](public/images/logo@3x.png)
+![Astro Sphere Lighthouse Score](public/images/logo@2x.png)
 
-#### BSMP - media programming
+# BSMP
 
-A modern, server-side rendered website built with Astro, featuring dynamic content, dark mode support, and optimal performance.
+A modern, server-side rendered website built with Astro, featuring dynamic content, AI-powered chat, state management, and optimal performance.
 
 ## 🛠 Tech Stack
 
 - **Framework:** [Astro](https://astro.build) with Server-Side Rendering (SSR)
+- **State Management:** Nanostores for reactive, persistent state
+- **UI Components:** 
+  - React for interactive features
+  - Solid.js for performance-critical components
 - **Styling:** Tailwind CSS
-- **Components:** React for interactive components
-- **Content:** MDX for rich content authoring
-- **Deployment:** Multi-platform support (Netlify, Vercel, Firebase)
-- **Database:** Astro DB integration
+- **Content:** MDX with frontmatter
+- **AI Integration:** LangChain/OpenAI via proxy
+- **Database:** Astro DB
+- **Deployment:** Multi-platform (Netlify, Vercel, Firebase)
 
-## ✨ Features
+## ✨ Core Features
 
-- Server-Side Rendering for optimal performance
-- Dark/Light theme with persistent user preference
-- Responsive design with Tailwind CSS
-- Interactive chat component
-- Blog with MDX support
-- Projects showcase
-- Content search functionality
-- RSS Feed generation
-- Automatic sitemap generation
+### State Management
+- Centralized state using nanostores
+- Persistent storage for critical data
+- Type-safe state handling
+- Cross-component reactivity
+
+### AI Integration
+- Singleton ChatManager pattern
+- Template-based prompt system
+- Message parsing and rendering
+- Structured chat sessions
+
+### Content System
+- MDX/Markdown with frontmatter
+- Blog posts and project showcases
+- Draft support
+- Tag-based organization
 - SEO optimization
-- Animated UI elements
+
+### UI/UX
+- Server-Side Rendering
+- Dark/Light theme (persistent)
+- Responsive Tailwind design
+- Animated elements
 - Code syntax highlighting
-- Network-enabled development mode
 
 ## 🚀 Quick Start
 
@@ -35,59 +51,54 @@ A modern, server-side rendered website built with Astro, featuring dynamic conte
 # Install dependencies
 npm install
 
-# Start development server
-npm run dev
+# Development
+npm run dev              # Local server
+npm run dev:network      # Network-enabled server
 
-# Start development server with network access
-npm run dev:network
-
-# Build for production
-npm run build
-
-# Preview production build
-npm run preview
-
-# Preview production build with network access
-npm run preview:network
+# Production
+npm run build           # Build for production
+npm run preview         # Preview build
 ```
 
 ## 📁 Project Structure
 
 ```
 /
-├── public/           # Static assets
-│   ├── fonts/       # Custom fonts
-│   └── js/         # Client-side scripts
 ├── src/
-│   ├── components/  # UI components
-│   ├── content/     # MDX/Markdown content
-│   │   ├── blog/   # Blog posts
-│   │   ├── projects/ # Project showcases
-│   │   └── legal/  # Legal documents
-│   ├── layouts/    # Page layouts
-│   ├── pages/      # Route pages
-│   └── styles/     # Global styles
+│   ├── components/    # UI components
+│   ├── content/       # MDX content
+│   │   ├── blog/     # Blog posts
+│   │   └── projects/ # Project showcases
+│   ├── layouts/      # Page layouts
+│   ├── lib/          # Core logic + state
+│   ├── pages/        # Routes
+│   └── styles/       # Global styles
+└── public/           # Static assets
 ```
 
 ## 🔧 Configuration
 
-Key configuration files:
-- `astro.config.mjs` - Astro configuration
-- `tailwind.config.mjs` - Tailwind CSS configuration
-- `src/consts.ts` - Site-wide constants and metadata
+### Core Config Files
+- `astro.config.mjs` - Astro settings
+- `tailwind.config.mjs` - Tailwind setup
+- `src/lib/appStore.ts` - State management
+- `src/consts.ts` - Site-wide constants
+
+### State Configuration
+```typescript
+// src/lib/appStore.ts
+export const appState = persistentMap<AppState>({
+  apiBaseUrl: string,
+  environment: string,
+  selectedModel?: string,
+  currentChat?: ChatState
+});
+```
 
 ## 💻 Development
 
-### Content Management
-
-Content is managed through Markdown and MDX files in the `src/content/` directory:
-- Blog posts: `src/content/blog/`
-- Projects: `src/content/projects/`
-- Legal content: `src/content/legal/`
-
-### Adding New Content
-
-Create a new directory in the respective collection with an `index.md` or `index.mdx` file:
+### Content Creation
+Create new content in `src/content/{blog|projects}/`:
 
 ```yaml
 ---
@@ -101,37 +112,41 @@ tags:
 ---
 ```
 
+### State Management
+```typescript
+// In components
+import { useStore } from '@nanostores/react';
+import { appState } from '../lib/appStore';
+
+const state = useStore(appState);
+```
+
 ## 🌐 Deployment
 
-The application supports multiple deployment platforms:
-
 ```bash
-# Netlify deployment
+# Netlify
 npm run build
 # Configure in netlify.toml
 
-# Firebase deployment
+# Vercel
+npm run deploy-vercel
+
+# Firebase
 npm run deploy-firebase
 ```
 
 ## 🔄 Database Operations
 
 ```bash
-# Pull remote database
-npm run db-pull-remote
-
-# Push to remote database
-npm run db-push-remote
+npm run db-pull-remote  # Pull remote DB
+npm run db-push-remote  # Push to remote DB
 ```
 
 ## 🧪 Quality Assurance
 
 ```bash
-# Run linting
-npm run lint
-
-# Fix linting issues
-npm run lint:fix
+npm run lint       # Run linting
+npm run lint:fix   # Fix lint issues
 ```
 
 ## License
@@ -140,7 +155,7 @@ MIT License
 
 ## 👤 Author
 
-Bob Stoute - madia programming
+Bob Stoute - media programming
 - Website: [www.bobstoute.nl](https://www.bobstoute.nl)
 - GitHub: [github.com/stoute/bsmp-website](https://github.com/stoute/bsmp-website)
 - Email: stoute.bob@gmail.com

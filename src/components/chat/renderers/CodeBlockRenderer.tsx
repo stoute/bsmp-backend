@@ -1,6 +1,6 @@
 import { type LLMOutputComponent } from "@llm-ui/react";
 import { useEffect, useState } from "react";
-import { useShiki } from "@lib/hooks/useShiki";
+import { useShiki } from "@lib/hooks/useShiki.ts";
 
 export const CodeBlockRenderer: LLMOutputComponent = ({ blockMatch }) => {
   const [highlightedCode, setHighlightedCode] = useState<string>("");

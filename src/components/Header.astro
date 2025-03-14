@@ -1,10 +1,12 @@
 ---
-import { SITE, LINKS, SOCIALS } from "@consts";
-import { cn, parseLinks } from "@lib/utils";
+import { SITE, LINKS, LINKS_DEV, SOCIALS } from "@consts";
+import { cn } from "@lib/utils";
 const { pathname } = Astro.url;
 const subpath = pathname.match(/[^/]+/g);
 import Container from "@components/Container.astro";
-import type { Link } from "@types";
+import LogoLight from "@images/logo-light.svg";
+import LogoDark from "@images/logo-dark.svg";
+import SessionsList from "@components/sessions/SessionsList";
 
 interface Props {
   colorMode?: "light" | "dark" | "system";
@@ -13,6 +15,10 @@ interface Props {
 const { colorMode } = Astro.props;
 const EMAIL: unknown = SOCIALS.find((SOCIAL) => SOCIAL.NAME === "Email");
 const environment: string = import.meta.env.MODE;
+
+// Handle links based on environment
+const navigationLinks =
+  environment === "development" ? [...LINKS, ...LINKS_DEV] : LINKS;
 ---
 
 <header id="header" class="fixed top-0 z-50 h-16 w-full">
@@ -25,16 +31,8 @@ const environment: string = import.meta.env.MODE;
           href="/"
           class="flex gap-1 text-current transition-colors duration-300 ease-in-out hover:text-black dark:hover:text-white"
         >
-          <img
-            src="/images/logo-light.svg"
-            alt={SITE.TITLE}
-            class="block h-8 w-auto dark:hidden"
-          />
-          <img
-            src="/images/logo-dark.svg"
-            alt={SITE.TITLE}
-            class="hidden h-8 w-auto dark:block"
-          />
+          <LogoLight class="block h-8 w-auto dark:hidden" />
+          <LogoDark class="hidden h-8 w-auto dark:block" />
           <div class="pt-1 pl-3">
             {SITE.TITLE}
           </div>
@@ -44,9 +42,9 @@ const environment: string = import.meta.env.MODE;
       <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
         <nav class="hidden items-center justify-center gap-1 text-sm md:flex">
           {
-            parseLinks(LINKS, environment).map((LINK, index) => (
+            navigationLinks.map((LINK) => (
               <a
-                href={LINKS[index].HREF}
+                href={LINK.HREF}
                 class={cn(
                   "h-8 rounded-full px-3 text-current",
                   "flex items-center justify-center",
@@ -56,7 +54,7 @@ const environment: string = import.meta.env.MODE;
                     : "hover:bg-black/5 hover:text-black dark:hover:bg-white/20 dark:hover:text-white",
                 )}
               >
-                {LINKS[index].TEXT}
+                {LINK.TEXT}
               </a>
             ))
           }
@@ -64,17 +62,7 @@ const environment: string = import.meta.env.MODE;
       </div>
 
       <div class="buttons absolute top-1/2 right-0 flex -translate-y-1/2 gap-1">
-        <!--<a href="/search" aria-label={`Search blog posts and projects on ${SITE.TITLE}`} class={cn("hidden md:flex", "size-9 rounded-full p-2 items-center justify-center", "bg-transparent hover:bg-black/5 dark:hover:bg-white/20", "stroke-current hover:stroke-black dark:hover:stroke-white", "border border-black/10 dark:border-white/25", "transition-colors duration-300 ease-in-out", pathname === "/search" || "/" + subpath?.[0] === "/search" ? "pointer-events-none bg-black dark:bg-white text-white dark:text-black" : "")}>-->
-        <!--  <svg class="size-full">-->
-        <!--    <use href="/ui.svg#search"></use>-->
-        <!--  </svg>-->
-        <!--</a>-->
-
-        <!--<a href="/rss.xml" target="_blank" aria-label={`Rss feed for ${SITE.TITLE}`} class={cn("hidden md:flex", "size-9 rounded-full p-2 items-center justify-center", "bg-transparent hover:bg-black/5 dark:hover:bg-white/20", "stroke-current hover:stroke-black dark:hover:stroke-white", "border border-black/10 dark:border-white/25", "transition-colors duration-300 ease-in-out")}>-->
-        <!--  <svg class="size-full">-->
-        <!--    <use href="/ui.svg#rss"></use>-->
-        <!--  </svg>-->
-        <!--</a>-->
+        <SessionsList client:load />
 
         <button
           id="header-theme-button"

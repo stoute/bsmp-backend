@@ -1,12 +1,10 @@
 ---
+export const prerender = true;
 import { getCollection } from "astro:content";
-import { Icon } from "astro-icon/components";
 import PageLayout from "@layouts/PageLayout.astro";
+import BottomLayout from "@layouts/BottomLayout.astro";
 import ArrowCard from "@components/ArrowCard";
-import StackCard from "@components/StackCard.astro";
 import { SITE, SOCIALS } from "@consts";
-import TwinklingStars from "@components/TwinklingStars.astro";
-import MeteorShower from "@components/MeteorShower.astro";
 
 const posts = (await getCollection("blog"))
   .filter((post) => !post.data.draft)
@@ -20,112 +18,106 @@ const projects = (await getCollection("projects"))
 ---
 
 <PageLayout title="Home" description={SITE.DESCRIPTION}>
-  <!-- HERO -->
-  <section class="relative h-screen w-full">
-    <div
-      class="animate absolute flex h-full w-full items-center justify-center"
-    >
-      <div class="relative flex h-full w-full items-center justify-center">
-        <div class="w-full text-center">
-          <p
-            class="animated mb-3 text-2xl font-semibold text-black uppercase opacity-80 md:text-2xl lg:text-2xl dark:text-white"
-          >
-            BSMP
-          </p>
-          <p
-            class="animated text-xl font-bold uppercase opacity-90 md:text-xl lg:text-xl"
-          >
-            Media Services
-          </p>
-          <p class="mt-5 mb-5 flex items-center justify-center">
-            <img
-              src="/images/logo-light.svg"
-              class="animated block h-18 w-18 dark:hidden"
-            />
-            <img
-              src="/images/logo-dark.svg"
-              class="animated hidden h-18 w-18 dark:block"
-            />
-          </p>
-          <p class="block text-sm font-bold uppercase opacity-90 md:text-base">
-            frontend
-          </p>
-          <p class="text-sm opacity-90 md:text-base lg:text-lg">
-            architecture / design / development / consulting
-          </p>
-          <!--<div class="flex items-center justify-center mt-5 mb-5">-->
-          <!--  <a href="#about"><Icon class="block scale-10 w-20 h-20" name="mdi:arrow-down-bold-circle" /></a>-->
-          <!--</div>-->
+  <BottomLayout>
+    <!-- HERO -->
+    <section class="relative h-screen w-full">
+      <div
+        class="animate absolute flex h-full w-full items-center justify-center"
+      >
+        <div class="relative flex h-full w-full items-center justify-center">
+          <div class="w-full text-center">
+            <p
+              class="animated mb-3 text-2xl font-semibold text-black uppercase opacity-80 md:text-2xl lg:text-2xl dark:text-white"
+            >
+              BSMP
+            </p>
+            <p
+              class="animated text-xl font-bold uppercase opacity-90 md:text-xl lg:text-xl"
+            >
+              Media Services
+            </p>
+            <p class="mt-5 mb-5 flex items-center justify-center">
+              <img
+                src="/images/logo-light.svg"
+                alt="logo"
+                class="animated block h-18 w-18 dark:hidden"
+              />
+              <img
+                src="/images/logo-dark.svg"
+                alt="logo"
+                class="animated hidden h-18 w-18 dark:block"
+              />
+            </p>
+            <p
+              class="block text-sm font-bold uppercase opacity-90 md:text-base"
+            >
+              frontend
+            </p>
+            <p class="text-sm opacity-90 md:text-base lg:text-lg">
+              architecture / design / development / consulting
+            </p>
+            <!--<div class="flex items-center justify-center mt-5 mb-5">-->
+            <!--  <a href="#about"><Icon class="block scale-10 w-20 h-20" name="mdi:arrow-down-bold-circle" /></a>-->
+            <!--</div>-->
+          </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!--<section id="about" class="relative bg-white dark:bg-black relative h-screen w-full  text-center">-->
-  <!--  <div class="mx-auto max-w-(--breakpoint-sm) p-5 space-y-24 pb-16">-->
-
-  <!-- About Section -->
-  <!--<section class="animate">-->
-  <!--  <article>-->
-  <!--    <p>I am a <b><i>software engineer</i></b>, <b><i>ui/ux designer</i></b>, <b><i>product planner</i></b>, <b><i>mentor</i></b>, <b><i>student</i></b>, <b><i>minimalist</i></b>, <b><i>eternal optimist</i></b>, <b><i>crypto enthusiast</i></b> and <b><i>sarcasm connoisseur</i></b>.</p>-->
-  <!--    <p>I love to both build and break things. I am motivated by challenging projects with self-guided research and dynamic problem solving. My true passion is crafting creative front end designs with unique takes on color, typography and motion.</p>-->
-  <!--    <p>I have built products ranging from marketing and ecommerce websites to complex enterprise apps with focus on delivering fast, elegant code along with delightful user interfaces.</p>-->
-  <!--    <p>Now</p>-->
-  <!--    <p>I currently work as a software engineer at StreamlineFS, where I do product planning, design and development.</p>-->
-  <!--  </article>-->
-  <!--</section>-->
-
-  <!--Project Preview Section -->
-  <section class="animate">
-    <div class="space-y-4">
-      <div class="flex justify-between">
-        <p class="font-semibold text-black dark:text-white">Recent projects</p>
-        <a
-          href="/projects"
-          class="group blend col-span-3 flex w-fit items-center gap-1 text-black underline decoration-black/25 decoration-[.5px] underline-offset-2 hover:decoration-black dark:text-white dark:decoration-white/50 dark:hover:decoration-white"
-        >
-          <span
-            class="blend text-black/75 group-hover:text-black dark:text-white/75 dark:group-hover:text-white"
+    <!--Project Preview Section -->
+    <section class="animate">
+      <div class="space-y-4">
+        <div class="flex justify-between">
+          <p class="font-semibold text-black dark:text-white">
+            Recent projects
+          </p>
+          <a
+            href="/projects"
+            class="group blend col-span-3 flex w-fit items-center gap-1 text-black underline decoration-black/25 decoration-[.5px] underline-offset-2 hover:decoration-black dark:text-white dark:decoration-white/50 dark:hover:decoration-white"
           >
-            All projects
-          </span>
-        </a>
+            <span
+              class="blend text-black/75 group-hover:text-black dark:text-white/75 dark:group-hover:text-white"
+            >
+              All projects
+            </span>
+          </a>
+        </div>
+        <ul class="space-y-4">
+          {
+            projects.map((project) => (
+              <li>
+                <ArrowCard entry={project} />
+              </li>
+            ))
+          }
+        </ul>
       </div>
-      <ul class="space-y-4">
-        {
-          projects.map((project) => (
-            <li>
-              <ArrowCard entry={project} />
-            </li>
-          ))
-        }
-      </ul>
-    </div>
-  </section>
+    </section>
 
-  <!-- Blog Preview Section -->
-  <!--<section class="animate">-->
-  <!--  <div class="space-y-4">-->
-  <!--    <div class="flex justify-between">-->
-  <!--      <p class="font-semibold text-black dark:text-white">-->
-  <!--        Recent posts-->
-  <!--      </p>-->
-  <!--      <a href="/blog" class="w-fit col-span-3 group flex gap-1 items-center underline decoration-[.5px] decoration-black/25 dark:decoration-white/50 hover:decoration-black dark:hover:decoration-white text-black dark:text-white underline-offset-2 blend">-->
-  <!--        <span class="text-black/75 dark:text-white/75 group-hover:text-black dark:group-hover:text-white blend">-->
-  <!--          All posts-->
-  <!--        </span>-->
-  <!--      </a>-->
-  <!--    </div>-->
-  <!--    <ul class="space-y-4">-->
-  <!--      {posts.map((post) => (-->
-  <!--        <li>-->
-  <!--          <ArrowCard entry={post} />-->
-  <!--        </li>-->
-  <!--      ))}-->
-  <!--    </ul>-->
-  <!--  </div>-->
-  <!--</section>-->
+    <!-- Blog Preview Section -->
+    <!--<section class="animate">-->
+    <!--  <div class="space-y-4">-->
+    <!--    <div class="flex justify-between">-->
+    <!--      <p class="font-semibold text-black dark:text-white">-->
+    <!--        Recent posts-->
+    <!--      </p>-->
+    <!--      <a href="/blog" class="w-fit col-span-3 group flex gap-1 items-center underline decoration-[.5px] decoration-black/25 dark:decoration-white/50 hover:decoration-black dark:hover:decoration-white text-black dark:text-white underline-offset-2 blend">-->
+    <!--        <span class="text-black/75 dark:text-white/75 group-hover:text-black dark:group-hover:text-white blend">-->
+    <!--          All posts-->
+    <!--        </span>-->
+    <!--      </a>-->
+    <!--    </div>-->
+    <!--    <ul class="space-y-4">-->
+    <!--      {posts.map((post) => (-->
+    <!--        <li>-->
+    <!--          <ArrowCard entry={post} />-->
+    <!--        </li>-->
+    <!--      ))}-->
+    <!--    </ul>-->
+    <!--  </div>-->
+    <!--</section>-->
 
-  <!--  </div>-->
-  <!--</section>-->
+    <!--  </div>-->
+    <!--</section>-->
+  </BottomLayout>
 </PageLayout>

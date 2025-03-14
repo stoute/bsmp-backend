@@ -20,18 +20,56 @@ export const logger = defineMiddleware(async (context, next) => {
 });
 
 export const cors = defineMiddleware(async (context, next) => {
-  if (context.request.method === "OPTIONS") {
+  // Define allowed origins
+  const allowedOrigins = [
+    "http://localhost:4321",
+    "http://localhost:4322",
+    "https://bsmp.netlify.app",
+  ];
+  const origin = context.request.headers.get("Origin") || "";
+  const method = context.request.method;
+
+  // Check if the request origin is allowed
+  const isAllowedOrigin = allowedOrigins.includes(origin);
+
+  // Handle preflight requests (OPTIONS)
+  if (method === "OPTIONS") {
     return new Response(null, {
       status: 204,
       headers: {
-        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Origin": isAllowedOrigin ? origin : "*",
         "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type, Authorization",
+        "Access-Control-Allow-Headers":
+          "Content-Type, Authorization, X-Requested-With",
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Max-Age": "86400",
       },
     });
   }
+
+  // For PUT and DELETE, only allow from specific origins
+  if ((method === "PUT" || method === "DELETE") && !isAllowedOrigin) {
+    return new Response(
+      JSON.stringify({
+        error: "CORS policy does not allow this origin for this method",
+      }),
+      {
+        status: 403,
+        headers: { "Content-Type": "application/json" },
+      },
+    );
+  }
+
   const response = await next();
-  response.headers.set("Access-Control-Allow-Origin", "*");
+
+  // Set CORS headers on the response
+  if (isAllowedOrigin) {
+    response.headers.set("Access-Control-Allow-Origin", origin);
+    response.headers.set("Access-Control-Allow-Credentials", "true");
+  } else {
+    response.headers.set("Access-Control-Allow-Origin", "*");
+  }
+
   return response;
 });
 
@@ -39,7 +77,13 @@ export const securityHeaders = defineMiddleware(async (context, next) => {
   const response = await next();
   response.headers.set("X-Frame-Options", "DENY");
   response.headers.set("X-Content-Type-Options", "nosniff");
-  response.headers.set("Content-Security-Policy", "default-src 'self'");
+
+  // Update CSP to allow connections to your production domain
+  response.headers.set(
+    "Content-Security-Policy",
+    "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://bsmp.netlify.app https://openrouter.ai;",
+  );
+
   return response;
 });
 

@@ -1,37 +1,14 @@
-import { useState } from "react";
-import type { IPromptTemplate } from "@types";
 import Chat from "./Chat";
 import ChatControls from "./ChatControls";
+import { MessageErrorBoundary } from "./MessageErrorBoundary";
 
-interface ChatTemplatesProps {
-  model?: string;
-  systemPrompt?: string;
-}
-
-export default function ChatTemplates({
-  model = "openai/gpt-3.5-turbo",
-  systemPrompt = "You are a helpful assistant.",
-}: ChatTemplatesProps) {
-  const [selectedTemplate, setSelectedTemplate] = useState<
-    IPromptTemplate | undefined
-  >();
-  const [selectedModel, setSelectedModel] = useState(model);
-
-  // if (!selectedTemplate) return;
-
+export default function ChatTemplates() {
   return (
-    <div className="flex flex-col gap-4">
-      <ChatControls
-        onTemplateChange={setSelectedTemplate}
-        onModelChange={setSelectedModel}
-        selectedTemplateId={selectedTemplate?.id}
-        selectedModel={selectedModel}
-      />
-      <Chat
-        key={`${selectedTemplate?.id || "default"}-${selectedModel}`}
-        model={selectedModel}
-        template={selectedTemplate}
-      />
+    <div className="flex h-full flex-col gap-4 overflow-hidden p-4">
+      <ChatControls />
+      <MessageErrorBoundary>
+        <Chat key="chat" />
+      </MessageErrorBoundary>
     </div>
   );
 }

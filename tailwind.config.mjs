@@ -282,7 +282,10 @@ export default {
       },
     },
     backgroundColor: {
-      background: "white",
+      background: {
+        DEFAULT: "white",
+        dark: "black",
+      },
     },
     textColor: {
       foreground: "black",
