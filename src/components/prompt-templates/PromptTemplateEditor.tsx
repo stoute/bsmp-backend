@@ -3,7 +3,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Trash2, Save, Plus, AlertCircle, Copy } from "lucide-react";
-import type { IPromptTemplate } from "@types.ts";
+import type { IPromptTemplate } from "@lib/ai/types.ts";
+import { appState } from "@lib/appStore";
 
 import {
   Form,
@@ -69,7 +70,7 @@ interface PromptTemplateEditorProps {
 }
 
 const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
-  apiEndPoint = "/api/prompts/index.json",
+  apiEndPoint = appState.get().apiBaseUrl + "/prompts/index.json",
   promptTemplate,
   onSave,
   onDelete,

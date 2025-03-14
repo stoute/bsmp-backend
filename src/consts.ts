@@ -1,5 +1,23 @@
 import type { Site, Page, Links, Socials } from "@types";
 
+// Get the window location origin
+const getWindowLocationOrigin = () => {
+  if (typeof window !== "undefined") {
+    return window.location.origin;
+  }
+  return "";
+};
+
+export const API_BASE_URL_PROD = getWindowLocationOrigin() + "/api";
+export const API_BASE_URL_DEV = getWindowLocationOrigin() + "/api";
+// export const API_BASE_URL_DEV = "https://bsmp.netlify.app/api";
+
+export const DEFAULT_MODEL = "google/gemini-2.0-flash-lite-001";
+export const DEFAULT_MODEL_FREE = "mistralai/mistral-7b-instruct";
+
+export const DEFAULT_TEMPLATE_ID = "be0a2289-88ca-42b5-860c-a97bae747362";
+export const DEFAULT_SYSTEM_MESSAGE = "You are a helpful assistant.";
+
 export const LLM_MODELS = [
   "google/gemini-2.0-flash-lite-001",
   // "google/gemini-2.0-flash-001",
@@ -11,15 +29,7 @@ export const LLM_MODELS = [
   "thedrummer/unslopnemo-12b",
   "neversleep/noromaid-20b",
 ];
-export const DEFAULT_MODEL = "google/gemini-2.0-flash-lite-001";
-export const DEFAULT_MODEL_FREE = "mistralai/mistral-7b-instruct";
 
-export const DEFAULT_TEMPLATE_ID = "be0a2289-88ca-42b5-860c-a97bae747362";
-export const DEFAULT_SYSTEM_MESSAGE = "You are a helpful assistant.";
-
-export const API_BASE_URL = "/api";
-// export const API_BASE_URL_DEV = "https://bsmp.netlify.app/api";
-export const API_BASE_URL_DEV = "/api";
 
 // Links
 export const LINKS: Links = [

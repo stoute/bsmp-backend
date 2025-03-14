@@ -34,7 +34,7 @@ export default function SessionsList() {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch("/api/sessions/list.json");
+      const response = await fetch(appState.get().apiBaseUrl + "/sessions/list.json");
       if (!response.ok) throw new Error("Failed to fetch sessions");
       const data = await response.json();
       setSessions(data);
@@ -53,7 +53,7 @@ export default function SessionsList() {
 
   const handleDelete = async (id: string) => {
     try {
-      const response = await fetch(`/api/sessions/${id}.json`, {
+      const response = await fetch(appState.get().apiBaseUrl + `/sessions/${id}.json`, {
         method: "DELETE",
       });
       if (!response.ok) throw new Error("Failed to delete session");
@@ -66,7 +66,7 @@ export default function SessionsList() {
 
   const handleLoad = async (id: string) => {
     try {
-      const response = await fetch(`/api/sessions/${id}.json`);
+      const response = await fetch(appState.get().apiBaseUrl + `/sessions/${id}.json`);
       if (!response.ok) throw new Error("Failed to load session");
       const session = await response.json();
       // Implement your session loading logic here

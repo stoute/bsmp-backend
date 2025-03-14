@@ -5,14 +5,6 @@ import type {
 } from "@lib/ai/types";
 import type { IPromptTemplate } from "@lib/aitypes";
 import { atom } from "nanostores";
-import { API_BASE_URL, API_BASE_URL_DEV } from "@consts";
-
-const getEnvironment = () => {
-  if (typeof window !== "undefined") {
-    return document.documentElement.dataset.environment;
-  }
-  return "development";
-};
 
 export type AppState = {
   apiBaseUrl: string;
@@ -29,9 +21,8 @@ export type AppState = {
 export const appState = persistentMap<AppState>(
   "app-state:",
   {
-    apiBaseUrl:
-      getEnvironment() === "development" ? API_BASE_URL_DEV : API_BASE_URL,
-    environment: getEnvironment(),
+    apiBaseUrl: undefined as any,
+    environment: undefined as any,
     selectedModel: undefined,
     selectedTemplateId: undefined,
     currentChat: undefined,

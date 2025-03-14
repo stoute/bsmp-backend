@@ -1,17 +1,14 @@
 import { defineDb, defineTable, column } from "astro:db";
 
-/**
- * Define the database table schema for PromptTemplates.
- */
 const PromptTemplate = defineTable({
   columns: {
     id: column.text({ primaryKey: true }),
     name: column.text(),
     description: column.text(),
     systemPrompt: column.text(),
-    template: column.text({ optional: true }), // Made optional
-    variables: column.json(), // Array of strings
-    created_at: column.text(), // fixme: use column.date()
+    template: column.text({ optional: true }),
+    variables: column.json(),
+    created_at: column.text(),
     updated_at: column.text(),
   },
 });
@@ -19,8 +16,6 @@ const PromptTemplate = defineTable({
 const ChatSession = defineTable({
   columns: {
     id: column.text({ primaryKey: true }),
-    //model: column.text(),
-    //templateId: column.text({ optional: true }),
     messages: column.json(), // Array of Message objects
     metadata: column.json({
       default: {
@@ -61,4 +56,5 @@ const Author = defineTable({
 // https://astro.build/db/config
 export default defineDb({
   tables: { PromptTemplate, ChatSession, Comment, Author },
+  // tables: { PromptTemplateTable, PromptTemplate, ChatSession, Comment, Author },
 });

@@ -75,12 +75,12 @@ class ChatManager {
 
   public async init(template?: IPromptTemplate) {
     console.log("init", template);
-    try {
-      await this.restoreState();
+    await this.restoreState();
+    if (template) {
       await this.setTemplate(template);
-    } catch (error) {
-      console.error("Error during initialization:", error);
-      // Fallback to default system message
+    }else{
+      console.log("No templateId provided, using default template");
+      appState.setKey("selectedTemplateId", DEFAULT_TEMPLATE_ID);
       this.messages = [new SystemMessage(DEFAULT_SYSTEM_MESSAGE)];
     }
   }
@@ -133,20 +133,20 @@ class ChatManager {
   }
 
   async newChat(templateId?: string) {
+    if (!templateId) {
+      templateId = DEFAULT_TEMPLATE_ID;
+    }
     await this.clearMessages();
     this.cleanupSubscriptions();
     appState.setKey("currentChat", undefined);
-
     if (templateId) {
       try {
         const baseUrl = appState.get().apiBaseUrl;
-        let fetchUrl = new URL(baseUrl+`/prompts/${templateId}.json`, window.location.origin).toString();
-
+        let fetchUrl = `${baseUrl}/prompts/${templateId}.json`;
         const response = await fetch(fetchUrl);
         if (!response.ok) {
           throw new Error(`Failed to fetch template: ${response.statusText}`);
         }
-
         const template: IPromptTemplate = await response.json();
         if (!template) {
           throw new Error('Template not found');
@@ -160,21 +160,6 @@ class ChatManager {
             model: this.model,
           },
         };
-
-        // Save chat state to server
-        // const saveResponse = await fetch(`${baseUrl}/sessions/index.json`, {
-        //   method: 'POST',
-        //   headers: {
-        //     'Content-Type': 'application/json',
-        //   },
-        //   body: JSON.stringify(chatState),
-        // });
-        //
-        // if (!saveResponse.ok) {
-        //   throw new Error('Failed to save chat session');
-        // }
-        // const savedSession = await saveResponse.json();
-
         appState.setKey("currentChat", chatState);
         appState.setKey("selectedTemplate", template);
         appState.setKey("selectedTemplateId", template.id);
@@ -183,13 +168,11 @@ class ChatManager {
       } catch (error) {
         console.error('Error in newChat:', error);
         // Fall through to default initialization
+        await this.init();
       }
+    // } else {
+    //   await this.init();
     }
-
-    // Initialize with default system message
-    appState.setKey("selectedTemplateId", DEFAULT_TEMPLATE_ID);
-    this.messages = [new SystemMessage(DEFAULT_SYSTEM_MESSAGE)];
-    await this.init();
   }
 
   private async restoreState() {
@@ -245,8 +228,8 @@ class ChatManager {
     const method = currentChat?.id ? 'PUT' : 'POST';
     let url = `${appState.get().apiBaseUrl}/sessions/index.json`;
     if(method === 'PUT') url = url.replace("index", currentChat.id);
-    console.log("method", method);
     if (this.messages.length > 2) {
+      console.log("method", method);
       try {
         const response = await fetch(url, {
           method: method,
@@ -386,7 +369,7 @@ class ChatManager {
     const urlObj = new URL(url);
     const endpoint = urlObj.pathname.split("/v1/")[1];
 
-    const response: Response = await fetch("/api/ai-proxy", {
+    const response: Response = await fetch(appState.get().apiBaseUrl + "/ai-proxy", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

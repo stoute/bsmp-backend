@@ -7,6 +7,7 @@ import { type AppState, openRouterModels } from "@lib/appStore";
 import { type OpenRouterModelIndex } from "@lib/ai/types";
 import * as constants from "@consts";
 import type { OpenRouterModel } from "@lib/ai/types";
+import {API_BASE_URL_DEV, API_BASE_URL_PROD} from '@consts';
 
 const production: boolean = process.env.NODE_ENV === "production";
 
@@ -16,6 +17,13 @@ declare global {
     executeWhenReady: (callback: () => void) => void;
   }
 }
+const getEnvironment = () => {
+  if (typeof window !== "undefined") {
+    return document.documentElement.dataset.environment;
+  }
+  return "development";
+};
+
 
 export class AppService {
   private static instance: AppService;
@@ -25,16 +33,14 @@ export class AppService {
   public initialized: boolean = false;
   public production: boolean = production;
   public constants: any = constants;
-  // public version: string = packageJson.version;
-  // public apikeyOpenAi = process.env.NEXT_PUBLIC_OPENAI_API_KEY as string;
 
   private constructor() {
-    // console.log("AppService constructor");
+    this.store.appState.setKey("environment", getEnvironment());
+    this.store.appState.setKey("apiBaseUrl", getEnvironment() === "development" ? API_BASE_URL_DEV : API_BASE_URL_PROD);
   }
 
   async init() {
     if (this.initialized) return;
-
     try {
       // Check if models are already loaded
       const openRouter = openRouterModels.get();
@@ -69,7 +75,8 @@ export class AppService {
           );
         }
       }
-      console.log("App initialized", this);
+      console.log("App initialized");
+      this.debug();
       this.initialized = true;
     } catch (error) {
       console.error("Error during app initialization:", error);
@@ -79,15 +86,16 @@ export class AppService {
   }
 
   debug(value: any = undefined): void {
-    console.log("");
-    console.log("--appService.debug()--");
     if (this.production) return;
+    console.log("");
+    console.log("--debug()--");
     if (value) {
       console.log(value);
       console.log("--");
       return;
     }
     console.log(this);
+    console.log('apiBaseUrl'+this.state.value.apiBaseUrl);
     console.log("--");
     console.log("");
   }

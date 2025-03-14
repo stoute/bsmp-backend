@@ -18,12 +18,13 @@
     "astro": "astro",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
+    "db-verify-remote": "astro db verify --remote",
     "db-pull-remote": "astro db pull --remote",
     "db-push-remote": "astro db push --remote"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",
-    "@astrojs/db": "^0.14.6",
+    "@astrojs/db": "^0.14.8",
     "@astrojs/mdx": "^4.0.8",
     "@astrojs/netlify": "^6.2.1",
     "@astrojs/node": "^9.1.0",
@@ -61,6 +62,7 @@
     "clsx": "^2.1.0",
     "cmdk": "1.0.0",
     "fuse.js": "^7.0.0",
+    "g": "^2.0.1",
     "html-react-parser": "^5.2.2",
     "langchain": "^0.3.19",
     "lucide-react": "^0.475.0",
