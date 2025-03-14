@@ -21,10 +21,11 @@ const getEnvironment = () => {
 
 export class AppService {
   private static instance: AppService;
+  public initialized: boolean = false;
   public name = constants.SITE.TITLE;
   public store = store;
   public state: AppState = store.appState;
-  public initialized: boolean = false;
+
   public production: boolean = production;
   public constants: any = constants;
 

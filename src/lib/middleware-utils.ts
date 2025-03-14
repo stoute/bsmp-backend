@@ -7,7 +7,7 @@ export const errorHandler = defineMiddleware(async (context, next) => {
     console.error("Error:", error);
     return new Response(JSON.stringify({ error: "Internal Server Error" }), {
       status: 500,
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json"  },
     });
   }
 });
@@ -21,7 +21,11 @@ export const logger = defineMiddleware(async (context, next) => {
 
 export const cors = defineMiddleware(async (context, next) => {
   // Define allowed origins
-  const allowedOrigins = ["http://localhost:4321", "http://localhost:4322"];
+  const allowedOrigins = [
+    "http://localhost:4321",
+    "http://localhost:4322",
+    "https://bsmp.netlify.app"
+  ];
   const origin = context.request.headers.get("Origin") || "";
 
   // Check if the request origin is allowed
@@ -33,13 +37,13 @@ export const cors = defineMiddleware(async (context, next) => {
       headers: {
         "Access-Control-Allow-Origin": isAllowedOrigin ? origin : "*",
         "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Requested-With",
+        "Access-Control-Allow-Headers":
+          "Content-Type, Authorization, X-Requested-With",
         "Access-Control-Allow-Credentials": "true",
-        "Access-Control-Max-Age": "86400"
+        "Access-Control-Max-Age": "86400",
       },
     });
   }
-
   const response = await next();
 
   // Set CORS headers on the response
@@ -57,7 +61,13 @@ export const securityHeaders = defineMiddleware(async (context, next) => {
   const response = await next();
   response.headers.set("X-Frame-Options", "DENY");
   response.headers.set("X-Content-Type-Options", "nosniff");
-  response.headers.set("Content-Security-Policy", "default-src 'self'");
+
+  // Update CSP to allow connections to your production domain
+  response.headers.set(
+    "Content-Security-Policy",
+    "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://bsmp.netlify.app https://openrouter.ai;"
+  );
+
   return response;
 });
 
