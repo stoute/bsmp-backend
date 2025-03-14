@@ -1,6 +1,7 @@
 import * as store from "@lib/appStore";
 import { type AppState, openRouterModels } from "@lib/appStore";
 import * as constants from "@consts";
+import {clearLocalStorage} from '@lib/utils.ts';
 import {API_BASE_URL_DEV, API_BASE_URL_PROD} from '@consts';
 
 const production: boolean = process.env.NODE_ENV === "production";
@@ -77,6 +78,11 @@ export class AppService {
       this.initialized = true;
     }
   }
+
+  public clearStorage() {
+    clearLocalStorage(true);
+  }
+
 
   debug(value: any = undefined): void {
     if (this.production) return;

@@ -5,12 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8cf7e9a9-1ddf-43bf-8ddd-96d96e27722b" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/AugmentWebviewStateStore.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/AugmentWebviewStateStore.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/prettier.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/prettier.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/db/migrate-templates.ts" beforeDir="false" afterPath="$PROJECT_DIR$/db/migrate-templates.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/db/seed-templates.json" beforeDir="false" afterPath="$PROJECT_DIR$/public/seed-templates.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/db/seed.ts" beforeDir="false" afterPath="$PROJECT_DIR$/db/seed.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/consts.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/consts.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/ChatManager.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/ChatManager.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/lib/appService.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/appService.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/middleware-utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/middleware-utils.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/middleware.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/middleware.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/utils.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -48,31 +52,31 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;pnpm&quot;,
-    &quot;npm.----build.executor&quot;: &quot;Run&quot;,
-    &quot;npm.---build.executor&quot;: &quot;Run&quot;,
-    &quot;npm.build.executor&quot;: &quot;Run&quot;,
-    &quot;npm.db-pull-remote.executor&quot;: &quot;Run&quot;,
-    &quot;npm.db-pull.executor&quot;: &quot;Run&quot;,
-    &quot;npm.db-push-remote.executor&quot;: &quot;Run&quot;,
-    &quot;npm.db-push.executor&quot;: &quot;Run&quot;,
-    &quot;npm.db-verify-remote.executor&quot;: &quot;Run&quot;,
-    &quot;npm.dev:network.executor&quot;: &quot;Run&quot;,
-    &quot;prettierjs.PrettierConfiguration.Package&quot;: &quot;/Users/bobstoute/Git/@bsmp/bsmp-backend/node_modules/prettier&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;settings.astroservice&quot;,
-    &quot;ts.external.directory.path&quot;: &quot;/Users/bobstoute/Git/@bsmp/bsmp-backend/node_modules/typescript/lib&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "main",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "pnpm",
+    "npm.----build.executor": "Run",
+    "npm.---build.executor": "Run",
+    "npm.build.executor": "Run",
+    "npm.db-pull-remote.executor": "Run",
+    "npm.db-pull.executor": "Run",
+    "npm.db-push-remote.executor": "Run",
+    "npm.db-push.executor": "Run",
+    "npm.db-verify-remote.executor": "Run",
+    "npm.dev:network.executor": "Run",
+    "prettierjs.PrettierConfiguration.Package": "/Users/bobstoute/Git/@bsmp/bsmp-backend/node_modules/prettier",
+    "settings.editor.selected.configurable": "settings.javascript.prettier",
+    "ts.external.directory.path": "/Users/bobstoute/Git/@bsmp/bsmp-backend/node_modules/typescript/lib",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="ReactDesignerToolWindowState">
     <option name="myId2Visible">
       <map>
@@ -84,6 +88,7 @@
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/public" />
       <recent name="$PROJECT_DIR$/src-design" />
     </key>
   </component>
@@ -167,11 +172,15 @@
       <workItem from="1741866574154" duration="26804000" />
       <workItem from="1741903987621" duration="14739000" />
       <workItem from="1741945963003" duration="8314000" />
-      <workItem from="1741959627684" duration="1567000" />
+      <workItem from="1741959627684" duration="5812000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
   </component>
 </project>

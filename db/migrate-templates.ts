@@ -1,5 +1,5 @@
 import { db, PromptTemplate, PromptTemplateTable } from "astro:db";
-import seedTemplates from "./seed-templates.json";
+import seedTemplates from "../public/seed-templates.json";
 
 export async function migrateSeedTemplatesToRemote() {
   try {

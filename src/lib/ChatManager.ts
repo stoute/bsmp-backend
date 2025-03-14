@@ -12,12 +12,13 @@ import {
 } from "@langchain/core/messages";
 import type { Message } from "@lib/ai/types";
 import { appService } from "@lib/appService.ts";
-import {  type ChatState, type IPromptTemplate } from "@lib/ai/types";
+import { type ChatState, type IPromptTemplate } from "@lib/ai/types";
 import { appState, openRouterModels } from "@lib/appStore";
 import {
   DEFAULT_MODEL,
   DEFAULT_MODEL_FREE,
   DEFAULT_SYSTEM_MESSAGE,
+  DEFAULT_TEMPLATE,
   DEFAULT_TEMPLATE_ID,
 } from "@consts";
 import { ChatParser } from "./ChatParser";
@@ -77,7 +78,7 @@ class ChatManager {
     await this.restoreState();
     if (template) {
       await this.setTemplate(template);
-    }else{
+    } else {
       console.log("No templateId provided, using default template");
       appState.setKey("selectedTemplateId", DEFAULT_TEMPLATE_ID);
       this.messages = [new SystemMessage(DEFAULT_SYSTEM_MESSAGE)];
@@ -132,7 +133,7 @@ class ChatManager {
 
   async newChat(templateId?: string) {
     // Early return if running on server
-    if (typeof window === 'undefined') return;
+    if (typeof window === "undefined") return;
 
     if (!templateId) {
       templateId = DEFAULT_TEMPLATE_ID;
@@ -140,19 +141,25 @@ class ChatManager {
     await this.clearMessages();
     this.cleanupSubscriptions();
     appState.setKey("currentChat", undefined);
+    // define template
+    let template: IPromptTemplate = undefined;
     if (templateId) {
       try {
-        const baseUrl = appState.get().apiBaseUrl;
-        // Fix URL construction
-        let fetchUrl = new URL(appState.get().apiBaseUrl + `/prompts/${templateId}.json`, baseUrl).toString();
-        console.log(fetchUrl);
-        const response = await fetch(fetchUrl);
-        if (!response.ok) {
-          throw new Error(`Failed to fetch template: ${response.statusText}`);
-        }
-        const template: IPromptTemplate = await response.json();
-        if (!template) {
-          throw new Error('Template not found');
+        if (templateId === DEFAULT_TEMPLATE_ID) {
+          template = DEFAULT_TEMPLATE;
+        } else {
+          const baseUrl = appState.get().apiBaseUrl;
+          // Fix URL construction
+          let fetchUrl = new URL(
+            appState.get().apiBaseUrl + `/prompts/${templateId}.json`,
+            baseUrl,
+          ).toString();
+          console.log(fetchUrl);
+          const response = await fetch(fetchUrl);
+          if (!response.ok) {
+            throw new Error(`Failed to fetch template: ${response.statusText}`);
+          }
+          template = await response.json();
         }
         const chatState: Partial<ChatState> = {
           messages: this.messages,
@@ -169,7 +176,7 @@ class ChatManager {
         await this.init(template);
         return;
       } catch (error) {
-        console.error('Error in newChat:', error);
+        console.error("Error in newChat:", error);
         // Fall through to default initialization
         await this.init();
       }
@@ -215,28 +222,28 @@ class ChatManager {
     };
     // POST or PUT to db
     const currentChat = appState.get().currentChat;
-    const method = currentChat?.id ? 'PUT' : 'POST';
+    const method = currentChat?.id ? "PUT" : "POST";
     let url = `${appState.get().apiBaseUrl}/sessions/index.json`;
-    if(method === 'PUT') url = url.replace("index", currentChat.id);
+    if (method === "PUT") url = url.replace("index", currentChat.id);
     if (this.messages.length > 2) {
       // console.log("method", method);
       try {
         const response = await fetch(url, {
           method: method,
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify(chatState),
         });
 
         if (!response.ok) {
-          throw new Error('Failed to update chat session');
+          throw new Error("Failed to update chat session");
         }
 
         const updatedSession = await response.json();
         appState.setKey("currentChat", updatedSession);
       } catch (error) {
-        console.error('Error saving chat state:', error);
+        console.error("Error saving chat state:", error);
         // Still update local state even if server update fails
         appState.setKey("currentChat", chatState);
       }
@@ -358,17 +365,19 @@ class ChatManager {
   private proxyFetchHandler = async (url: string, options: any) => {
     const urlObj = new URL(url);
     const endpoint = urlObj.pathname.split("/v1/")[1];
-
-    const response: Response = await fetch(appState.get().apiBaseUrl + "/ai-proxy", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
+    const response: Response = await fetch(
+      appState.get().apiBaseUrl + "/ai-proxy",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          endpoint,
+          data: JSON.parse(options.body),
+        }),
       },
-      body: JSON.stringify({
-        endpoint,
-        data: JSON.parse(options.body),
-      }),
-    });
+    );
 
     return response;
   };

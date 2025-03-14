@@ -34,3 +34,13 @@ export function isRunningOnLocalhost(): boolean {
     hostname.startsWith("127.") // Any 127.x.x.x IP range
   );
 }
+
+export function clearLocalStorage(reloadPage: boolean = false): void {
+  if (typeof window !== "undefined") {
+    localStorage.clear();
+    if (reloadPage) {
+      window.location.reload();
+    }
+    console.log("Local storage cleared successfully");
+  }
+}
