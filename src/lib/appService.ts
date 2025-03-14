@@ -1,8 +1,9 @@
 import * as store from "@lib/appStore";
 import { type AppState, openRouterModels } from "@lib/appStore";
 import * as constants from "@consts";
-import {clearLocalStorage} from '@lib/utils.ts';
-import {API_BASE_URL_DEV, API_BASE_URL_PROD} from '@consts';
+import { clearLocalStorage } from "@lib/utils.ts";
+import { API_BASE_URL_DEV, API_BASE_URL_PROD } from "@consts";
+import { migrateSeedTemplatesToRemote } from "@lib/utils/dbUtils";
 
 const production: boolean = process.env.NODE_ENV === "production";
 
@@ -19,7 +20,6 @@ const getEnvironment = () => {
   return "development";
 };
 
-
 export class AppService {
   private static instance: AppService;
   public initialized: boolean = false;
@@ -32,7 +32,11 @@ export class AppService {
 
   private constructor() {
     this.store.appState.setKey("environment", getEnvironment());
-    this.store.appState.setKey("apiBaseUrl", getEnvironment() === "development" ? API_BASE_URL_DEV : API_BASE_URL_PROD);
+    this.store.appState.setKey(
+      "apiBaseUrl",
+      getEnvironment() === "development" ? API_BASE_URL_DEV : API_BASE_URL_PROD,
+    );
+    // this.pushSeedTemplatesToRemote();
   }
 
   async init() {
@@ -83,6 +87,11 @@ export class AppService {
     clearLocalStorage(true);
   }
 
+  public async pushSeedTemplatesToRemote() {
+    if (typeof window === "undefined") return;
+    const seedTemplates = await (await fetch("_seed-templates.json")).json();
+    await migrateSeedTemplatesToRemote(seedTemplates);
+  }
 
   debug(value: any = undefined): void {
     if (this.production) return;
