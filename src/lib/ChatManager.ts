@@ -366,7 +366,8 @@ class ChatManager {
     const urlObj = new URL(url);
     const endpoint = urlObj.pathname.split("/v1/")[1];
     const response: Response = await fetch(
-      appState.get().apiBaseUrl + "/ai-proxy",
+      // appState.get().apiBaseUrl + "/ai-proxy",
+      "/ai-proxy",
       {
         method: "POST",
         headers: {

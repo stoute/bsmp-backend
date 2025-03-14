@@ -20,15 +20,54 @@
       "type": "string",
       "description": "An optional system prompt segment that sets overall context or instructions for the LLM."
     },
+    "template": {
+      "type": "string",
+      "description": "The actual prompt template string, potentially containing variable placeholders."
+    },
+
+
     "template_format": {
       "type": "string",
       "enum": ["jinja2", "f-string", "handlebars", "raw"],
       "description": "Specifies the templating language used in the template."
     },
-    "template": {
-      "type": "string",
-      "description": "The actual prompt template string, potentially containing variable placeholders."
+    "output_parser": {
+      "type": "object",
+      "description": "Defines how the output of the LLM should be parsed.",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the output parser (e.g., 'JSON', 'Regex', 'List')."
+        },
+        "arguments": {
+          "type": "object",
+          "description": "Configuration parameters specific to the chosen output parser.",
+          "additionalProperties": true
+        }
+      },
+      "required": ["name"]
     },
+    "prompt_chain": {
+      "type": "array",
+      "description": "An array of IDs that refer to other prompt templates for prompt chaining.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Arbitrary metadata associated with the prompt template. Custom properties can be added here.",
+      "additionalProperties": true
+    },
+    "tags": {
+      "type": "array",
+      "description": "An array of tags for categorizing and searching prompt templates.",
+      "items": {
+        "type": "string"
+      }
+    },
+
+
     "input_variables": {
       "type": "array",
       "description": "Array of input variable definitions required by the template.",
@@ -134,22 +173,7 @@
         ]
       }
     },
-    "output_parser": {
-      "type": "object",
-      "description": "Defines how the output of the LLM should be parsed.",
-      "properties": {
-        "name": {
-          "type": "string",
-          "description": "The name of the output parser (e.g., 'JSON', 'Regex', 'List')."
-        },
-        "arguments": {
-          "type": "object",
-          "description": "Configuration parameters specific to the chosen output parser.",
-          "additionalProperties": true
-        }
-      },
-      "required": ["name"]
-    },
+
     "examples": {
       "type": "array",
       "description": "An array of example inputs and expected outputs for few-shot learning and testing.",
@@ -168,18 +192,7 @@
         "required": ["input", "output"]
       }
     },
-    "metadata": {
-      "type": "object",
-      "description": "Arbitrary metadata associated with the prompt template. Custom properties can be added here.",
-      "additionalProperties": true
-    },
-    "tags": {
-      "type": "array",
-      "description": "An array of tags for categorizing and searching prompt templates.",
-      "items": {
-        "type": "string"
-      }
-    },
+
     "created_at": {
       "type": "string",
       "format": "date-time",
@@ -196,14 +209,8 @@
       "type": "integer",
       "default": 1,
       "description": "An integer representing the version of the prompt template."
-    },
-    "prompt_chain": {
-      "type": "array",
-      "description": "An array of IDs that refer to other prompt templates for prompt chaining.",
-      "items": {
-        "type": "string"
-      }
     }
+
   },
   "required": ["id", "name", "template_format", "template", "input_variables"],
   "additionalProperties": false
