@@ -7,24 +7,80 @@ export const errorHandler = defineMiddleware(async (context, next) => {
     console.error("Error:", error);
     return new Response(JSON.stringify({ error: "Internal Server Error" }), {
       status: 500,
-      headers: { "Content-Type": "application/json"  },
+      headers: { "Content-Type": "application/json" },
     });
   }
 });
 
-export const logger = defineMiddleware(async (context, next) => {
-  console.log(`Request: ${context.request.method} ${context.url.pathname}`);
+export const cors = defineMiddleware(async (context, next) => {
+  // Define allowed origins for PUT and DELETE
+  const allowedOrigins = [
+    "http://localhost:4321",
+    "http://localhost:4322",
+    "https://bsmp.netlify.app",
+  ];
+  const origin = context.request.headers.get("Origin") || "";
+
+  // Get the HTTP method of the request
+  const method = context.request.method;
+
+  // Default CORS headers
+  let corsHeaders = {
+    "Access-Control-Allow-Headers":
+      "Content-Type, Authorization, X-Requested-With",
+    "Access-Control-Allow-Methods": "GET, HEAD, PUT, DELETE, OPTIONS",
+  };
+
+  // Allow all origins for GET and HEAD requests
+  if (["GET", "HEAD"].includes(method)) {
+    corsHeaders["Access-Control-Allow-Origin"] = "*";
+  }
+
+  // Restrict PUT and DELETE to specific allowed origins
+  else if (["PUT", "DELETE"].includes(method)) {
+    if (allowedOrigins.includes(origin)) {
+      corsHeaders["Access-Control-Allow-Origin"] = origin;
+      corsHeaders["Access-Control-Allow-Credentials"] = "true";
+    } else {
+      return new Response(
+        JSON.stringify({ error: "CORS policy does not allow this origin." }),
+        {
+          status: 403,
+          headers: { "Content-Type": "application/json" },
+        },
+      );
+    }
+  }
+
+  // Handle preflight requests (OPTIONS)
+  if (method === "OPTIONS") {
+    return new Response(null, {
+      status: 204,
+      headers: {
+        ...corsHeaders,
+        // Preflight-specific headers
+        "Access-Control-Max-Age": "86400", // Cache preflight response for 24 hours
+      },
+    });
+  }
+
+  // Pass the request to the next middleware or route handler
   const response = await next();
-  console.log(`Response: ${response.status}`);
+
+  // Set CORS headers on the response
+  Object.entries(corsHeaders).forEach(([key, value]) => {
+    response.headers.set(key, value);
+  });
+
   return response;
 });
 
-export const cors = defineMiddleware(async (context, next) => {
+export const corsDeprecated = defineMiddleware(async (context, next) => {
   // Define allowed origins
   const allowedOrigins = [
     "http://localhost:4321",
     "http://localhost:4322",
-    "https://bsmp.netlify.app"
+    "https://bsmp.netlify.app",
   ];
   const origin = context.request.headers.get("Origin") || "";
 
@@ -65,7 +121,7 @@ export const securityHeaders = defineMiddleware(async (context, next) => {
   // Update CSP to allow connections to your production domain
   response.headers.set(
     "Content-Security-Policy",
-    "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://bsmp.netlify.app https://openrouter.ai;"
+    "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://bsmp.netlify.app https://openrouter.ai;",
   );
 
   return response;

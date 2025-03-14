@@ -5,14 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8cf7e9a9-1ddf-43bf-8ddd-96d96e27722b" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/lib/utils/dbUtils.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/AugmentWebviewStateStore.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/AugmentWebviewStateStore.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/prettier.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/prettier.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/db/migrate-templates.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/db/seed.ts" beforeDir="false" afterPath="$PROJECT_DIR$/db/seed.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/seed-templates.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/appService.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/appService.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/ChatManager.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/ChatManager.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/middleware-utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/middleware-utils.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/middleware.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/middleware.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -176,7 +171,7 @@
       <workItem from="1741866574154" duration="26804000" />
       <workItem from="1741903987621" duration="14739000" />
       <workItem from="1741945963003" duration="8314000" />
-      <workItem from="1741959627684" duration="13091000" />
+      <workItem from="1741959627684" duration="15390000" />
     </task>
     <servers />
   </component>
