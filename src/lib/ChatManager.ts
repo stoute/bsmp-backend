@@ -9,7 +9,6 @@ import {
   HumanMessage,
   SystemMessage,
   AIMessage,
-  BaseMessage,
 } from "@langchain/core/messages";
 import type { Message } from "@lib/ai/types";
 import { appService } from "@lib/appService.ts";
@@ -56,8 +55,8 @@ class ChatManager {
     });
     this.setupStateSubscription();
     this.restoreState();
-    if (!appState.get().currentChat) this.newChat(DEFAULT_TEMPLATE_ID);
-
+    // if (typeof window !== 'undefined') this.newChat(DEFAULT_TEMPLATE_ID)
+    console.log("ChatManager initialized");
   }
 
   private setupStateSubscription() {
@@ -74,7 +73,7 @@ class ChatManager {
   }
 
   public async init(template?: IPromptTemplate) {
-    console.log("init", template);
+    // console.log("init", template);
     await this.restoreState();
     if (template) {
       await this.setTemplate(template);
@@ -117,7 +116,6 @@ class ChatManager {
           },
         });
         descriptionMessage.getType = () => "template-description";
-
         messages.push(descriptionMessage);
       }
       // todo:Process and filter messages
@@ -133,6 +131,9 @@ class ChatManager {
   }
 
   async newChat(templateId?: string) {
+    // Early return if running on server
+    if (typeof window === 'undefined') return;
+
     if (!templateId) {
       templateId = DEFAULT_TEMPLATE_ID;
     }
@@ -142,7 +143,9 @@ class ChatManager {
     if (templateId) {
       try {
         const baseUrl = appState.get().apiBaseUrl;
-        let fetchUrl = `${baseUrl}/prompts/${templateId}.json`;
+        // Fix URL construction
+        let fetchUrl = new URL(appState.get().apiBaseUrl + `/prompts/${templateId}.json`, baseUrl).toString();
+        console.log(fetchUrl);
         const response = await fetch(fetchUrl);
         if (!response.ok) {
           throw new Error(`Failed to fetch template: ${response.statusText}`);
@@ -170,8 +173,6 @@ class ChatManager {
         // Fall through to default initialization
         await this.init();
       }
-    // } else {
-    //   await this.init();
     }
   }
 
@@ -212,24 +213,13 @@ class ChatManager {
         template: this.template,
       },
     };
-    // const chatState: Partial<ChatState> = {
-    //   messages: this.messages,
-    //   metadata: {
-    //     templateId: template.id,
-    //     template: template,
-    //     topic: template.name || "",
-    //     model: this.model,
-    //   },
-    // };
-
-    // POST or PUT
+    // POST or PUT to db
     const currentChat = appState.get().currentChat;
-
     const method = currentChat?.id ? 'PUT' : 'POST';
     let url = `${appState.get().apiBaseUrl}/sessions/index.json`;
     if(method === 'PUT') url = url.replace("index", currentChat.id);
     if (this.messages.length > 2) {
-      console.log("method", method);
+      // console.log("method", method);
       try {
         const response = await fetch(url, {
           method: method,
