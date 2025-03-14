@@ -1,12 +1,6 @@
-// import packageJson from '../../package.json';
-// import configJson from '../app/app-config.json';
 import * as store from "@lib/appStore";
-import { type ChatState, } from "@lib/ai/types";
 import { type AppState, openRouterModels } from "@lib/appStore";
-// import { type IPromptTemplate } from "@types";
-import { type OpenRouterModelIndex } from "@lib/ai/types";
 import * as constants from "@consts";
-import type { OpenRouterModel } from "@lib/ai/types";
 import {API_BASE_URL_DEV, API_BASE_URL_PROD} from '@consts';
 
 const production: boolean = process.env.NODE_ENV === "production";
@@ -42,13 +36,12 @@ export class AppService {
   async init() {
     if (this.initialized) return;
     try {
-      // Check if models are already loaded
+      // Check if Open Router models should be updated
       const openRouter = openRouterModels.get();
       const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
       const lastUpdated = openRouter?.updated
         ? new Date(openRouter.updated)
         : null;
-
       if (!lastUpdated || lastUpdated < oneHourAgo) {
         const response = await fetch("https://openrouter.ai/api/v1/models", {
           headers: {
@@ -76,7 +69,6 @@ export class AppService {
         }
       }
       console.log("App initialized");
-      this.debug();
       this.initialized = true;
     } catch (error) {
       console.error("Error during app initialization:", error);
@@ -95,7 +87,6 @@ export class AppService {
       return;
     }
     console.log(this);
-    console.log('apiBaseUrl'+this.state.value.apiBaseUrl);
     console.log("--");
     console.log("");
   }

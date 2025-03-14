@@ -20,18 +20,36 @@ export const logger = defineMiddleware(async (context, next) => {
 });
 
 export const cors = defineMiddleware(async (context, next) => {
+  // Define allowed origins
+  const allowedOrigins = ["http://localhost:4321", "http://localhost:4322"];
+  const origin = context.request.headers.get("Origin") || "";
+
+  // Check if the request origin is allowed
+  const isAllowedOrigin = allowedOrigins.includes(origin);
+
   if (context.request.method === "OPTIONS") {
     return new Response(null, {
       status: 204,
       headers: {
-        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Origin": isAllowedOrigin ? origin : "*",
         "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type, Authorization",
+        "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Requested-With",
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Max-Age": "86400"
       },
     });
   }
+
   const response = await next();
-  response.headers.set("Access-Control-Allow-Origin", "*");
+
+  // Set CORS headers on the response
+  if (isAllowedOrigin) {
+    response.headers.set("Access-Control-Allow-Origin", origin);
+    response.headers.set("Access-Control-Allow-Credentials", "true");
+  } else {
+    response.headers.set("Access-Control-Allow-Origin", "*");
+  }
+
   return response;
 });
 

@@ -9,8 +9,8 @@ const getWindowLocationOrigin = () => {
 };
 
 export const API_BASE_URL_PROD = getWindowLocationOrigin() + "/api";
-export const API_BASE_URL_DEV = getWindowLocationOrigin() + "/api";
-// export const API_BASE_URL_DEV = "https://bsmp.netlify.app/api";
+//export const API_BASE_URL_DEV = getWindowLocationOrigin() + "/api";
+ export const API_BASE_URL_DEV = "https://bsmp.netlify.app/api";
 
 export const DEFAULT_MODEL = "google/gemini-2.0-flash-lite-001";
 export const DEFAULT_MODEL_FREE = "mistralai/mistral-7b-instruct";
