@@ -1,5 +1,11 @@
 <svg xmlns="http://www.w3.org/2000/svg">
   <defs>
+    <!-- user -->
+    <symbol id="user" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
+      <path d="M12 2a5 5 0 015 5v2a5 5 0 01-10 0V7a5 5 0 015-5z"/>
+      <path d="M19 21v-1a7 7 0 00-14 0v1"/>
+    </symbol>
+
     <!-- menu -->
     <symbol id="menu" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
       <path d="M3 12h18"/>

@@ -64,35 +64,55 @@ const navigationLinks =
       <div class="buttons absolute top-1/2 right-0 flex -translate-y-1/2 gap-1">
         <SessionsList client:load />
 
-        <!-- Login button - only visible when not logged in -->
-        <a
-          id="login-button"
-          href="/auth/login"
-          aria-label="Login to your account"
-          class={cn(
-            "hidden md:flex",
-            "size-9 rounded-full p-2 items-center justify-center",
-            "bg-transparent hover:bg-black/5 dark:hover:bg-white/20",
-            "stroke-current hover:stroke-black dark:hover:stroke-white",
-            "border border-black/10 dark:border-white/25",
-            "transition-colors duration-300 ease-in-out",
-          )}
-        >
-          <!-- Replace with inline SVG that will definitely work -->
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            class="size-full"
+        <!-- Replace the login button with a user button that's always visible -->
+        <div class="user-menu-container relative">
+          <button
+            id="user-button"
+            aria-label="User menu"
+            class={cn(
+              "flex md:flex",
+              "size-9 rounded-full p-2 items-center justify-center",
+              "bg-transparent hover:bg-black/5 dark:hover:bg-white/20",
+              "stroke-current hover:stroke-black dark:hover:stroke-white",
+              "border border-black/10 dark:border-white/25",
+              "transition-colors duration-300 ease-in-out",
+            )}
           >
-            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-            <circle cx="12" cy="7" r="4"></circle>
-          </svg>
-        </a>
+            <!-- Inline SVG instead of using use href -->
+            <svg
+              class="size-full"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M12 2a5 5 0 015 5v2a5 5 0 01-10 0V7a5 5 0 015-5z"></path>
+              <path d="M19 21v-1a7 7 0 00-14 0v1"></path>
+            </svg>
+          </button>
+
+          <!-- Dropdown menu -->
+          <div
+            id="user-dropdown"
+            class="absolute right-0 mt-2 hidden w-48 rounded-md bg-white shadow-lg dark:bg-neutral-800"
+          >
+            <!-- Single auth link that changes dynamically -->
+            <a
+              href="/auth/login"
+              id="auth-link"
+              class="block px-4 py-2 text-sm text-current hover:bg-black/5 dark:hover:bg-white/20"
+            >
+              Login
+            </a>
+
+            <!-- Admin links container -->
+            <div id="admin-links" class="hidden">
+              <!-- Admin links will be dynamically inserted here -->
+            </div>
+          </div>
+        </div>
 
         <button
           id="header-theme-button"
@@ -158,50 +178,152 @@ const navigationLinks =
   #header-drawer-button.open > #drawer-close {
     @apply block;
   }
+
+  /* User dropdown styles */
+  #user-dropdown {
+    z-index: 100;
+    transition: all 0.2s ease-in-out;
+  }
+
+  /* No hover styles here - we'll handle this with JavaScript */
 </style>
 
-<script is:inline>
-  // Existing drawer functions remain unchanged
-  function toggleDrawer() {
-    const drawer = document.getElementById("drawer");
-    const drawerButton = document.getElementById("header-drawer-button");
-    drawer?.classList.toggle("open");
-    drawerButton?.classList.toggle("open");
-  }
+<script>
+  import { isLoggedIn, appState, logout } from "../lib/appStore";
 
-  function initializeDrawerButton() {
-    const drawerButton = document.getElementById("header-drawer-button");
-    drawerButton?.addEventListener("click", toggleDrawer);
-  }
+  document.addEventListener("DOMContentLoaded", () => {
+    const userButton = document.getElementById("user-button");
+    const userDropdown = document.getElementById("user-dropdown");
+    const userMenuContainer = document.querySelector(".user-menu-container");
+    const authLink = document.getElementById("auth-link");
+    const adminLinks = document.getElementById("admin-links");
+    let isDropdownOpen = false;
 
-  // Add login button visibility logic
-  function updateLoginButtonVisibility() {
-    const loginButton = document.getElementById("login-button");
-    const isLoggedIn = localStorage.getItem("is-logged-in:") === "true";
-
-    if (loginButton) {
-      if (isLoggedIn) {
-        loginButton.style.display = "none";
-      } else {
-        loginButton.style.display = "flex";
+    // Helper functions for dropdown visibility
+    function showDropdown() {
+      if (userDropdown && userDropdown.classList.contains("hidden")) {
+        userDropdown.classList.remove("hidden");
+        isDropdownOpen = true;
       }
     }
-  }
 
-  // Initialize and set up event listeners
-  document.addEventListener("astro:after-swap", () => {
-    initializeDrawerButton();
-    updateLoginButtonVisibility();
-  });
-
-  // Run on initial load
-  initializeDrawerButton();
-  updateLoginButtonVisibility();
-
-  // Listen for storage changes to update button visibility
-  window.addEventListener("storage", (event) => {
-    if (event.key === "is-logged-in:") {
-      updateLoginButtonVisibility();
+    function hideDropdown() {
+      if (userDropdown) {
+        userDropdown.classList.add("hidden");
+        isDropdownOpen = false;
+      }
     }
+
+    function hideDropdownWithDelay() {
+      setTimeout(() => {
+        if (userMenuContainer && !userMenuContainer.matches(":hover")) {
+          hideDropdown();
+        }
+      }, 100);
+    }
+
+    function toggleDropdown() {
+      if (isDropdownOpen) {
+        hideDropdown();
+      } else {
+        showDropdown();
+      }
+    }
+
+    function updateUserMenu() {
+      const loggedInStatus = isLoggedIn.get();
+      console.log("Updating user menu, logged in:", loggedInStatus);
+
+      // Update the auth link based on login status
+      if (authLink) {
+        if (loggedInStatus) {
+          // User is logged in - show logout option
+          authLink.textContent = "Logout";
+          authLink.href = "#";
+          authLink.onclick = async (e) => {
+            e.preventDefault();
+            await logout();
+            hideDropdown();
+          };
+        } else {
+          // User is not logged in - show login option
+          authLink.textContent = "Login";
+          authLink.href = "/auth/login";
+          authLink.onclick = null;
+        }
+      }
+
+      // Handle admin links
+      if (adminLinks) {
+        const currentUser = appState.get().currentUser;
+
+        // Only show admin links if user is logged in and has admin role
+        if (loggedInStatus && currentUser && currentUser.role === "admin") {
+          adminLinks.innerHTML = ""; // Clear existing links
+          adminLinks.classList.remove("hidden");
+
+          // Get LINKS_DEV from window
+          if (window.LINKS_DEV) {
+            window.LINKS_DEV.forEach((link) => {
+              const linkElement = document.createElement("a");
+              linkElement.href = link.HREF;
+              linkElement.className =
+                "block px-4 py-2 text-sm text-current hover:bg-black/5 dark:hover:bg-white/20";
+              linkElement.textContent = link.TEXT;
+              adminLinks.appendChild(linkElement);
+            });
+          }
+        } else {
+          // Hide admin links when not logged in or not admin
+          adminLinks.classList.add("hidden");
+        }
+      }
+    }
+
+    // Check if device supports hover
+    const supportsHover = window.matchMedia("(hover: hover)").matches;
+
+    // Event listeners
+    if (supportsHover) {
+      userButton?.addEventListener("mouseenter", showDropdown);
+      userMenuContainer?.addEventListener("mouseenter", showDropdown);
+      userMenuContainer?.addEventListener("mouseleave", hideDropdownWithDelay);
+    } else {
+      userButton?.addEventListener("click", toggleDropdown);
+    }
+
+    // Close dropdown when clicking outside
+    document.addEventListener("click", (event) => {
+      if (
+        userButton &&
+        !userButton.contains(event.target as Node) &&
+        userDropdown &&
+        !userDropdown.contains(event.target as Node)
+      ) {
+        hideDropdown();
+      }
+    });
+
+    // Subscribe to changes in login state
+    const unsubscribe = isLoggedIn.subscribe((value) => {
+      console.log("isLoggedIn changed:", value);
+      updateUserMenu();
+    });
+
+    // Also check the initial state after a short delay
+    // This ensures the persistent atom has had time to load from storage
+    setTimeout(() => {
+      updateUserMenu();
+    }, 100);
+
+    // Clean up subscription when component is unmounted
+    window.addEventListener("beforeunload", () => {
+      unsubscribe();
+    });
   });
+</script>
+
+<!-- Expose LINKS_DEV to client-side JavaScript -->
+<script define:vars={{ LINKS_DEV }}>
+  window.LINKS_DEV = LINKS_DEV;
 </script>
