@@ -26,7 +26,7 @@ import Container from "@components/Container.astro";
             Welcome back! Please enter your details.
           </p>
 
-          <form id="login-form" class="w-full space-y-4">
+          <form id="login-form" class="w-full space-y-4" method="POST">
             <div>
               <input
                 id="email"
@@ -119,7 +119,7 @@ import Container from "@components/Container.astro";
     ) as HTMLDivElement;
 
     form.addEventListener("submit", async (e) => {
-      e.preventDefault();
+      e.preventDefault(); // Prevent the default form submission
 
       // Reset error message
       errorMessage.textContent = "";
@@ -136,7 +136,7 @@ import Container from "@components/Container.astro";
 
       try {
         const response = await fetch("/api/auth/login.json", {
-          method: "POST",
+          method: "POST", // Ensure this is POST
           headers: {
             "Content-Type": "application/json",
           },

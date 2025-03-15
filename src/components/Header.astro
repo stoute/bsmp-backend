@@ -233,10 +233,10 @@ const navigationLinks =
     function updateUserMenu() {
       const loggedInStatus = isLoggedIn.get();
       console.log("Updating user menu, logged in:", loggedInStatus);
-
+      console.log(authLink);
       // Update the auth link based on login status
       if (authLink) {
-        if (loggedInStatus) {
+        if (loggedInStatus == "true") {
           // User is logged in - show logout option
           authLink.textContent = "Logout";
           authLink.href = "#";

@@ -57,8 +57,8 @@ export async function logout() {
     isLoggedIn.set(false);
     appState.setKey("currentUser", undefined);
 
-    // Redirect to login page
-    window.location.href = "/auth/login";
+    // Redirect to home page instead of login page
+    window.location.href = "/";
   } catch (error) {
     console.error("Logout error:", error);
   }
