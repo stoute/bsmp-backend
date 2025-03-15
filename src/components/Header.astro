@@ -17,7 +17,6 @@ const { colorMode } = Astro.props;
 const EMAIL: unknown = SOCIALS.find((SOCIAL) => SOCIAL.NAME === "Email");
 const environment: string = import.meta.env.MODE;
 
-// Handle links based on environment
 const navigationLinks = LINKS;
 ---
 
@@ -132,6 +131,27 @@ const navigationLinks = LINKS;
     @apply block;
   }
 </style>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const drawerButton = document.getElementById("header-drawer-button");
+    const drawer = document.getElementById("drawer");
+
+    if (drawerButton && drawer) {
+      drawerButton.addEventListener("click", () => {
+        drawerButton.classList.toggle("open");
+        drawer.classList.toggle("open");
+
+        // Prevent scrolling when drawer is open
+        if (drawer.classList.contains("open")) {
+          document.body.style.overflow = "hidden";
+        } else {
+          document.body.style.overflow = "";
+        }
+      });
+    }
+  });
+</script>
 
 <!--<script>-->
 <!--  // Expose LINKS_DEV to client-side JavaScript-->

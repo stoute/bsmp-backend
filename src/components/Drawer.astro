@@ -8,8 +8,7 @@ const EMAIL: any = SOCIALS.find((SOCIAL) => SOCIAL.NAME === "Email");
 const environment: string = import.meta.env.MODE;
 
 // Handle links based on environment
-const navigationLinks =
-  environment === "development" ? [...LINKS, ...LINKS_DEV] : LINKS;
+const navigationLinks = LINKS;
 ---
 
 <div
