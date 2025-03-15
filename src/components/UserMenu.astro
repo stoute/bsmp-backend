@@ -113,7 +113,7 @@ import { LINKS_DEV } from "@consts";
     }
 
     function updateUserMenu() {
-      const loggedInStatus = isLoggedIn.get();
+      const loggedInStatus = isLoggedIn.get() === "true";
       console.log("Updating user menu, logged in:", loggedInStatus);
 
       // Update the auth link based on login status
