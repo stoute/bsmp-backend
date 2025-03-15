@@ -10,6 +10,7 @@ export default async function () {
   await db.insert(User).values({
     id: "0025f772-dc3e-4641-ae1b-89f4cf4c1119",
     email: "stoute.bob@gmail.com",
+    password: "$2b$10$wFuC/dcmrlLYE.nT/mkJZ.ApKi8TPq.olR4SI./HXhYkgtB8zqZkK",
     role: "admin",
     created_at: "2025-03-15T12:53:10.615Z",
     updated_at: "2025-03-15T12:53:10.615Z",

@@ -8,8 +8,8 @@
       <change beforePath="$PROJECT_DIR$/.idea/AugmentWebviewStateStore.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/AugmentWebviewStateStore.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/db/seed.ts" beforeDir="false" afterPath="$PROJECT_DIR$/db/seed.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/api/auth/login.json.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/api/auth/login.json.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/api/auth/register.json.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/api/auth/register.json.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/Header.astro" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Header.astro" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/consts.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/consts.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/pages/auth/login.astro" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/auth/login.astro" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/pages/auth/register.astro" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/auth/register.astro" afterDir="false" />
     </list>
@@ -70,7 +70,7 @@
     "npm.db-verify-remote.executor": "Run",
     "npm.dev:network.executor": "Run",
     "prettierjs.PrettierConfiguration.Package": "/Users/bobstoute/Git/@bsmp/bsmp-backend/node_modules/prettier",
-    "settings.editor.selected.configurable": "settings.javascript.prettier",
+    "settings.editor.selected.configurable": "com.albertoventurini.graphdbplugin.jetbrains.configuration.GraphDatabaseConfiguration",
     "ts.external.directory.path": "/Users/bobstoute/Git/@bsmp/bsmp-backend/node_modules/typescript/lib",
     "vue.rearranger.settings.migration": "true"
   }

@@ -145,6 +145,7 @@ import Container from "@components/Container.astro";
           body: JSON.stringify({
             data: { email, password },
           }),
+          credentials: "same-origin",
         });
 
         const data = await response.json();

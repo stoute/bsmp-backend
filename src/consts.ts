@@ -46,11 +46,13 @@ export const LINKS: Links = [
     HREF: "/chat",
   },
 ];
-export const LINKS_DEV: Links = [
+export const LINKS_AUTHENTICATED: Links = [
   {
     TEXT: "Prompts",
     HREF: "/prompts",
   },
+]; // Global
+export const LINKS_DEV: Links = [
   {
     TEXT: "Contact",
     HREF: "/contact",
@@ -68,7 +70,8 @@ export const LINKS_DEV: Links = [
     TEXT: "Blog",
     HREF: "/blog",
   },
-]; // Global
+];
+// Global
 export const SITE: Site = {
   TITLE: "BSMP",
   DESCRIPTION: "BSMP",

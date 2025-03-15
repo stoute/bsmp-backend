@@ -1,5 +1,5 @@
 ---
-import { SITE, LINKS, LINKS_DEV, SOCIALS } from "@consts";
+import { SITE, LINKS, LINKS_AUTHENTICATED, SOCIALS } from "@consts";
 import { cn } from "@lib/utils";
 const { pathname } = Astro.url;
 const subpath = pathname.match(/[^/]+/g);
@@ -153,14 +153,7 @@ const navigationLinks = LINKS;
   });
 </script>
 
-<!--<script>-->
-<!--  // Expose LINKS_DEV to client-side JavaScript-->
-<!--  document.addEventListener("DOMContentLoaded", () => {-->
-<!--    window.LINKS_DEV = window.LINKS_DEV || [];-->
-<!--  });-->
-<!--</script>-->
-
-<!--&lt;!&ndash; Expose LINKS_DEV to client-side JavaScript &ndash;&gt;-->
-<!--<script define:vars={{ LINKS_DEV }}>-->
-<!--  window.LINKS_DEV = LINKS_DEV;-->
-<!--</script>-->
+<!-- Expose links to client-side JavaScript -->
+<script define:vars={{ LINKS, LINKS_AUTHENTICATED }}>
+  window.LINKS_AUTHENTICATED = LINKS_AUTHENTICATED;
+</script>
