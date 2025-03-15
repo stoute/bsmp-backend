@@ -1,6 +1,7 @@
 import { persistentAtom, persistentMap } from "@nanostores/persistent";
 import type { OpenRouterModelIndex, ChatState } from "@lib/ai/types";
-import type { IPromptTemplate } from "@lib/aitypes";
+import type { IPromptTemplate } from "@lib/ai/types";
+import { type UserModel as User } from "@db/models";
 import { atom } from "nanostores";
 
 export type AppState = {
@@ -12,6 +13,7 @@ export type AppState = {
   currentChat?: ChatState;
   currentSession?: ChatState;
   currentSessionId?: string;
+  currentUser?: User;
 };
 
 // Specify the serializer/deserializer for the persistent store
@@ -23,6 +25,9 @@ export const appState = persistentMap<AppState>(
     selectedModel: undefined,
     selectedTemplateId: undefined,
     currentChat: undefined,
+    currentSession: undefined,
+    currentSessionId: undefined,
+    currentUser: undefined,
   },
   {
     encode: JSON.stringify,
