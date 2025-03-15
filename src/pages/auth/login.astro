@@ -136,11 +136,13 @@ import Container from "@components/Container.astro";
 
       try {
         const response = await fetch("/api/auth/login.json", {
-          method: "POST", // Ensure this is POST
+          method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ email, password }),
+          body: JSON.stringify({
+            data: { email, password },
+          }),
         });
 
         const data = await response.json();

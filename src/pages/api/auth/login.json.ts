@@ -7,7 +7,7 @@ import { eq } from "astro:db";
 export async function POST({ request }: { request: Request }) {
   try {
     const requestBody = await request.json();
-    const { email, password } = requestBody;
+    const { email, password } = requestBody.data;
 
     if (!email || !password) {
       return new Response(
