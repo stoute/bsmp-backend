@@ -9,6 +9,15 @@ export interface PromptTemplateModel {
   updated_at: string;
 }
 
+export interface UserModel {
+  id: string;
+  email: string;
+  password: string;
+  role: "authenticated" | "moderator" | "admin";
+  created_at: string;
+  updated_at: string;
+}
+
 export interface CommentModel {
   id: number;
   likes: number;

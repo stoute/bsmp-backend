@@ -1,8 +1,5 @@
 import { persistentAtom, persistentMap } from "@nanostores/persistent";
-import type {
-  OpenRouterModelIndex,
-  ChatState,
-} from "@lib/ai/types";
+import type { OpenRouterModelIndex, ChatState } from "@lib/ai/types";
 import type { IPromptTemplate } from "@lib/aitypes";
 import { atom } from "nanostores";
 
@@ -46,4 +43,23 @@ export const openRouterModels = persistentMap<OpenRouterModelIndex>(
 
 export const templateList = atom([]);
 
+// USER
 export const isLoggedIn = persistentAtom<boolean>("is-logged-in:", false);
+
+// Add logout function
+export async function logout() {
+  try {
+    await fetch("/api/auth/logout.json", {
+      method: "POST",
+    });
+
+    // Clear user data
+    isLoggedIn.set(false);
+    appState.setKey("currentUser", undefined);
+
+    // Redirect to login page
+    window.location.href = "/auth/login";
+  } catch (error) {
+    console.error("Logout error:", error);
+  }
+}

@@ -1,13 +1,12 @@
 ---
 import PageLayout from "@layouts/PageLayout.astro";
 import { SITE } from "@consts";
-import { Button } from "@components/ui/button";
 import Container from "@components/Container.astro";
 ---
 
 <PageLayout
   title="Login"
-  description="Login to your account"
+  description="Sign in to your account"
   colorMode="system"
 >
   <div class="flex min-h-[100vh] flex-col">
@@ -24,12 +23,13 @@ import Container from "@components/Container.astro";
           <p
             class="mt-2 mb-8 text-center text-sm text-black/60 dark:text-white/60"
           >
-            Sign in to access your account
+            Welcome back! Please enter your details.
           </p>
 
-          <form class="w-full space-y-4">
+          <form id="login-form" class="w-full space-y-4">
             <div>
               <input
+                id="email"
                 type="email"
                 placeholder="Email"
                 class="w-full rounded-md border border-black/20 bg-white p-2.5 text-sm text-black transition-all outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 dark:border-white/20 dark:bg-black/30 dark:text-white dark:focus:border-purple-400 dark:focus:ring-purple-400/20"
@@ -37,11 +37,14 @@ import Container from "@components/Container.astro";
             </div>
             <div>
               <input
+                id="password"
                 type="password"
                 placeholder="Password"
                 class="w-full rounded-md border border-black/20 bg-white p-2.5 text-sm text-black transition-all outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 dark:border-white/20 dark:bg-black/30 dark:text-white dark:focus:border-purple-400 dark:focus:ring-purple-400/20"
               />
             </div>
+
+            <div id="error-message" class="hidden text-sm text-red-500"></div>
 
             <button
               type="submit"
@@ -99,6 +102,69 @@ import Container from "@components/Container.astro";
     </div>
   </div>
 </PageLayout>
+
+<script>
+  import { appState, isLoggedIn } from "@lib/appStore";
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const form = document.getElementById("login-form") as HTMLFormElement;
+    const emailInput = document.getElementById("email") as HTMLInputElement;
+    const passwordInput = document.getElementById(
+      "password",
+    ) as HTMLInputElement;
+    const errorMessage = document.getElementById(
+      "error-message",
+    ) as HTMLDivElement;
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      // Reset error message
+      errorMessage.textContent = "";
+      errorMessage.classList.add("hidden");
+
+      const email = emailInput.value.trim();
+      const password = passwordInput.value;
+
+      if (!email || !password) {
+        errorMessage.textContent = "Email and password are required";
+        errorMessage.classList.remove("hidden");
+        return;
+      }
+
+      try {
+        const response = await fetch("/api/auth/login.json", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, password }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          errorMessage.textContent = data.message || "Login failed";
+          errorMessage.classList.remove("hidden");
+          return;
+        }
+
+        // Login successful
+        isLoggedIn.set(true);
+
+        // Store user info in app state
+        appState.setKey("currentUser", data.user);
+
+        // Redirect to home page
+        window.location.href = "/";
+      } catch (error) {
+        console.error("Login error:", error);
+        errorMessage.textContent = "An error occurred. Please try again.";
+        errorMessage.classList.remove("hidden");
+      }
+    });
+  });
+</script>
 
 <style>
   /* Override the default footer behavior for this page */

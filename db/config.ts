@@ -32,6 +32,17 @@ const ChatSession = defineTable({
   },
 });
 
+const User = defineTable({
+  columns: {
+    id: column.text({ primaryKey: true }),
+    email: column.text({ unique: true }),
+    password: column.text(), // Will store hashed passwords
+    role: column.text({ default: "authenticated" }), // "authenticated", "moderator", "admin"
+    created_at: column.text(),
+    updated_at: column.text(),
+  },
+});
+
 const Comment = defineTable({
   columns: {
     id: column.number({ primaryKey: true }),
@@ -55,6 +66,5 @@ const Author = defineTable({
 
 // https://astro.build/db/config
 export default defineDb({
-  tables: { PromptTemplate, ChatSession, Comment, Author },
-  // tables: { PromptTemplateTable, PromptTemplate, ChatSession, Comment, Author },
+  tables: { PromptTemplate, ChatSession, Comment, Author, User },
 });

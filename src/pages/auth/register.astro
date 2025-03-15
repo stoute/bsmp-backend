@@ -26,21 +26,29 @@ import Container from "@components/Container.astro";
             Create an account to access your awesome tool!
           </p>
 
-          <form class="w-full space-y-4">
+          <form id="register-form" class="w-full space-y-4">
             <div>
               <input
+                id="email"
+                name="email"
                 type="email"
                 placeholder="Email"
                 class="w-full rounded-md border border-black/20 bg-white p-2.5 text-sm text-black transition-all outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 dark:border-white/20 dark:bg-black/30 dark:text-white dark:focus:border-purple-400 dark:focus:ring-purple-400/20"
+                required
               />
             </div>
             <div>
               <input
+                id="password"
+                name="password"
                 type="password"
                 placeholder="Password"
                 class="w-full rounded-md border border-black/20 bg-white p-2.5 text-sm text-black transition-all outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 dark:border-white/20 dark:bg-black/30 dark:text-white dark:focus:border-purple-400 dark:focus:ring-purple-400/20"
+                required
               />
             </div>
+
+            <div id="error-message" class="hidden text-sm text-red-500"></div>
 
             <button
               type="submit"
@@ -98,6 +106,57 @@ import Container from "@components/Container.astro";
     </div>
   </div>
 </PageLayout>
+
+<script>
+  import { isLoggedIn, appState } from "../../lib/appStore";
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const form = document.getElementById("register-form") as HTMLFormElement;
+    const errorMessage = document.getElementById(
+      "error-message",
+    ) as HTMLDivElement;
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const email = (document.getElementById("email") as HTMLInputElement)
+        .value;
+      const password = (document.getElementById("password") as HTMLInputElement)
+        .value;
+
+      try {
+        const response = await fetch("/api/auth/register.json", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, password }),
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          // Set logged in state
+          isLoggedIn.set(true);
+
+          // Store user info in app state
+          appState.setKey("currentUser", data.user);
+
+          // Redirect to home page
+          window.location.href = "/";
+        } else {
+          // Show error message
+          errorMessage.textContent = data.message;
+          errorMessage.classList.remove("hidden");
+        }
+      } catch (error) {
+        console.error("Registration error:", error);
+        errorMessage.textContent = "An error occurred during registration";
+        errorMessage.classList.remove("hidden");
+      }
+    });
+  });
+</script>
 
 <style>
   /* Override the default footer behavior for this page */
