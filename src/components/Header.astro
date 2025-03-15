@@ -17,7 +17,8 @@ const { colorMode } = Astro.props;
 const EMAIL: unknown = SOCIALS.find((SOCIAL) => SOCIAL.NAME === "Email");
 const environment: string = import.meta.env.MODE;
 
-// We'll update this dynamically with client-side JS
+// Initial server-side rendering will just show LINKS
+// Client-side JS will update this based on login state
 const navigationLinks = LINKS;
 ---
 
@@ -157,58 +158,60 @@ const navigationLinks = LINKS;
   });
 </script>
 
-<!-- Add script to update navigation links based on login state -->
-<script>
-  import { isLoggedIn } from "../lib/appStore";
+<!-- Expose links to client-side JavaScript -->
+<script define:vars={{ LINKS, LINKS_AUTHENTICATED }}>
+  window.LINKS_AUTHENTICATED = LINKS_AUTHENTICATED;
+  window.LINKS = LINKS;
 
   function updateNavigationLinks() {
+    // Check if user is logged in by looking at localStorage
+    const isLoggedIn = localStorage.getItem("is-logged-in:") === "true";
+
+    // Get the navigation container
     const navContainer = document.getElementById("navigation-links");
     if (!navContainer) return;
-
-    const loggedIn = isLoggedIn.get() === true || isLoggedIn.get() === "true";
-    const links = loggedIn
-      ? [...window.LINKS, ...window.LINKS_AUTHENTICATED]
-      : window.LINKS;
 
     // Clear existing links
     navContainer.innerHTML = "";
 
-    // Add updated links
-    links.forEach((link) => {
+    // Determine which links to show
+    const linksToShow = isLoggedIn ? [...LINKS, ...LINKS_AUTHENTICATED] : LINKS;
+
+    // Get current path for active state
+    const pathname = window.location.pathname;
+    const subpath = pathname.match(/[^/]+/g);
+
+    // Add links to navigation
+    linksToShow.forEach((link) => {
+      const isActive =
+        pathname === link.HREF || "/" + (subpath?.[0] || "") === link.HREF;
+
       const linkElement = document.createElement("a");
       linkElement.href = link.HREF;
       linkElement.textContent = link.TEXT;
-
-      // Get current path
-      const pathname = window.location.pathname;
-      const subpath = pathname.match(/[^/]+/g);
-
-      // Set classes based on active state
-      linkElement.className =
-        "h-8 rounded-full px-3 text-current " +
-        "flex items-center justify-center " +
-        "transition-colors duration-300 ease-in-out " +
-        (pathname === link.HREF || "/" + (subpath?.[0] || "") === link.HREF
+      linkElement.className = [
+        "h-8 rounded-full px-3 text-current",
+        "flex items-center justify-center",
+        "transition-colors duration-300 ease-in-out",
+        isActive
           ? "bg-black text-white dark:bg-white dark:text-black"
-          : "hover:bg-black/5 hover:text-black dark:hover:bg-white/20 dark:hover:text-white");
+          : "hover:bg-black/5 hover:text-black dark:hover:bg-white/20 dark:hover:text-white",
+      ].join(" ");
 
       navContainer.appendChild(linkElement);
     });
   }
 
-  // Subscribe to changes in login state
-  isLoggedIn.subscribe(() => {
-    updateNavigationLinks();
-  });
+  // Initialize on page load
+  document.addEventListener("DOMContentLoaded", updateNavigationLinks);
 
-  // Also update on initial load
-  document.addEventListener("DOMContentLoaded", () => {
-    setTimeout(updateNavigationLinks, 100); // Short delay to ensure store is loaded
-  });
-</script>
+  // Update when login state changes
+  window.addEventListener("login-state-changed", updateNavigationLinks);
 
-<!-- Expose links to client-side JavaScript -->
-<script define:vars={{ LINKS, LINKS_AUTHENTICATED }}>
-  window.LINKS_AUTHENTICATED = LINKS_AUTHENTICATED;
-  window.LINKS = LINKS;
+  // Update on storage events (for cross-tab synchronization)
+  window.addEventListener("storage", (event) => {
+    if (event.key === "is-logged-in:") {
+      updateNavigationLinks();
+    }
+  });
 </script>

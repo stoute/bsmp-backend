@@ -106,8 +106,6 @@ import Container from "@components/Container.astro";
 </PageLayout>
 
 <script>
-  import { appState, isLoggedIn } from "@lib/appStore";
-
   document.addEventListener("DOMContentLoaded", () => {
     const form = document.getElementById("login-form") as HTMLFormElement;
     const emailInput = document.getElementById("email") as HTMLInputElement;
@@ -135,7 +133,7 @@ import Container from "@components/Container.astro";
       }
 
       try {
-        console.log("Sending login request with:", { email, password });
+        console.log("Sending login request with:", { email });
 
         const response = await fetch("/api/auth/login.json", {
           method: "POST",
@@ -159,10 +157,14 @@ import Container from "@components/Container.astro";
         }
 
         // Login successful
-        isLoggedIn.set(true);
+        // Set logged in state in localStorage
+        localStorage.setItem("is-logged-in:", "true");
+
+        // Dispatch custom event for navigation update
+        window.dispatchEvent(new CustomEvent("login-state-changed"));
 
         // Store user info in app state
-        appState.setKey("currentUser", data.user);
+        // ... existing code ...
 
         // Redirect to home page
         window.location.href = "/";

@@ -60,9 +60,7 @@ import { LINKS_DEV } from "@consts";
   }
 </style>
 
-<script>
-  import { isLoggedIn, appState, logout } from "../lib/appStore";
-
+<script define:vars={{ LINKS_DEV }}>
   document.addEventListener("DOMContentLoaded", () => {
     const userButton = document.getElementById("user-button");
     const userDropdown = document.getElementById("user-dropdown");
@@ -113,7 +111,7 @@ import { LINKS_DEV } from "@consts";
     }
 
     function updateUserMenu() {
-      const loggedInStatus = isLoggedIn.get() === "true";
+      const loggedInStatus = localStorage.getItem("is-logged-in:") === "true";
       console.log("Updating user menu, logged in:", loggedInStatus);
 
       // Update the auth link based on login status
@@ -124,7 +122,7 @@ import { LINKS_DEV } from "@consts";
           authLink.href = "#";
           authLink.onclick = async (e) => {
             e.preventDefault();
-            await logout();
+            await handleLogout();
             hideDropdown();
           };
         } else {
@@ -137,27 +135,24 @@ import { LINKS_DEV } from "@consts";
 
       // Handle admin links
       if (adminLinks) {
-        const currentUser = appState.get().currentUser;
+        const currentUser = JSON.parse(
+          localStorage.getItem("current-user") || "{}",
+        );
 
         // Only show admin links if user is logged in and has admin role
         if (loggedInStatus && currentUser && currentUser.role === "admin") {
           adminLinks.innerHTML = ""; // Clear existing links
           adminLinks.classList.remove("hidden");
 
-          // Get LINKS_DEV from window
-          if (typeof window !== "undefined") {
-            window.LINKS_DEV = window.LINKS_DEV || [];
-            if (window.LINKS_DEV) {
-              window.LINKS_DEV.forEach((link) => {
-                const linkElement = document.createElement("a");
-                linkElement.href = link.HREF;
-                linkElement.className =
-                  "block px-4 py-2 text-sm text-current hover:bg-black/5 dark:hover:bg-white/20";
-                linkElement.textContent = link.TEXT;
-                adminLinks.appendChild(linkElement);
-              });
-            }
-          }
+          // Add LINKS_DEV links
+          LINKS_DEV.forEach((link) => {
+            const linkElement = document.createElement("a");
+            linkElement.href = link.HREF;
+            linkElement.className =
+              "block px-4 py-2 text-sm text-current hover:bg-black/5 dark:hover:bg-white/20";
+            linkElement.textContent = link.TEXT;
+            adminLinks.appendChild(linkElement);
+          });
         } else {
           // Hide admin links when not logged in or not admin
           adminLinks.classList.add("hidden");
@@ -189,39 +184,44 @@ import { LINKS_DEV } from "@consts";
     document.addEventListener("click", (event) => {
       if (
         userButton &&
-        !userButton.contains(event.target as Node) &&
+        !userButton.contains(event.target) &&
         userDropdown &&
-        !userDropdown.contains(event.target as Node)
+        !userDropdown.contains(event.target)
       ) {
         hideDropdown();
       }
     });
 
-    // Subscribe to changes in login state
-    const unsubscribe = isLoggedIn.subscribe((value) => {
-      console.log("isLoggedIn changed:", value);
-      updateUserMenu();
+    // Update on login state changes
+    window.addEventListener("login-state-changed", updateUserMenu);
+
+    // Update on storage events (for cross-tab synchronization)
+    window.addEventListener("storage", (event) => {
+      if (event.key === "is-logged-in:" || event.key === "current-user") {
+        updateUserMenu();
+      }
     });
 
-    // Also check the initial state after a short delay
-    // This ensures the persistent atom has had time to load from storage
-    setTimeout(() => {
-      updateUserMenu();
-    }, 100);
-
-    // Clean up subscription when component is unmounted
-    if (typeof window !== "undefined") {
-      window.addEventListener("beforeunload", () => {
-        unsubscribe();
-        if (hoverTimeout) {
-          clearTimeout(hoverTimeout);
-        }
-      });
-    }
+    // Initial update
+    updateUserMenu();
   });
-</script>
 
-<!-- Expose LINKS_DEV to client-side JavaScript -->
-<script define:vars={{ LINKS_DEV }}>
-  window.LINKS_DEV = LINKS_DEV;
+  async function handleLogout() {
+    try {
+      await fetch("/api/auth/logout.json", {
+        method: "POST",
+      });
+
+      // Update localStorage directly
+      localStorage.setItem("is-logged-in:", "false");
+
+      // Dispatch custom event for navigation update
+      window.dispatchEvent(new CustomEvent("login-state-changed"));
+
+      // Redirect to home page
+      window.location.href = "/";
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
+  }
 </script>
