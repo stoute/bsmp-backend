@@ -26,7 +26,7 @@ import Container from "@components/Container.astro";
             Create an account to access your awesome tool!
           </p>
 
-          <form id="register-form" class="w-full space-y-4">
+          <form id="register-form" class="w-full space-y-4" method="POST">
             <div>
               <input
                 id="email"
@@ -113,14 +113,28 @@ import Container from "@components/Container.astro";
     const errorMessage = document.getElementById(
       "error-message",
     ) as HTMLDivElement;
+    const emailInput = document.getElementById("email") as HTMLInputElement;
+    const passwordInput = document.getElementById(
+      "password",
+    ) as HTMLInputElement;
 
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
 
-      const email = (document.getElementById("email") as HTMLInputElement)
-        .value;
-      const password = (document.getElementById("password") as HTMLInputElement)
-        .value;
+      // Reset error message
+      errorMessage.textContent = "";
+      errorMessage.classList.add("hidden");
+
+      // Get form values
+      const email = emailInput.value.trim();
+      const password = passwordInput.value;
+
+      // Basic validation
+      if (!email || !password) {
+        errorMessage.textContent = "Email and password are required";
+        errorMessage.classList.remove("hidden");
+        return;
+      }
 
       try {
         const response = await fetch("/api/auth/register.json", {
@@ -133,6 +147,12 @@ import Container from "@components/Container.astro";
 
         const data = await response.json();
 
+        if (!response.ok) {
+          errorMessage.textContent = data.message || "Registration failed";
+          errorMessage.classList.remove("hidden");
+          return;
+        }
+
         if (data.success) {
           // Set logged in state
           isLoggedIn.set(true);
@@ -144,7 +164,7 @@ import Container from "@components/Container.astro";
           window.location.href = "/";
         } else {
           // Show error message
-          errorMessage.textContent = data.message;
+          errorMessage.textContent = data.message || "Registration failed";
           errorMessage.classList.remove("hidden");
         }
       } catch (error) {
