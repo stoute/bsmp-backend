@@ -17,6 +17,7 @@ const { colorMode } = Astro.props;
 const EMAIL: unknown = SOCIALS.find((SOCIAL) => SOCIAL.NAME === "Email");
 const environment: string = import.meta.env.MODE;
 
+// We'll update this dynamically with client-side JS
 const navigationLinks = LINKS;
 ---
 
@@ -39,7 +40,10 @@ const navigationLinks = LINKS;
       </div>
 
       <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-        <nav class="hidden items-center justify-center gap-1 text-sm md:flex">
+        <nav
+          id="navigation-links"
+          class="hidden items-center justify-center gap-1 text-sm md:flex"
+        >
           {
             navigationLinks.map((LINK) => (
               <a
@@ -153,7 +157,58 @@ const navigationLinks = LINKS;
   });
 </script>
 
+<!-- Add script to update navigation links based on login state -->
+<script>
+  import { isLoggedIn } from "../lib/appStore";
+
+  function updateNavigationLinks() {
+    const navContainer = document.getElementById("navigation-links");
+    if (!navContainer) return;
+
+    const loggedIn = isLoggedIn.get() === true || isLoggedIn.get() === "true";
+    const links = loggedIn
+      ? [...window.LINKS, ...window.LINKS_AUTHENTICATED]
+      : window.LINKS;
+
+    // Clear existing links
+    navContainer.innerHTML = "";
+
+    // Add updated links
+    links.forEach((link) => {
+      const linkElement = document.createElement("a");
+      linkElement.href = link.HREF;
+      linkElement.textContent = link.TEXT;
+
+      // Get current path
+      const pathname = window.location.pathname;
+      const subpath = pathname.match(/[^/]+/g);
+
+      // Set classes based on active state
+      linkElement.className =
+        "h-8 rounded-full px-3 text-current " +
+        "flex items-center justify-center " +
+        "transition-colors duration-300 ease-in-out " +
+        (pathname === link.HREF || "/" + (subpath?.[0] || "") === link.HREF
+          ? "bg-black text-white dark:bg-white dark:text-black"
+          : "hover:bg-black/5 hover:text-black dark:hover:bg-white/20 dark:hover:text-white");
+
+      navContainer.appendChild(linkElement);
+    });
+  }
+
+  // Subscribe to changes in login state
+  isLoggedIn.subscribe(() => {
+    updateNavigationLinks();
+  });
+
+  // Also update on initial load
+  document.addEventListener("DOMContentLoaded", () => {
+    setTimeout(updateNavigationLinks, 100); // Short delay to ensure store is loaded
+  });
+</script>
+
 <!-- Expose links to client-side JavaScript -->
 <script define:vars={{ LINKS, LINKS_AUTHENTICATED }}>
   window.LINKS_AUTHENTICATED = LINKS_AUTHENTICATED;
+  window.LINKS = LINKS;
 </script>
