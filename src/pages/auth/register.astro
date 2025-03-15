@@ -142,7 +142,9 @@ import Container from "@components/Container.astro";
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ email, password }),
+          body: JSON.stringify({
+            data: { email, password },
+          }),
         });
 
         const data = await response.json();
