@@ -29,7 +29,7 @@ export function getMatchingOpenRouterModels(): OpenRouterModel[] {
     });
     // Only add models with 'free' in their name on production
     orModels.forEach((model: OpenRouterModel) => {
-      if (model.name.toLowerCase().includes("free")) {
+      if (model.name.toLowerCase().includes("(free)")) {
         matches.add(model);
       }
     });
