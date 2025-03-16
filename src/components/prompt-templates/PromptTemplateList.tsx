@@ -5,21 +5,20 @@ import React, {
   useState,
 } from "react";
 import { Plus, RefreshCw, Search, Loader2 } from "lucide-react";
-import type { IPromptTemplate } from "@types.ts";
-
+import type { IPromptTemplate } from "@lib/ai/types.ts";
 import { Button } from "@components/ui/button.tsx";
 import { Input } from "@components/ui/input.tsx";
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@components/ui/card.tsx";
 import { ScrollArea } from "@components/ui/scroll-area.tsx";
 import { Separator } from "@components/ui/separator.tsx";
 import { cn } from "@lib/utils";
+import { useAppService } from "@lib/hooks/useAppService";
 
 interface PromptTemplateListProps {
   onSelect: (promptTemplate: IPromptTemplate) => void;
@@ -37,6 +36,7 @@ const PromptTemplateList = forwardRef<
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const { appService } = useAppService();
 
   // Expose fetchPromptTemplates to parent
   useImperativeHandle(ref, () => ({
@@ -53,6 +53,26 @@ const PromptTemplateList = forwardRef<
       }
       const data = await response.json();
       setPromptTemplates(data);
+
+      // Handle template selection based on app state
+      if (data.length > 0) {
+        const storedTemplateId = appService.state.get().selectedTemplateId;
+        if (!storedTemplateId) {
+          // No template selected, select the first one
+          onSelect(data[0]);
+        } else {
+          // Find and select the stored template
+          const storedTemplate = data.find(
+            (template) => template.id === storedTemplateId,
+          );
+          if (storedTemplate) {
+            onSelect(storedTemplate);
+          } else {
+            // Fallback to first template if stored ID not found
+            onSelect(data[0]);
+          }
+        }
+      }
     } catch (error) {
       console.error("Error fetching prompt templates:", error);
       setError("Failed to load prompt templates");

@@ -39,6 +39,7 @@ import {
   AlertDialogCancel,
   AlertDialogAction,
 } from "@components/ui/alert-dialog.tsx";
+import { useAppService } from "@lib/hooks/useAppService.ts";
 
 // Define the form schema using zod
 const formSchema = z.object({
@@ -83,6 +84,7 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
   const [loading, setLoading] = useState(false);
   const [variableInput, setVariableInput] = useState("");
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const { appService } = useAppService();
 
   // Initialize form with default values or provided promptTemplate
   const form = useForm<z.infer<typeof formSchema>>({
@@ -436,48 +438,50 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
 
               <Separator />
 
-              <div className="flex justify-between">
-                {!isNew && (
-                  <div className="flex gap-2">
-                    {onDelete && (
+              {appService?.getUser()?.role === "admin" && (
+                <div className="crud-buttons flex justify-between">
+                  {!isNew && (
+                    <div className="flex gap-2">
+                      {onDelete && (
+                        <Button
+                          type="button"
+                          variant="destructive"
+                          onClick={handleDelete}
+                          disabled={loading}
+                        >
+                          <Trash2 className="mr-2 h-4 w-4" />
+                          Delete
+                        </Button>
+                      )}
                       <Button
                         type="button"
-                        variant="destructive"
-                        onClick={handleDelete}
+                        variant="outline"
+                        onClick={handleDuplicate}
                         disabled={loading}
                       >
-                        <Trash2 className="mr-2 h-4 w-4" />
-                        Delete
+                        <Copy className="mr-2 h-4 w-4" />
+                        Duplicate
+                      </Button>
+                    </div>
+                  )}
+                  <div className="ml-auto flex gap-2">
+                    {onCancel && (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={onCancel}
+                        disabled={loading}
+                      >
+                        Cancel
                       </Button>
                     )}
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={handleDuplicate}
-                      disabled={loading}
-                    >
-                      <Copy className="mr-2 h-4 w-4" />
-                      Duplicate
+                    <Button type="submit" disabled={loading}>
+                      <Save className="mr-2 h-4 w-4" />
+                      {isNew ? "Create" : "Update"}
                     </Button>
                   </div>
-                )}
-                <div className="ml-auto flex gap-2">
-                  {onCancel && (
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={onCancel}
-                      disabled={loading}
-                    >
-                      Cancel
-                    </Button>
-                  )}
-                  <Button type="submit" disabled={loading}>
-                    <Save className="mr-2 h-4 w-4" />
-                    {isNew ? "Create" : "Update"}
-                  </Button>
                 </div>
-              </div>
+              )}
             </form>
           </Form>
         </CardContent>
