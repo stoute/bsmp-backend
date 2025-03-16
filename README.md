@@ -1,8 +1,8 @@
-![Astro Sphere Lighthouse Score](public/images/logo@2x.png)
+![BSMP Logo](public/images/logo@2x.png)
 
 # BSMP
 
-A modern, server-side rendered website built with Astro, featuring dynamic content, AI-powered chat, state management, and optimal performance.
+A modern, server-side rendered website built with Astro, featuring dynamic content, AI-powered chat, state management, and optimal performance. Built on top of [Astro Sphere](https://github.com/markhorn-dev/astro-sphere).
 
 ## 🛠 Tech Stack
 
@@ -10,12 +10,11 @@ A modern, server-side rendered website built with Astro, featuring dynamic conte
 - **State Management:** Nanostores for reactive, persistent state
 - **UI Components:** 
   - React for interactive features
-  - Solid.js for performance-critical components
 - **Styling:** Tailwind CSS
 - **Content:** MDX with frontmatter
 - **AI Integration:** LangChain/OpenAI via proxy
 - **Database:** Astro DB
-- **Deployment:** Multi-platform (Netlify, Vercel, Firebase)
+- **Deployment:** Multi-platform (Netlify, Vercel)
 
 ## ✨ Core Features
 
@@ -24,6 +23,7 @@ A modern, server-side rendered website built with Astro, featuring dynamic conte
 - Persistent storage for critical data
 - Type-safe state handling
 - Cross-component reactivity
+- Authentication state management
 
 ### AI Integration
 - Singleton ChatManager pattern
@@ -37,13 +37,15 @@ A modern, server-side rendered website built with Astro, featuring dynamic conte
 - Draft support
 - Tag-based organization
 - SEO optimization
+- RSS feed generation
 
 ### UI/UX
 - Server-Side Rendering
 - Dark/Light theme (persistent)
 - Responsive Tailwind design
-- Animated elements
+- Animated page transitions
 - Code syntax highlighting
+- Mobile-friendly drawer navigation
 
 ## 🚀 Quick Start
 
@@ -68,21 +70,27 @@ npm run preview         # Preview build
 │   ├── components/    # UI components
 │   ├── content/       # MDX content
 │   │   ├── blog/     # Blog posts
-│   │   └── projects/ # Project showcases
+│   │   ├── projects/ # Project showcases
+│   │   ├── work/     # Work page content
+│   │   └── legal/    # Legal documents
 │   ├── layouts/      # Page layouts
 │   ├── lib/          # Core logic + state
 │   ├── pages/        # Routes
 │   └── styles/       # Global styles
 └── public/           # Static assets
+    ├── images/       # Image assets
+    ├── ui.svg        # UI icon sprite
+    ├── social.svg    # Social media icon sprite
+    └── open-graph.jpg # Default OG image
 ```
 
 ## 🔧 Configuration
 
 ### Core Config Files
-- `astro.config.mjs` - Astro settings
+- `astro.config.mjs` - Astro settings and integrations
 - `tailwind.config.mjs` - Tailwind setup
 - `src/lib/appStore.ts` - State management
-- `src/consts.ts` - Site-wide constants
+- `src/consts.ts` - Site-wide constants and navigation
 
 ### State Configuration
 ```typescript
@@ -93,6 +101,9 @@ export const appState = persistentMap<AppState>({
   selectedModel?: string,
   currentChat?: ChatState
 });
+
+// Authentication state
+export const isLoggedIn = atom(false);
 ```
 
 ## 💻 Development
@@ -109,13 +120,24 @@ draft: false
 tags:
   - Tag1
   - Tag2
+demoUrl: https://example.com  # Optional for projects
+repoUrl: https://github.com/example/repo  # Optional for projects
 ---
+
+Your markdown content here...
 ```
 
 ### State Management
 ```typescript
-// In components
+// In React components
 import { useStore } from '@nanostores/react';
+import { appState, isLoggedIn } from '../lib/appStore';
+
+const state = useStore(appState);
+const loggedIn = useStore(isLoggedIn);
+
+// In Solid.js components
+import { useStore } from '@nanostores/solid';
 import { appState } from '../lib/appStore';
 
 const state = useStore(appState);
@@ -124,22 +146,21 @@ const state = useStore(appState);
 ## 🌐 Deployment
 
 ```bash
-# Netlify
+# Netlify (default)
 npm run build
 # Configure in netlify.toml
 
 # Vercel
 npm run deploy-vercel
 
-# Firebase
-npm run deploy-firebase
 ```
 
 ## 🔄 Database Operations
 
 ```bash
-npm run db-pull-remote  # Pull remote DB
-npm run db-push-remote  # Push to remote DB
+npm run db-verify-remote  # Verify remote DB schema
+npm run db-pull-remote    # Pull remote DB
+npm run db-push-remote    # Push to remote DB
 ```
 
 ## 🧪 Quality Assurance
