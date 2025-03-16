@@ -5,18 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8cf7e9a9-1ddf-43bf-8ddd-96d96e27722b" name="Changes" comment="fix: auth login POST">
-      <change beforePath="$PROJECT_DIR$/.idea/AugmentWebviewStateStore.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/AugmentWebviewStateStore.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/db/seed.ts" beforeDir="false" afterPath="$PROJECT_DIR$/db/seed.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/BaseHead.astro" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/BaseHead.astro" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/Header.astro" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Header.astro" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/UserMenu.astro" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/UserMenu.astro" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/appStore.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/appStore.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/api/auth/login.json.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/api/auth/login.json.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/api/auth/register.json.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/api/auth/register.json.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/auth/login.astro" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/auth/login.astro" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/auth/register.astro" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/auth/register.astro" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/index.astro" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/index.astro" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

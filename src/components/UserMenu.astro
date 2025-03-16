@@ -136,7 +136,7 @@ import { LINKS_DEV } from "@consts";
       // Handle admin links
       if (adminLinks) {
         const currentUser = JSON.parse(
-          localStorage.getItem("current-user") || "{}",
+          localStorage.getItem("app-state:currentUser") || "{}",
         );
 
         // Only show admin links if user is logged in and has admin role
@@ -197,11 +197,7 @@ import { LINKS_DEV } from "@consts";
 
     // Update on storage events (for cross-tab synchronization)
     window.addEventListener("storage", (event) => {
-      if (
-        event.key === "is-logged-in"
-        // event.key === "is-logged-in" ||
-        // event.key === "app-state:currentUser"
-      ) {
+      if (event.key === "is-logged-in") {
         updateUserMenu();
       }
     });
