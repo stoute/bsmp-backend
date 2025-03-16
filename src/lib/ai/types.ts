@@ -1,5 +1,8 @@
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 import type { BaseMessage } from "@langchain/core/messages";
+import type { PromptTemplateModel } from "@db/models";
+
+export type IPromptTemplate = PromptTemplateModel & {};
 
 export type Message = BaseMessage & {
   role: "system" | "user" | "assistant"; // Role of the message sender
@@ -26,19 +29,6 @@ export type ChatState = ChatSession & {
     model: string;
   };
 };
-
-export interface IPromptTemplate {
-  id: string; // UUID format
-  name: string;
-  description: string;
-  systemPrompt?: string;
-  template?: string; // Changed to optional
-  variables?: string[];
-  created_at: string; // ISO datetime format
-  updated_at: string; // ISO datetime format
-}
-
-
 
 // example
 // const chatSession: ChatSession = {

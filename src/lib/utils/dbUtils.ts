@@ -1,7 +1,26 @@
 // import { db, PromptTemplate } from "astro:db";
 // import { v4 as uuid } from "uuid";
 import { API_BASE_URL_DEV } from "@consts.ts";
+import bcrypt from "bcryptjs";
+import { db, User } from "astro:db";
+import { v4 as uuid } from "uuid";
 // import { appState } from "@lib/appStore.ts";
+
+export async function registerUser(
+  email?: string,
+  password?: string,
+  role?: string,
+) {
+  const hashedPassword = await bcrypt.hash(password, 10);
+  await db.insert(User).values({
+    id: uuid(),
+    email: email,
+    password: hashedPassword,
+    role: role || "authenticated",
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  });
+}
 
 export async function migrateSeedTemplatesToRemote(seedTemplates: any[]) {
   try {
