@@ -171,6 +171,9 @@ const navigationLinks = LINKS;
     const navContainer = document.getElementById("navigation-links");
     if (!navContainer) return;
 
+    // Store the current links state in a data attribute to preserve during transitions
+    navContainer.dataset.linksState = isLoggedIn ? "authenticated" : "default";
+
     // Clear existing links
     navContainer.innerHTML = "";
 
@@ -205,6 +208,15 @@ const navigationLinks = LINKS;
   // Initialize on page load
   document.addEventListener("DOMContentLoaded", updateNavigationLinks);
 
+  // Update after Astro view transitions
+  document.addEventListener("astro:after-swap", () => {
+    // Short delay to ensure DOM is ready
+    setTimeout(updateNavigationLinks, 10);
+  });
+
+  // Also update before the transition starts to ensure links are preserved
+  document.addEventListener("astro:before-preparation", updateNavigationLinks);
+
   // Update when login state changes
   window.addEventListener("login-state-changed", updateNavigationLinks);
 
@@ -214,4 +226,11 @@ const navigationLinks = LINKS;
       updateNavigationLinks();
     }
   });
+
+  // Also update when the nanostores isLoggedIn atom changes
+  if (typeof window !== "undefined" && window.nanostores) {
+    window.nanostores.isLoggedIn.listen(() => {
+      updateNavigationLinks();
+    });
+  }
 </script>
