@@ -106,17 +106,20 @@ import Container from "@components/Container.astro";
 </PageLayout>
 
 <script>
-  import { isLoggedIn, appState } from "../../lib/appStore";
+  // Function to initialize the form
+  function initializeRegisterForm() {
+    const form = document.getElementById("register-form");
+    const emailInput = document.getElementById("email");
+    const passwordInput = document.getElementById("password");
+    const errorMessage = document.getElementById("error-message");
 
-  document.addEventListener("DOMContentLoaded", () => {
-    const form = document.getElementById("register-form") as HTMLFormElement;
-    const errorMessage = document.getElementById(
-      "error-message",
-    ) as HTMLDivElement;
-    const emailInput = document.getElementById("email") as HTMLInputElement;
-    const passwordInput = document.getElementById(
-      "password",
-    ) as HTMLInputElement;
+    if (!form || !emailInput || !passwordInput || !errorMessage) {
+      console.error("Register form elements not found, retrying in 100ms");
+      setTimeout(initializeRegisterForm, 100);
+      return;
+    }
+
+    console.log("Register form initialized");
 
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -125,11 +128,9 @@ import Container from "@components/Container.astro";
       errorMessage.textContent = "";
       errorMessage.classList.add("hidden");
 
-      // Get form values
       const email = emailInput.value.trim();
       const password = passwordInput.value;
 
-      // Basic validation
       if (!email || !password) {
         errorMessage.textContent = "Email and password are required";
         errorMessage.classList.remove("hidden");
@@ -137,14 +138,20 @@ import Container from "@components/Container.astro";
       }
 
       try {
+        // Create the request payload
+        const payload = { email, password };
+
+        console.log(
+          "Sending register request with payload:",
+          JSON.stringify(payload),
+        );
+
         const response = await fetch("/api/auth/register.json", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({
-            data: { email, password },
-          }),
+          body: JSON.stringify(payload),
           credentials: "same-origin",
         });
 
@@ -158,10 +165,15 @@ import Container from "@components/Container.astro";
 
         if (data.success) {
           // Set logged in state
-          isLoggedIn.set(true);
-
-          // Store user info in app state
-          appState.setKey("currentUser", data.user);
+          localStorage.setItem("is-logged-in", "true");
+          // Store user info if available
+          if (data.user) {
+            localStorage.setItem(
+              "app-state:currentUser",
+              JSON.stringify(data.user),
+            );
+            // localStorage.setItem("user", JSON.stringify(data.user));
+          }
 
           // Redirect to home page
           window.location.href = "/";
@@ -172,11 +184,22 @@ import Container from "@components/Container.astro";
         }
       } catch (error) {
         console.error("Registration error:", error);
-        errorMessage.textContent = "An error occurred during registration";
+        errorMessage.textContent = "An error occurred. Please try again.";
         errorMessage.classList.remove("hidden");
       }
     });
-  });
+  }
+
+  // Initialize form when DOM is ready
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initializeRegisterForm);
+  } else {
+    // DOM already loaded
+    initializeRegisterForm();
+  }
+
+  // Also initialize on window load as a fallback
+  window.addEventListener("load", initializeRegisterForm);
 </script>
 
 <style>

@@ -6,7 +6,8 @@ import { registerUser } from "../src/lib/utils/dbUtils";
 
 export default async function () {
   const adminEmail = import.meta.env.PUBLIC_ADMIN_EMAIL;
-  const adminPassword = import.meta.env.PUBLIC_ADMIN_PASSWORD;
+  const adminPassword = "binnen";
+  // const adminPassword = import.meta.env.PUBLIC_ADMIN_PASSWORD;
   // set the default admin user
   await registerUser(adminEmail, adminPassword, "admin");
   await registerUser("bobstoute@icloud.com", "binnen");

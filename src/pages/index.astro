@@ -17,6 +17,10 @@ const projects = (await getCollection("projects"))
   .slice(0, 3);
 ---
 
+<script is:inline>
+  console.log(localStorage);
+</script>
+
 <PageLayout title="Home" description={SITE.DESCRIPTION}>
   <BottomLayout>
     <!-- HERO -->

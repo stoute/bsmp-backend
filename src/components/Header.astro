@@ -165,7 +165,7 @@ const navigationLinks = LINKS;
 
   function updateNavigationLinks() {
     // Check if user is logged in by looking at localStorage
-    const isLoggedIn = localStorage.getItem("is-logged-in:") === "true";
+    const isLoggedIn = localStorage.getItem("is-logged-in") === "true";
 
     // Get the navigation container
     const navContainer = document.getElementById("navigation-links");
@@ -210,7 +210,7 @@ const navigationLinks = LINKS;
 
   // Update on storage events (for cross-tab synchronization)
   window.addEventListener("storage", (event) => {
-    if (event.key === "is-logged-in:") {
+    if (event.key === "is-logged-in") {
       updateNavigationLinks();
     }
   });

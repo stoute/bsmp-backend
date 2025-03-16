@@ -106,18 +106,23 @@ import Container from "@components/Container.astro";
 </PageLayout>
 
 <script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const form = document.getElementById("login-form") as HTMLFormElement;
-    const emailInput = document.getElementById("email") as HTMLInputElement;
-    const passwordInput = document.getElementById(
-      "password",
-    ) as HTMLInputElement;
-    const errorMessage = document.getElementById(
-      "error-message",
-    ) as HTMLDivElement;
+  // Function to initialize the form
+  function initializeLoginForm() {
+    const form = document.getElementById("login-form");
+    const emailInput = document.getElementById("email");
+    const passwordInput = document.getElementById("password");
+    const errorMessage = document.getElementById("error-message");
+
+    if (!form || !emailInput || !passwordInput || !errorMessage) {
+      console.error("Login form elements not found, retrying in 100ms");
+      setTimeout(initializeLoginForm, 100);
+      return;
+    }
+
+    console.log("Login form initialized");
 
     form.addEventListener("submit", async (e) => {
-      e.preventDefault(); // Prevent the default form submission
+      e.preventDefault();
 
       // Reset error message
       errorMessage.textContent = "";
@@ -133,20 +138,23 @@ import Container from "@components/Container.astro";
       }
 
       try {
-        console.log("Sending login request with:", { email });
+        // Create the request payload
+        const payload = { email, password };
+
+        console.log(
+          "Sending login request with payload:",
+          JSON.stringify(payload),
+        );
 
         const response = await fetch("/api/auth/login.json", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({
-            data: { email, password },
-          }),
+          body: JSON.stringify(payload),
           credentials: "same-origin",
         });
 
-        console.log("Login response status:", response.status);
         const data = await response.json();
         console.log("Login response data:", data);
 
@@ -156,15 +164,19 @@ import Container from "@components/Container.astro";
           return;
         }
 
-        // Login successful
-        // Set logged in state in localStorage
-        localStorage.setItem("is-logged-in:", "true");
+        // Login successful: set store items
+
+        // Store user info if available
+        if (data.user) {
+          localStorage.setItem(
+            "app-state:currentUser",
+            JSON.stringify(data.user),
+          );
+          localStorage.setItem("is-logged-in", "true");
+        }
 
         // Dispatch custom event for navigation update
         window.dispatchEvent(new CustomEvent("login-state-changed"));
-
-        // Store user info in app state
-        // ... existing code ...
 
         // Redirect to home page
         window.location.href = "/";
@@ -174,7 +186,18 @@ import Container from "@components/Container.astro";
         errorMessage.classList.remove("hidden");
       }
     });
-  });
+  }
+
+  // Initialize form when DOM is ready
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initializeLoginForm);
+  } else {
+    // DOM already loaded
+    initializeLoginForm();
+  }
+
+  // Also initialize on window load as a fallback
+  window.addEventListener("load", initializeLoginForm);
 </script>
 
 <style>

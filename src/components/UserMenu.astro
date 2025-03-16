@@ -111,7 +111,7 @@ import { LINKS_DEV } from "@consts";
     }
 
     function updateUserMenu() {
-      const loggedInStatus = localStorage.getItem("is-logged-in:") === "true";
+      const loggedInStatus = localStorage.getItem("is-logged-in") === "true";
       console.log("Updating user menu, logged in:", loggedInStatus);
 
       // Update the auth link based on login status
@@ -197,7 +197,11 @@ import { LINKS_DEV } from "@consts";
 
     // Update on storage events (for cross-tab synchronization)
     window.addEventListener("storage", (event) => {
-      if (event.key === "is-logged-in:" || event.key === "current-user") {
+      if (
+        event.key === "is-logged-in"
+        // event.key === "is-logged-in" ||
+        // event.key === "app-state:currentUser"
+      ) {
         updateUserMenu();
       }
     });
@@ -213,7 +217,7 @@ import { LINKS_DEV } from "@consts";
       });
 
       // Update localStorage directly
-      localStorage.setItem("is-logged-in:", "false");
+      localStorage.setItem("is-logged-in", "false");
 
       // Dispatch custom event for navigation update
       window.dispatchEvent(new CustomEvent("login-state-changed"));

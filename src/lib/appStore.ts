@@ -49,7 +49,7 @@ export const openRouterModels = persistentMap<OpenRouterModelIndex>(
 export const templateList = atom([]);
 
 // USER
-export const isLoggedIn = persistentAtom<boolean>("is-logged-in:", false);
+export const isLoggedIn = persistentAtom<boolean>("is-logged-in");
 
 // Add logout function
 export async function logout() {
