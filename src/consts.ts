@@ -7,7 +7,7 @@ const getWindowLocationOrigin = () => {
   return "";
 };
 
-export const API_BASE_URL_PROD = getWindowLocationOrigin() + "/api";
+export const API_BASE_URL_PROD = "/api";
 export const API_BASE_URL_DEV = getWindowLocationOrigin() + "/api";
 // export const API_BASE_URL_DEV = "https://bsmp.netlify.app/api";
 

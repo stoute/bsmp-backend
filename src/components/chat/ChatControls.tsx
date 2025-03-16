@@ -14,7 +14,7 @@ import {
 } from "@components/ui/select";
 import { Label } from "@components/ui/label";
 import { DEFAULT_TEMPLATE_ID, DEFAULT_MODEL } from "@/consts";
-import { getMatchingOpenRouterModels } from "@lib/utils/modelUtils";
+import { getMatchingOpenRouterModels } from "@lib/ai/modelUtils.ts";
 import {
   Popover,
   PopoverContent,
