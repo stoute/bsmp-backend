@@ -1,20 +1,20 @@
 import { db, PromptTemplate, User, Comment, Author, Test } from "astro:db";
-
 import templates from "../public/_seed-templates.json";
+import { registerUser } from "../src/lib/utils/dbUtils";
+
+// import.meta.env.API_KEY;
 
 export default async function () {
-  const promptTemplates = templates;
+  const adminEmail = import.meta.env.PUBLIC_ADMIN_EMAIL;
+  const adminPassword = import.meta.env.PUBLIC_ADMIN_PASSWORD;
+  // set the default admin user
+  await registerUser(adminEmail, adminPassword, "admin");
+  await registerUser("bobstoute@icloud.com", "binnen");
+  await registerUser("stoute@planet.nl", "binnen", "moderator");
 
+  const promptTemplates = templates;
   await db.insert(PromptTemplate).values(promptTemplates);
 
-  await db.insert(User).values({
-    id: "0025f772-dc3e-4641-ae1b-89f4cf4c1119",
-    email: "stoute.bob@gmail.com",
-    password: "$2b$10$wFuC/dcmrlLYE.nT/mkJZ.ApKi8TPq.olR4SI./HXhYkgtB8zqZkK",
-    role: "admin",
-    created_at: "2025-03-15T12:53:10.615Z",
-    updated_at: "2025-03-15T12:53:10.615Z",
-  });
   await db.insert(Author).values([
     { id: 1, name: "Kasim" },
     { id: 2, name: "Mina" },

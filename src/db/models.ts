@@ -1,10 +1,10 @@
 export interface PromptTemplateModel {
   id: string;
   name: string;
-  description: string;
-  systemPrompt: string;
-  template: string;
-  variables: string[];
+  description?: string;
+  systemPrompt?: string;
+  template?: string;
+  variables?: string[];
   created_at: string;
   updated_at: string;
 }
@@ -13,7 +13,7 @@ export interface UserModel {
   id: string;
   email: string;
   password: string;
-  role: "authenticated" | "moderator" | "admin";
+  role: "authenticated" | "moderator" | "editor" | "admin";
   created_at: string;
   updated_at: string;
 }

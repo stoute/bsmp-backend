@@ -5,7 +5,11 @@ import { clearLocalStorage } from "@lib/utils.ts";
 import { API_BASE_URL_DEV, API_BASE_URL_PROD } from "@consts";
 import { migrateSeedTemplatesToRemote } from "@lib/utils/dbUtils";
 
-const production: boolean = process.env.NODE_ENV === "production";
+// const production: boolean =
+//   typeof window !== "undefined"
+//     ? window.location.hostname !== "localhost" &&
+//       !window.location.hostname.includes("127.0.0.1")
+//     : import.meta.env.PROD;
 
 declare global {
   interface Window {
@@ -27,7 +31,7 @@ export class AppService {
   public store = store;
   public state: AppState = store.appState;
 
-  public production: boolean = production;
+  // public production: boolean = production;
   public constants: any = constants;
 
   private constructor() {
@@ -94,7 +98,6 @@ export class AppService {
   }
 
   debug(value: any = undefined): void {
-    if (this.production) return;
     console.log("");
     console.log("--debug()--");
     if (value) {

@@ -22,12 +22,52 @@ const { title, description, image = "/open-graph.jpg" } = Astro.props;
   // Dynamic import to avoid SSR issues
   const initializeApp = async () => {
     try {
+      console.log("Starting appService initialization");
+
+      // Try importing each dependency separately to identify the problematic one
+      try {
+        const constants = await import("@consts");
+        console.log("Constants imported successfully");
+      } catch (e) {
+        console.error("Error importing constants:", e);
+      }
+
+      try {
+        const appStore = await import("@lib/appStore");
+        console.log("AppStore imported successfully");
+      } catch (e) {
+        console.error("Error importing appStore:", e);
+      }
+
+      try {
+        const utils = await import("@lib/utils.ts");
+        console.log("Utils imported successfully");
+      } catch (e) {
+        console.error("Error importing utils:", e);
+      }
+
+      try {
+        const dbUtils = await import("@lib/utils/dbUtils");
+        console.log("dbUtils imported successfully");
+      } catch (e) {
+        console.error("Error importing dbUtils:", e);
+      }
+
+      // Now try the main import
       const { appService } = await import("@lib/appService");
+      console.log("appService imported successfully");
       await appService.init();
+      console.log("appService initialized successfully");
       window.appService = appService;
       window.dispatchEvent(new CustomEvent("appservice:ready"));
     } catch (error) {
       console.error("Failed to initialize appService:", error);
+      console.error("Error stack:", error.stack);
+      // Try to extract more info about the error
+      if (error instanceof Error) {
+        console.error("Error name:", error.name);
+        console.error("Error message:", error.message);
+      }
     }
   };
   // Run initialization
@@ -141,6 +181,3 @@ const { title, description, image = "/open-graph.jpg" } = Astro.props;
     ].forEach((link) => link.remove()),
   );
 </script>
-
-<!-- Navigation script for dynamic link updates -->
-<script src="/js/navigation.js" type="module"></script>
