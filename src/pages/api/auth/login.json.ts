@@ -1,7 +1,7 @@
 export const prerender = false;
 import { v4 as uuid } from "uuid";
 import { db, User } from "astro:db";
-import bcrypt from "bcryptjs";
+import argon2 from "argon2";
 import { eq } from "astro:db";
 
 export async function POST({ request }: { request: Request }) {
@@ -31,7 +31,10 @@ export async function POST({ request }: { request: Request }) {
 
     if (!user) {
       return new Response(
-        JSON.stringify({ success: false, message: "Invalid credentials" }),
+        JSON.stringify({
+          success: false,
+          message: "No user with found with this email",
+        }),
         {
           status: 401,
           headers: { "Content-Type": "application/json" },
@@ -39,12 +42,12 @@ export async function POST({ request }: { request: Request }) {
       );
     }
 
-    // Verify password
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+    // Verify password using Argon2
+    const isPasswordValid = await argon2.verify(user.password, password);
 
     if (!isPasswordValid) {
       return new Response(
-        JSON.stringify({ success: false, message: "Invalid credentials" }),
+        JSON.stringify({ success: false, message: "Invalid password" }),
         {
           status: 401,
           headers: { "Content-Type": "application/json" },

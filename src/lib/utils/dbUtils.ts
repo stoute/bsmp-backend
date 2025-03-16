@@ -3,14 +3,14 @@ import { v4 as uuid } from "uuid";
 
 // Only import server-side modules when not in browser
 // This prevents these imports from being bundled into client-side code
-let bcrypt;
+let argon2;
 let db;
 let User;
 // Only load server-side modules in a server context
 if (typeof window === "undefined") {
   // Dynamic imports for server-only modules
   const importServerModules = async () => {
-    bcrypt = (await import("bcryptjs")).default;
+    argon2 = (await import("argon2")).default;
     const astroDb = await import("astro:db");
     db = astroDb.db;
     User = astroDb.User;
@@ -27,28 +27,52 @@ export async function registerUser(
   password?: string,
   role?: string,
 ) {
-  // For seed.ts, we need to ensure the imports are loaded
-  if (
-    typeof bcrypt === "undefined" ||
-    typeof db === "undefined" ||
-    typeof User === "undefined"
-  ) {
-    // If running in seed.ts or another server context where imports might not be initialized
-    bcrypt = (await import("bcryptjs")).default;
-    const astroDb = await import("astro:db");
-    db = astroDb.db;
-    User = astroDb.User;
+  try {
+    // For seed.ts, we need to ensure the imports are loaded
+    if (
+      typeof argon2 === "undefined" ||
+      typeof db === "undefined" ||
+      typeof User === "undefined"
+    ) {
+      // If running in seed.ts or another server context where imports might not be initialized
+      argon2 = (await import("argon2")).default;
+      const astroDb = await import("astro:db");
+      db = astroDb.db;
+      User = astroDb.User;
+    }
+
+    // Hash the password using Argon2
+    const hashedPassword = await argon2.hash(password, {
+      type: argon2.argon2id, // Use argon2id variant
+      memoryCost: 1024 * 16, // 16MB memory cost
+      timeCost: 3, // 3 iterations
+      parallelism: 1, // 1 degree of parallelism
+    });
+
+    const userId = uuid();
+    const now = new Date().toISOString();
+
+    const newUser = {
+      id: userId,
+      email: email,
+      password: hashedPassword,
+      role: role || "authenticated",
+      created_at: now,
+      updated_at: now,
+    };
+
+    // Make sure to use .run() to execute the query
+    await db.insert(User).values(newUser).run();
+
+    console.log(`User created: ${email} with role: ${role || "authenticated"}`);
+
+    // Return user without password
+    const { password: _, ...userWithoutPassword } = newUser;
+    return userWithoutPassword;
+  } catch (error) {
+    console.error("Error registering user:", error);
+    throw error;
   }
-  // Now we can use the imports
-  const hashedPassword = await bcrypt.hash(password, 10);
-  await db.insert(User).values({
-    id: uuid(),
-    email: email,
-    password: hashedPassword,
-    role: role || "authenticated",
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  });
 }
 
 // Client-safe function - can be used in both server and browser

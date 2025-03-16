@@ -17,10 +17,6 @@ const projects = (await getCollection("projects"))
   .slice(0, 3);
 ---
 
-<script is:inline>
-  console.log(localStorage);
-</script>
-
 <PageLayout title="Home" description={SITE.DESCRIPTION}>
   <BottomLayout>
     <!-- HERO -->
@@ -38,7 +34,7 @@ const projects = (await getCollection("projects"))
             <p
               class="animated text-xl font-bold uppercase opacity-90 md:text-xl lg:text-xl"
             >
-              Media Services
+              Media Programming
             </p>
             <p class="mt-5 mb-5 flex items-center justify-center">
               <img

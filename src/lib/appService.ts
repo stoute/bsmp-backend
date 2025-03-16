@@ -4,12 +4,7 @@ import * as constants from "@consts";
 import { clearLocalStorage } from "@lib/utils.ts";
 import { API_BASE_URL_DEV, API_BASE_URL_PROD } from "@consts";
 import { migrateSeedTemplatesToRemote } from "@lib/utils/dbUtils";
-
-// const production: boolean =
-//   typeof window !== "undefined"
-//     ? window.location.hostname !== "localhost" &&
-//       !window.location.hostname.includes("127.0.0.1")
-//     : import.meta.env.PROD;
+import { getOpenRouterModels } from "@lib/ai/utils";
 
 declare global {
   interface Window {
@@ -30,8 +25,6 @@ export class AppService {
   public name = constants.SITE.TITLE;
   public store = store;
   public state: AppState = store.appState;
-
-  // public production: boolean = production;
   public constants: any = constants;
 
   private constructor() {
@@ -43,41 +36,12 @@ export class AppService {
     // this.pushSeedTemplatesToRemote();
   }
 
+  // Called from BaseHead.astro
   async init() {
     if (this.initialized) return;
     try {
       // Check if Open Router models should be updated
-      const openRouter = openRouterModels.get();
-      const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
-      const lastUpdated = openRouter?.updated
-        ? new Date(openRouter.updated)
-        : null;
-      if (!lastUpdated || lastUpdated < oneHourAgo) {
-        const response = await fetch("https://openrouter.ai/api/v1/models", {
-          headers: {
-            "HTTP-Referer": window.location.href, // Required for OpenRouter API
-            "X-Title": this.name, // Optional, but recommended
-          },
-        });
-        if (!response.ok) {
-          throw new Error(
-            `Failed to fetch Open Router models: ${response.statusText}`,
-          );
-        }
-        const data = await response.json();
-        if (data && Array.isArray(data.data)) {
-          openRouterModels.set({
-            updated: new Date().toISOString(),
-            models: data.data,
-          });
-          console.log("Updated Open Router models:", data.data);
-        } else {
-          console.warn(
-            "Received unexpected data structure from OpenRouter API:",
-            data,
-          );
-        }
-      }
+      await getOpenRouterModels();
       console.log("App initialized");
       this.initialized = true;
     } catch (error) {
@@ -89,6 +53,10 @@ export class AppService {
 
   public clearStorage() {
     clearLocalStorage(true);
+  }
+
+  public getUser() {
+    return this.store.appState.get().currentUser;
   }
 
   public async pushSeedTemplatesToRemote() {
