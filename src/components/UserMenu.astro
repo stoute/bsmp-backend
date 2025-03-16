@@ -58,61 +58,51 @@ import { LINKS_DEV } from "@consts";
     z-index: 100;
     transition: all 0.2s ease-in-out;
   }
+
+  /* Add hover styles directly in CSS */
+  .user-menu-container:hover #user-dropdown {
+    display: block !important;
+  }
+
+  /* Ensure the dropdown stays visible when hovered */
+  #user-dropdown:hover {
+    display: block !important;
+  }
 </style>
 
 <script define:vars={{ LINKS_DEV }}>
-  document.addEventListener("DOMContentLoaded", () => {
+  function initializeUserMenu() {
     const userButton = document.getElementById("user-button");
     const userDropdown = document.getElementById("user-dropdown");
-    const userMenuContainer = document.querySelector(".user-menu-container");
     const authLink = document.getElementById("auth-link");
     const adminLinks = document.getElementById("admin-links");
-    let isDropdownOpen = false;
-    let hoverTimeout = null;
 
-    // Helper functions for dropdown visibility
-    function showDropdown() {
-      if (hoverTimeout) {
-        clearTimeout(hoverTimeout);
-        hoverTimeout = null;
+    // For mobile/touch devices, toggle on click
+    userButton?.addEventListener("click", (e) => {
+      // Only handle click for touch devices
+      if (window.matchMedia("(hover: none)").matches) {
+        e.preventDefault();
+        e.stopPropagation();
+        userDropdown?.classList.toggle("hidden");
       }
+    });
 
-      if (userDropdown && userDropdown.classList.contains("hidden")) {
-        userDropdown.classList.remove("hidden");
-        isDropdownOpen = true;
-      }
-    }
-
-    function hideDropdown() {
-      if (userDropdown) {
+    // Close dropdown when clicking outside (for touch devices)
+    document.addEventListener("click", (event) => {
+      if (
+        window.matchMedia("(hover: none)").matches &&
+        userButton &&
+        !userButton.contains(event.target) &&
+        userDropdown &&
+        !userDropdown.contains(event.target) &&
+        !userDropdown.classList.contains("hidden")
+      ) {
         userDropdown.classList.add("hidden");
-        isDropdownOpen = false;
       }
-    }
-
-    function hideDropdownWithDelay() {
-      if (hoverTimeout) {
-        clearTimeout(hoverTimeout);
-      }
-
-      hoverTimeout = setTimeout(() => {
-        if (userMenuContainer && !userMenuContainer.matches(":hover")) {
-          hideDropdown();
-        }
-      }, 150);
-    }
-
-    function toggleDropdown() {
-      if (isDropdownOpen) {
-        hideDropdown();
-      } else {
-        showDropdown();
-      }
-    }
+    });
 
     function updateUserMenu() {
       const loggedInStatus = localStorage.getItem("is-logged-in") === "true";
-      console.log("Updating user menu, logged in:", loggedInStatus);
 
       // Update the auth link based on login status
       if (authLink) {
@@ -123,7 +113,7 @@ import { LINKS_DEV } from "@consts";
           authLink.onclick = async (e) => {
             e.preventDefault();
             await handleLogout();
-            hideDropdown();
+            userDropdown?.classList.add("hidden");
           };
         } else {
           // User is not logged in - show login option
@@ -160,38 +150,6 @@ import { LINKS_DEV } from "@consts";
       }
     }
 
-    // Check if device supports hover
-    let supportsHover;
-    if (typeof window !== "undefined") {
-      supportsHover = window.matchMedia("(hover: hover)").matches;
-    }
-
-    // Event listeners
-    if (supportsHover) {
-      // Improved hover handling
-      userButton?.addEventListener("mouseenter", showDropdown);
-      userDropdown?.addEventListener("mouseenter", showDropdown);
-      userMenuContainer?.addEventListener("mouseleave", hideDropdownWithDelay);
-
-      // Add focus handling for accessibility
-      userButton?.addEventListener("focus", showDropdown);
-      userButton?.addEventListener("blur", hideDropdownWithDelay);
-    } else {
-      userButton?.addEventListener("click", toggleDropdown);
-    }
-
-    // Close dropdown when clicking outside
-    document.addEventListener("click", (event) => {
-      if (
-        userButton &&
-        !userButton.contains(event.target) &&
-        userDropdown &&
-        !userDropdown.contains(event.target)
-      ) {
-        hideDropdown();
-      }
-    });
-
     // Update on login state changes
     window.addEventListener("login-state-changed", updateUserMenu);
 
@@ -204,7 +162,14 @@ import { LINKS_DEV } from "@consts";
 
     // Initial update
     updateUserMenu();
-  });
+  }
+
+  // Initialize on page load
+  document.addEventListener("DOMContentLoaded", initializeUserMenu);
+
+  // Re-initialize after Astro view transitions
+  document.addEventListener("astro:page-load", initializeUserMenu);
+  document.addEventListener("astro:after-swap", initializeUserMenu);
 
   async function handleLogout() {
     try {
@@ -214,6 +179,7 @@ import { LINKS_DEV } from "@consts";
 
       // Update localStorage directly
       localStorage.setItem("is-logged-in", "false");
+      localStorage.removeItem("app-state:currentUser");
 
       // Dispatch custom event for navigation update
       window.dispatchEvent(new CustomEvent("login-state-changed"));
