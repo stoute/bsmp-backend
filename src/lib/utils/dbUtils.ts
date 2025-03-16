@@ -1,16 +1,45 @@
-// import { db, PromptTemplate } from "astro:db";
-// import { v4 as uuid } from "uuid";
-import { API_BASE_URL_DEV } from "@consts.ts";
-import bcrypt from "bcryptjs";
-import { db, User } from "astro:db";
+import { API_BASE_URL_DEV } from "@consts";
 import { v4 as uuid } from "uuid";
-// import { appState } from "@lib/appStore.ts";
 
+// Only import server-side modules when not in browser
+// This prevents these imports from being bundled into client-side code
+let bcrypt;
+let db;
+let User;
+// Only load server-side modules in a server context
+if (typeof window === "undefined") {
+  // Dynamic imports for server-only modules
+  const importServerModules = async () => {
+    bcrypt = (await import("bcryptjs")).default;
+    const astroDb = await import("astro:db");
+    db = astroDb.db;
+    User = astroDb.User;
+  };
+  // Execute the import
+  importServerModules().catch((err) =>
+    console.error("Failed to import server modules:", err),
+  );
+}
+
+// Server-only function - modified to work in both contexts
 export async function registerUser(
   email?: string,
   password?: string,
   role?: string,
 ) {
+  // For seed.ts, we need to ensure the imports are loaded
+  if (
+    typeof bcrypt === "undefined" ||
+    typeof db === "undefined" ||
+    typeof User === "undefined"
+  ) {
+    // If running in seed.ts or another server context where imports might not be initialized
+    bcrypt = (await import("bcryptjs")).default;
+    const astroDb = await import("astro:db");
+    db = astroDb.db;
+    User = astroDb.User;
+  }
+  // Now we can use the imports
   const hashedPassword = await bcrypt.hash(password, 10);
   await db.insert(User).values({
     id: uuid(),
@@ -22,6 +51,7 @@ export async function registerUser(
   });
 }
 
+// Client-safe function - can be used in both server and browser
 export async function migrateSeedTemplatesToRemote(seedTemplates: any[]) {
   try {
     // Check if there's data to migrate

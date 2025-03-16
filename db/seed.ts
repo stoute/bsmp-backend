@@ -2,6 +2,8 @@ import { db, PromptTemplate, User, Comment, Author, Test } from "astro:db";
 import templates from "../public/_seed-templates.json";
 import { registerUser } from "../src/lib/utils/dbUtils";
 
+// import.meta.env.API_KEY;
+
 export default async function () {
   const adminEmail = import.meta.env.PUBLIC_ADMIN_EMAIL;
   const adminPassword = import.meta.env.PUBLIC_ADMIN_PASSWORD;

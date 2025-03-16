@@ -41,7 +41,8 @@ class ChatManager {
     this.parser.registerDocumentationTemplateProcessor();
 
     let defaultModel = DEFAULT_MODEL;
-    if (appService.state.environment === "production") {
+    // fixme:
+    if (appState.get().environment === "production") {
       defaultModel = DEFAULT_MODEL_FREE;
     }
 
