@@ -49,6 +49,7 @@
     "@radix-ui/react-select": "^2.1.6",
     "@radix-ui/react-separator": "^1.1.2",
     "@radix-ui/react-slot": "^1.1.2",
+    "@sphereon/isomorphic-argon2": "^1.0.1",
     "@tailwindcss/postcss": "^4.0.8",
     "@tailwindcss/typography": "^0.5.10",
     "@tailwindcss/vite": "^4.0.8",

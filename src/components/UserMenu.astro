@@ -58,16 +58,6 @@ import { LINKS_DEV } from "@consts";
     z-index: 100;
     transition: all 0.2s ease-in-out;
   }
-
-  /* Add hover styles directly in CSS */
-  .user-menu-container:hover #user-dropdown {
-    display: block !important;
-  }
-
-  /* Ensure the dropdown stays visible when hovered */
-  #user-dropdown:hover {
-    display: block !important;
-  }
 </style>
 
 <script define:vars={{ LINKS_DEV }}>
@@ -76,26 +66,49 @@ import { LINKS_DEV } from "@consts";
     const userDropdown = document.getElementById("user-dropdown");
     const authLink = document.getElementById("auth-link");
     const adminLinks = document.getElementById("admin-links");
+    let closeTimeout = null;
 
-    // For mobile/touch devices, toggle on click
+    // Toggle dropdown on button click
     userButton?.addEventListener("click", (e) => {
-      // Only handle click for touch devices
-      if (window.matchMedia("(hover: none)").matches) {
-        e.preventDefault();
-        e.stopPropagation();
-        userDropdown?.classList.toggle("hidden");
+      e.preventDefault();
+      e.stopPropagation();
+      userDropdown?.classList.toggle("hidden");
+    });
+
+    // Handle mouse enter/leave for both button and dropdown
+    userButton?.addEventListener("mouseenter", () => {
+      if (closeTimeout) {
+        clearTimeout(closeTimeout);
+        closeTimeout = null;
+      }
+      userDropdown?.classList.remove("hidden");
+    });
+
+    userDropdown?.addEventListener("mouseenter", () => {
+      if (closeTimeout) {
+        clearTimeout(closeTimeout);
+        closeTimeout = null;
       }
     });
 
-    // Close dropdown when clicking outside (for touch devices)
+    // Set timeout when leaving either element
+    const handleMouseLeave = () => {
+      if (closeTimeout) clearTimeout(closeTimeout);
+      closeTimeout = setTimeout(() => {
+        userDropdown?.classList.add("hidden");
+      }, 300); // 300ms delay gives time to move between elements
+    };
+
+    userButton?.addEventListener("mouseleave", handleMouseLeave);
+    userDropdown?.addEventListener("mouseleave", handleMouseLeave);
+
+    // Close dropdown when clicking outside
     document.addEventListener("click", (event) => {
       if (
-        window.matchMedia("(hover: none)").matches &&
         userButton &&
         !userButton.contains(event.target) &&
         userDropdown &&
-        !userDropdown.contains(event.target) &&
-        !userDropdown.classList.contains("hidden")
+        !userDropdown.contains(event.target)
       ) {
         userDropdown.classList.add("hidden");
       }
