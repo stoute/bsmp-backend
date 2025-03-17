@@ -53,12 +53,14 @@ const formSchema = z.object({
   updated_at: z.string().optional(),
 });
 
-const emptyTemplate = {
+export const defaultNewTemplate: IPromptTemplate = {
   name: "",
   description: "",
   systemPrompt: "",
   template: "",
   variables: [],
+  tags: [],
+  llmConfig: undefined,
 };
 
 interface PromptTemplateEditorProps {
@@ -89,7 +91,7 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
   // Initialize form with default values or provided promptTemplate
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: promptTemplate || emptyTemplate,
+    defaultValues: promptTemplate || defaultNewTemplate,
   });
 
   // Reset form when promptTemplate changes
@@ -98,7 +100,7 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
       form.reset(promptTemplate);
       setIsNew(!promptTemplate.id);
     } else {
-      form.reset(emptyTemplate);
+      form.reset(defaultNewTemplate);
       setIsNew(true);
     }
   }, [promptTemplate, form]);

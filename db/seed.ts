@@ -1,5 +1,6 @@
 import { db, PromptTemplate, User, Comment, Author } from "astro:db";
 import { defaultLLMSettings } from "../src/lib/ai/llm";
+import { TEMPLATE_TAGS } from "../src/consts";
 import templates from "./seed-templates.json";
 import { registerUser } from "../src/lib/utils/dbUtils";
 
@@ -7,6 +8,7 @@ const formatTemplates = (templates: any) => {
   templates.forEach((template: any) => {
     if (!template.llm_settings) {
       template.llm_settings = defaultLLMSettings;
+      template.tags = [TEMPLATE_TAGS[0], TEMPLATE_TAGS[1]];
     }
   });
   return templates;
