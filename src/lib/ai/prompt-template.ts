@@ -1,4 +1,4 @@
-import { defaultLLMSettings } from "./llm";
+import { defaultLLMConfig } from "./llm";
 
 export const DEFAULT_TEMPLATE_ID = "default";
 export const DEFAULT_TEMPLATE = {
@@ -9,10 +9,17 @@ export const DEFAULT_TEMPLATE = {
   systemPrompt: "You are a helpful assistant.",
   template: "",
   variables: [],
-  llmSettings: defaultLLMSettings,
+  llmSettings: defaultLLMConfig,
   created_at: "2025-03-06T13:33:25.412Z",
   updated_at: "2025-03-11T22:37:36.864Z",
 };
+export const EDITABLE_LLM_CONFIG_PARAMS = [
+  "model",
+  "temperature",
+  "metadata",
+  // "maxTokens",
+  // "topP",
+];
 
 export const TEMPLATE_TAGS = [
   "prompt-enhancer",

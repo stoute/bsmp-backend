@@ -43,7 +43,6 @@ class ChatManager {
     this.parser.registerDocumentationTemplateProcessor();
 
     let defaultModel = DEFAULT_MODEL;
-    // fixme:
     if (appState.get().environment === "production") {
       defaultModel = DEFAULT_MODEL_FREE;
     }
@@ -52,6 +51,7 @@ class ChatManager {
     // initialize llm
     // this.llm = new ChatOpenAI(defaultLLMConstructorParams);
     const config = { ...defaultLLMConfig, model: this.model };
+    console.log("config", config);
     this.llm = new ChatOpenAI(config);
     // this.llm = new ChatOpenAI({
     //   temperature: 0.7,
