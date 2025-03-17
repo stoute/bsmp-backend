@@ -55,6 +55,7 @@ export default function Chat() {
   // Initialize chat manager only when appService is ready
   useEffect(() => {
     if (!isReady) return;
+
     const savedChat = state.currentChat;
     isRestoringRef.current = savedChat?.messages?.length > 0;
     setMessages(chatManager.getMessages());

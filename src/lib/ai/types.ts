@@ -19,9 +19,13 @@ type ChatSession = {
 };
 
 export type ChatState = ChatSession & {
-  model: string;
-  templateId?: string;
-  template?: IPromptTemplate;
+  // These properties are deprecated - use metadata instead
+  // /** @deprecated Use metadata.model instead */
+  // model?: string;
+  // /** @deprecated Use metadata.templateId instead */
+  // templateId?: string;
+  // /** @deprecated Use metadata.template instead */
+  // template?: IPromptTemplate;
   metadata: {
     templateId?: string;
     template?: IPromptTemplate;

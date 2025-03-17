@@ -80,12 +80,11 @@ class ChatManager {
   }
 
   public async init(template?: IPromptTemplate) {
-    // console.log("init", template);
     await this.restoreState();
+
     if (template) {
       await this.setTemplate(template);
     } else {
-      console.log("No templateId provided, using default template");
       appState.setKey("selectedTemplateId", DEFAULT_TEMPLATE_ID);
       this.messages = [new SystemMessage(DEFAULT_SYSTEM_MESSAGE)];
     }
@@ -192,11 +191,21 @@ class ChatManager {
   private async restoreState() {
     const savedChat = appState.get().currentChat;
     if (!savedChat) return;
-    appState.setKey("selectedModel", savedChat.model);
-    if (savedChat?.template) {
-      appState.setKey("selectedTemplateId", savedChat.template.id);
-      this.template = savedChat.template;
+
+    // Check if we have a model in the saved chat metadata
+    if (savedChat.metadata && savedChat.metadata.model) {
+      this.model = savedChat.metadata.model;
+      appState.setKey("selectedModel", savedChat.metadata.model);
+    } else if (appState.get().selectedModel) {
+      // If no model in saved chat but we have one in appState, use that
+      this.model = appState.get().selectedModel;
     }
+
+    if (savedChat?.metadata?.template) {
+      appState.setKey("selectedTemplateId", savedChat.metadata.template.id);
+      this.template = savedChat.metadata.template;
+    }
+
     if (savedChat?.messages && Array.isArray(savedChat.messages)) {
       const restoredMessages = savedChat.messages;
       if (restoredMessages.length > 0) {

@@ -61,6 +61,7 @@ export default function ChatControls() {
   useEffect(() => {
     const storedModel = appState.get().selectedModel;
     const storedTemplateId = appState.get().selectedTemplateId;
+
     if (storedModel) {
       setSelectedModel(storedModel);
     }
@@ -122,6 +123,9 @@ export default function ChatControls() {
   useEffect(() => {
     const unsubscribe = appState.subscribe((state) => {
       setSelectedTemplateId(state.selectedTemplateId || DEFAULT_TEMPLATE_ID);
+      if (state.selectedModel) {
+        setSelectedModel(state.selectedModel);
+      }
     });
     return () => unsubscribe();
   }, []); // Empty dependency array since we want to set up the subscription once
