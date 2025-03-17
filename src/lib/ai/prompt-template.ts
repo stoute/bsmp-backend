@@ -9,9 +9,8 @@ export const DEFAULT_TEMPLATE = {
   systemPrompt: "You are a helpful assistant.",
   template: "",
   variables: [],
-	tags: [];
-	metadata: {};
-  llmSettings: defaultLLMConfig,
+	tags: [];q
+  llmConfig: defaultLLMConfig,
   created_at: "2025-03-06T13:33:25.412Z",
   updated_at: "2025-03-11T22:37:36.864Z",
 };
