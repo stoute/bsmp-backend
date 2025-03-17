@@ -33,7 +33,7 @@ export async function POST({ request }: { request: Request }) {
       return new Response(
         JSON.stringify({
           success: false,
-          message: "No user with found with this email",
+          message: "No user was found with this email",
         }),
         {
           status: 401,

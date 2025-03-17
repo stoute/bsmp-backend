@@ -12,7 +12,7 @@ export async function getOpenRouterModels() {
     const response = await fetch("https://openrouter.ai/api/v1/models", {
       headers: {
         "HTTP-Referer": window.location.href, // Required for OpenRouter API
-        "X-Title": "bsmp", // Optional, but recommended
+        "X-Title": "app", // Optional, but recommended
       },
     });
     if (!response.ok) {

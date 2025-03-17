@@ -1,5 +1,5 @@
 import { db, PromptTemplate, User, Comment, Author } from "astro:db";
-import templates from "../public/_seed-templates.json";
+import templates from "./seed-templates.json";
 import { registerUser } from "../src/lib/utils/dbUtils";
 
 export default async function () {
