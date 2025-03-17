@@ -5,6 +5,8 @@ import { clearLocalStorage } from "@lib/utils.ts";
 import { API_BASE_URL_DEV, API_BASE_URL_PROD } from "@consts";
 import { migrateSeedTemplatesToRemote } from "@lib/utils/dbUtils";
 import { getOpenRouterModels } from "@lib/ai/open-router.ts";
+import { LLM_MODELS, DEFAULT_MODEL_FREE } from "@consts";
+import { type OpenRouterModel } from "@lib/ai/open-router";
 
 declare global {
   interface Window {
@@ -57,6 +59,40 @@ export class AppService {
 
   public getUser() {
     return this.store.appState.get().currentUser;
+  }
+
+  public getMatchingOpenRouterModels(): OpenRouterModel[] {
+    const orModels = this.store.openRouterModels.get().models;
+    if (!orModels) return [];
+
+    const matches = new Set<OpenRouterModel>();
+
+    if (this.store.appState.get().environment === "development") {
+      LLM_MODELS.forEach((llmModel) => {
+        const found = orModels.find(
+          (model: OpenRouterModel) => model.id === llmModel,
+        );
+        if (found) matches.add(found);
+      });
+      // add all models in development
+      orModels.forEach((model: OpenRouterModel) => {
+        matches.add(model);
+      });
+    } else {
+      // Add default free production model
+      orModels.forEach((model: OpenRouterModel) => {
+        if (model.id === DEFAULT_MODEL_FREE) {
+          matches.add(model);
+        }
+      });
+      // Only add models with 'free' in their name on production
+      orModels.forEach((model: OpenRouterModel) => {
+        if (model.name.toLowerCase().includes("(free)")) {
+          matches.add(model);
+        }
+      });
+    }
+    return Array.from(matches);
   }
 
   public async pushSeedTemplatesToRemote() {

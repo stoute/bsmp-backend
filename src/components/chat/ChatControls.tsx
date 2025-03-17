@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { useStore } from "@nanostores/react";
 import type { IPromptTemplate } from "@lib/ai/types";
-import type { OpenRouterModel } from "@lib/ai/types";
+import type { OpenRouterModel } from "@lib/ai/open-router.ts";
 import { appState, templateList } from "@lib/appStore";
 import { chatManager } from "@lib/ChatManager";
 import { useAppService } from "@lib/hooks/useAppService";
@@ -15,7 +15,6 @@ import {
 import { Label } from "@components/ui/label";
 import { DEFAULT_MODEL } from "@/consts";
 import { DEFAULT_TEMPLATE_ID } from "@lib/ai/prompt-template";
-import { getMatchingOpenRouterModels } from "@lib/ai/open-router.ts";
 import {
   Popover,
   PopoverContent,
@@ -56,7 +55,7 @@ export default function ChatControls() {
   const templateListStore = useStore(templateList);
 
   // App service hook
-  const { isReady } = useAppService();
+  const { isReady, appService } = useAppService();
 
   // Group all useEffect hooks together
   useEffect(() => {
@@ -108,7 +107,7 @@ export default function ChatControls() {
     if (!isReady) return;
 
     try {
-      const matchingModels = getMatchingOpenRouterModels();
+      const matchingModels = appService.getMatchingOpenRouterModels();
       // Ensure we always have an array, even if empty
       setModels(Array.isArray(matchingModels) ? matchingModels : []);
     } catch (error) {
@@ -124,7 +123,6 @@ export default function ChatControls() {
     const unsubscribe = appState.subscribe((state) => {
       setSelectedTemplateId(state.selectedTemplateId || DEFAULT_TEMPLATE_ID);
     });
-
     return () => unsubscribe();
   }, []); // Empty dependency array since we want to set up the subscription once
 
