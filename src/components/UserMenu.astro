@@ -1,6 +1,6 @@
 ---
 import { cn } from "@lib/utils";
-import { LINKS_DEV } from "@consts";
+import { LINKS_ADMIN } from "@consts";
 ---
 
 <div class="user-menu-container relative">
@@ -60,7 +60,7 @@ import { LINKS_DEV } from "@consts";
   }
 </style>
 
-<script define:vars={{ LINKS_DEV }}>
+<script define:vars={{ LINKS_ADMIN }}>
   function initializeUserMenu() {
     const userButton = document.getElementById("user-button");
     const userDropdown = document.getElementById("user-dropdown");
@@ -147,8 +147,8 @@ import { LINKS_DEV } from "@consts";
           adminLinks.innerHTML = ""; // Clear existing links
           adminLinks.classList.remove("hidden");
 
-          // Add LINKS_DEV links
-          LINKS_DEV.forEach((link) => {
+          // Add LINKS_ADMIN links
+          LINKS_ADMIN.forEach((link) => {
             const linkElement = document.createElement("a");
             linkElement.href = link.HREF;
             linkElement.className =

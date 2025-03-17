@@ -13,8 +13,9 @@ import {
   SelectValue,
 } from "@components/ui/select";
 import { Label } from "@components/ui/label";
-import { DEFAULT_TEMPLATE_ID, DEFAULT_MODEL } from "@/consts";
-import { getMatchingOpenRouterModels } from "@lib/ai/modelUtils.ts";
+import { DEFAULT_MODEL } from "@/consts";
+import { DEFAULT_TEMPLATE_ID } from "@lib/ai/prompt-template";
+import { getMatchingOpenRouterModels } from "@lib/ai/open-router.ts";
 import {
   Popover,
   PopoverContent,

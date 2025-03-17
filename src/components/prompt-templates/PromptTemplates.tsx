@@ -37,43 +37,15 @@ const PromptTemplates: React.FC<PromptTemplatesProps> = ({
   const { isReady } = useAppService();
   const listRef = useRef<{ fetchPromptTemplates: () => Promise<void> }>();
 
-  // Effects after all hooks
-  useEffect(() => {
-    const fetchSelectedTemplate = async () => {
-      if (!selectedId) {
-        handleNewTemplate();
-        return;
-      }
-      try {
-        const response = await fetch(apiEndPoint.replace("index", selectedId));
-        if (!response.ok) {
-          throw new Error("Failed to fetch template");
-        }
-        const template = await response.json();
-        setSelectedTemplate(template);
-      } catch (error) {
-        console.error("Error fetching selected template:", error);
-        handleNewTemplate();
-      }
-    };
-    fetchSelectedTemplate();
-  }, [selectedId]);
-
-  useEffect(() => {
-    appState.setKey("selectedTemplateId", selectedId);
-  }, [selectedId]);
-
-  // Move the conditional return after all hooks are declared
-  if (!isReady) return null;
+  // Define all handler functions before useEffect
+  const handleNewTemplate = () => {
+    setSelectedTemplate(newTemplate);
+    setSelectedId(undefined);
+  };
 
   const handleSelectTemplate = (template: IPromptTemplate) => {
     setSelectedTemplate(template);
     setSelectedId(template.id);
-  };
-
-  const handleNewTemplate = () => {
-    setSelectedTemplate(newTemplate);
-    setSelectedId(undefined);
   };
 
   const handleSaveTemplate = async (template: IPromptTemplate) => {
@@ -114,6 +86,35 @@ const PromptTemplates: React.FC<PromptTemplatesProps> = ({
     }
   };
 
+  // Effects after all hooks and function definitions
+  useEffect(() => {
+    const fetchSelectedTemplate = async () => {
+      if (!selectedId) {
+        handleNewTemplate();
+        return;
+      }
+      try {
+        const response = await fetch(apiEndPoint.replace("index", selectedId));
+        if (!response.ok) {
+          throw new Error("Failed to fetch template");
+        }
+        const template = await response.json();
+        setSelectedTemplate(template);
+      } catch (error) {
+        console.error("Error fetching selected template:", error);
+        handleNewTemplate();
+      }
+    };
+    fetchSelectedTemplate();
+  }, [selectedId]);
+
+  useEffect(() => {
+    appState.setKey("selectedTemplateId", selectedId);
+  }, [selectedId]);
+
+  // Move the conditional return after all hooks are declared
+  if (!isReady) return null;
+
   return (
     <div className="flex w-full flex-col gap-4 md:flex-row">
       <div className="w-full md:w-1/3">
@@ -122,7 +123,6 @@ const PromptTemplates: React.FC<PromptTemplatesProps> = ({
           dataUrl={apiEndPoint.replace("index", "list")}
           onSelect={handleSelectTemplate}
           onNew={handleNewTemplate}
-          selectedId={selectedId}
         />
       </div>
       <div className="w-full md:w-2/3">

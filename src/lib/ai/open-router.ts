@@ -37,6 +37,7 @@ export async function getOpenRouterModels() {
   }
 }
 
+// todo: move to appService
 export function getMatchingOpenRouterModels(): OpenRouterModel[] {
   const orModels = openRouterModels.get().models;
   if (!orModels) return [];

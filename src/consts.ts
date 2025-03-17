@@ -1,11 +1,5 @@
 import type { Site, Page, Links, Socials } from "@types";
-import { defaultLLMSettings } from "../src/lib/ai/llm";
 import { getWindowLocationOrigin } from "@lib/utils";
-import {
-  DEFAULT_TEMPLATE_ID,
-  DEFAULT_TEMPLATE,
-  TEMPLATE_TAGS,
-} from "@lib/ai/prompt-template";
 
 export const API_BASE_URL_PROD = "/api";
 export const API_BASE_URL_DEV = getWindowLocationOrigin() + "/api";
@@ -13,8 +7,6 @@ export const API_BASE_URL_DEV = getWindowLocationOrigin() + "/api";
 export const DEFAULT_MODEL = "google/gemini-2.0-flash-lite-001";
 export const DEFAULT_MODEL_FREE = "mistralai/mistral-7b-instruct";
 export const DEFAULT_SYSTEM_MESSAGE = "You are a helpful assistant.";
-
-export { DEFAULT_TEMPLATE_ID, DEFAULT_TEMPLATE, TEMPLATE_TAGS };
 
 export const LLM_MODELS = [
   "google/gemini-2.0-flash-lite-001",
@@ -41,7 +33,7 @@ export const LINKS_AUTHENTICATED: Links = [
     HREF: "/prompts",
   },
 ]; // Global
-export const LINKS_DEV: Links = [
+export const LINKS_ADMIN: Links = [
   {
     TEXT: "Contact",
     HREF: "/contact",
