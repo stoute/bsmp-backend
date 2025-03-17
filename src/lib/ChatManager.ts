@@ -22,6 +22,8 @@ import {
   DEFAULT_TEMPLATE_ID,
 } from "@consts";
 import { ChatParser } from "./ChatParser";
+import { proxyFetchHandler } from "@lib/ai/utils";
+import { defaultLLMConfig } from "@lib/ai/llm";
 
 class ChatManager {
   private static instance: ChatManager;
@@ -47,17 +49,20 @@ class ChatManager {
     }
 
     this.model = appState.get().selectedModel || defaultModel;
-    this.llm = new ChatOpenAI({
-      temperature: 0.7,
-      configuration: {
-        fetch: this.proxyFetchHandler,
-      },
-      model: this.model,
-      apiKey: "none",
-    });
+    // initialize llm
+    // this.llm = new ChatOpenAI(defaultLLMConstructorParams);
+    this.llm = new ChatOpenAI(defaultLLMConfig);
+    console.log(this.llm);
+    // this.llm = new ChatOpenAI({
+    //   temperature: 0.7,
+    //   configuration: {
+    //     fetch: proxyFetchHandler,
+    //   },
+    //   model: this.model,
+    //   apiKey: "NONE",
+    // });
     this.setupStateSubscription();
     this.restoreState();
-    // if (typeof window !== 'undefined') this.newChat(DEFAULT_TEMPLATE_ID)
     console.log("ChatManager initialized");
   }
 
@@ -306,16 +311,10 @@ class ChatManager {
   }
 
   private updateModel(newModel: string) {
+    const config = { ...defaultLLMConfig, model: newModel };
     this.model = newModel;
-    this.llm = new ChatOpenAI({
-      temperature: 0.7,
-      configuration: {
-        fetch: this.proxyFetchHandler,
-      },
-      model: newModel,
-      apiKey: "none",
-    });
-    appService.debug("Updated model to: " + newModel);
+    this.llm = new ChatOpenAI(config);
+    console.log("Updated model to: " + newModel);
     this.saveState();
   }
 
@@ -362,27 +361,6 @@ class ChatManager {
   isProcessing(): boolean {
     return this.isLoading;
   }
-
-  private proxyFetchHandler = async (url: string, options: any) => {
-    const urlObj = new URL(url);
-    const endpoint = urlObj.pathname.split("/v1/")[1];
-    const response: Response = await fetch(
-      // appState.get().apiBaseUrl + "/ai-proxy",
-      "/api/ai-proxy",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          endpoint,
-          data: JSON.parse(options.body),
-        }),
-      },
-    );
-
-    return response;
-  };
 
   public static getInstance(): ChatManager {
     if (!ChatManager.instance) {

@@ -1,4 +1,6 @@
 import type { Site, Page, Links, Socials } from "@types";
+import { defaultLLMSettings } from "../src/lib/ai/llm";
+
 // Get the window location origin
 const getWindowLocationOrigin = () => {
   if (typeof window !== "undefined") {
@@ -24,6 +26,7 @@ export const DEFAULT_TEMPLATE = {
   systemPrompt: "You are a helpful assistant.",
   template: "",
   variables: [],
+  llm_settings: defaultLLMSettings,
   created_at: "2025-03-06T13:33:25.412Z",
   updated_at: "2025-03-11T22:37:36.864Z",
 };

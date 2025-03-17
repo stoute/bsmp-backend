@@ -2,7 +2,7 @@
 
 # BSMP
 
-A modern, server-side rendered website built with Astro, featuring dynamic content, 
+A modern, server-side rendered website and api built with Astro, featuring dynamic content, 
 AI-powered chat, state management, and optimal performance. 
 Built on top of [Astro Sphere](https://github.com/markhorn-dev/astro-sphere).
 

@@ -1,3 +1,6 @@
+import type { defaultLLMConfig } from "@lib/ai/llm";
+import { type ChatOpenAI } from "@langchain/openai";
+
 export interface PromptTemplateModel {
   id: string;
   name: string;
@@ -5,6 +8,7 @@ export interface PromptTemplateModel {
   systemPrompt?: string;
   template?: string;
   variables?: string[];
+  llmConfig?: ChatOpenAI;
   created_at: string;
   updated_at: string;
 }
@@ -30,5 +34,3 @@ export interface AuthorModel {
   id: number;
   name: string;
 }
-
-export type PromptTemplateTable = PromptTemplateModel;

@@ -1,6 +1,16 @@
 import { db, PromptTemplate, User, Comment, Author } from "astro:db";
+import { defaultLLMSettings } from "../src/lib/ai/llm";
 import templates from "./seed-templates.json";
 import { registerUser } from "../src/lib/utils/dbUtils";
+
+const formatTemplates = (templates: any) => {
+  templates.forEach((template: any) => {
+    if (!template.llm_settings) {
+      template.llm_settings = defaultLLMSettings;
+    }
+  });
+  return templates;
+};
 
 export default async function () {
   const adminEmail = import.meta.env.PUBLIC_ADMIN_EMAIL;
@@ -10,7 +20,7 @@ export default async function () {
   await registerUser("editor@bsmp.nl", "binnen", "editor");
   await registerUser("moderator@bsmp.nl", "binnen", "moderator");
 
-  await db.insert(PromptTemplate).values(templates);
+  await db.insert(PromptTemplate).values(formatTemplates(templates));
 
   await db.insert(Author).values([
     { id: 1, name: "Kasim" },

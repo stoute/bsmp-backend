@@ -10,7 +10,7 @@ import {
   HumanMessagePromptTemplate,
 } from "@langchain/core/prompts";
 import { appState } from "./appStore";
-import type { IPromptTemplate } from "@types";
+import type { IPromptTemplate } from "@lib/ai/types";
 import type { Message } from "@lib/ai/types";
 
 type MessageProcessor = (message: Message) => Message | null;
@@ -30,7 +30,9 @@ export class ChatParser {
     // Default system message processor
     this.registerMessageProcessor("system", (message: Message) => {
       if (message.getType() !== "system") return message;
-      // Ensure system messages don't contain certain patterns
+      // Checks if the system message contains code blocks (```), and if so,
+      // removes all code blocks from the system message to prevent code injection
+      // or unintended execution instructions in the system prompt
       const content = message.content.toString();
       if (content.includes("```")) {
         return new SystemMessage(content.replace(/```[\s\S]*?```/g, ""));
@@ -44,7 +46,6 @@ export class ChatParser {
       let content = message.content.toString();
       // remove content between <think> tags
       content = content.replace(/(<think>)[\s\S]*?(<\/think>)/g, "$1$2");
-      // Then remove the empty <think> tags
       content = content.replace(/<\/?think>/g, "");
       return new AIMessage(content.trim());
     });
@@ -59,12 +60,13 @@ export class ChatParser {
 
     // Add default message filter
     this.addMessageFilter((message: Message) => {
-      /* Example usage:
+      /*
+      The filter returns false for empty messages or messages containing only whitespace
+      Examples:
         Input messages:
         - new AIMessage("  ") -> filtered out (returns false)
         - new AIMessage("") -> filtered out (returns false)
         - new AIMessage("Hello world") -> kept (returns true)
-        - new HumanMessage("  Hi  ") -> kept (returns true)
       */
       let content = message.content.toString();
       return content.length > 0 && content.trim() !== "";
