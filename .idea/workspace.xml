@@ -5,10 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8cf7e9a9-1ddf-43bf-8ddd-96d96e27722b" name="Changes" comment="fix: auth login POST">
+      <change afterPath="$PROJECT_DIR$/.env.example" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/db/seed.ts" beforeDir="false" afterPath="$PROJECT_DIR$/db/seed.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/_seed-templates.json" beforeDir="false" afterPath="$PROJECT_DIR$/db/seed-templates.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/js/appStore.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/js/navigation.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/ai/modelUtils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/ai/modelUtils.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/ai/utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/ai/utils.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/api/auth/login.json.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/api/auth/login.json.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/api/hello.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/auth/register.astro" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/auth/register.astro" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
