@@ -1,14 +1,16 @@
-// import { proxyFetchHandler } from "./utils";
+import { proxyFetchHandler } from "./utils";
 import { type ChatOpenAI } from "@langchain/openai";
 
 export const defaultLLMConfig: ChatOpenAI = {
   // Configuration Parameters
-  baseURL: "/api/ai-proxy", // Base URL for the API endpoint (proxy or custom server)
+  configuration: {
+    fetch: proxyFetchHandler,
+  },
+  //baseURL: "/api/ai-proxy", // Base URL for the API endpoint (proxy or custom server)
   timeout: 30000, // Timeout period in milliseconds (default: 30 seconds)
   // organization: "org-123456", // OpenAI organization ID (optional)
   model: "google/gemini-2.0-flash-lite-001", // The model to use (e.g., "gpt-3.5-turbo", "gpt-4")
   apiKey: "NONE", // API key for authentication (if required)
-  metadata: { session_id: "abc123", user_id: "user42" }, // Custom metadata for tracking or debugging
   // Output Control
   temperature: 0.7, // Controls randomness in output (higher = more creative, lower = more deterministic)
   maxTokens: 256, // Maximum number of tokens to generate in the response
@@ -16,6 +18,9 @@ export const defaultLLMConfig: ChatOpenAI = {
   n: 1, // Number of chat completions to generate for each prompt
   stop: ["END"], // Stop sequences where the model output is cut off
   logitBias: { 50256: -100 }, // Adjusts likelihood of specific tokens appearing in the completion
+
+  metadata: { session_id: "abc123", user_id: "user42" }, // Custom metadata for tracking or debugging
+
   // Retry and Timeout Parameters
   maxRetries: 3, // Maximum number of retries for failed API calls
   requestTimeout: 30000, // Timeout for API requests (in milliseconds)
@@ -32,9 +37,6 @@ export const defaultLLMConfig: ChatOpenAI = {
   },
   // Additional Parameters
   cache: true, // Whether to cache responses for repeated prompts
-  // configuration: {
-  //   fetch: proxyFetchHandler,
-  // },
 };
 
 /**  todo: check additional Default settings for the LLM. */

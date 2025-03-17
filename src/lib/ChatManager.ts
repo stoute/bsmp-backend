@@ -28,13 +28,14 @@ import { defaultLLMConfig } from "@lib/ai/llm";
 class ChatManager {
   private static instance: ChatManager;
   private llm: ChatOpenAI;
+  private parser: ChatParser;
   private isLoading: boolean = false;
   private chatPromptTemplate?: ChatPromptTemplate;
   private model: string;
   private unsubscribe: (() => void) | null = null;
   public template?: IPromptTemplate;
   public messages: Message[] = [];
-  private parser: ChatParser;
+  public llmConfig: ChatOpenAI = defaultLLMConfig;
 
   private constructor() {
     this.parser = new ChatParser();
@@ -51,8 +52,8 @@ class ChatManager {
     this.model = appState.get().selectedModel || defaultModel;
     // initialize llm
     // this.llm = new ChatOpenAI(defaultLLMConstructorParams);
-    this.llm = new ChatOpenAI(defaultLLMConfig);
-    console.log(this.llm);
+    const config = { ...defaultLLMConfig, model: this.model };
+    this.llm = new ChatOpenAI(config);
     // this.llm = new ChatOpenAI({
     //   temperature: 0.7,
     //   configuration: {
@@ -311,9 +312,10 @@ class ChatManager {
   }
 
   private updateModel(newModel: string) {
-    const config = { ...defaultLLMConfig, model: newModel };
     this.model = newModel;
-    this.llm = new ChatOpenAI(config);
+    this.llmConfig = { ...this.llmConfig, model: newModel };
+
+    this.llm = new ChatOpenAI(this.llmConfig);
     console.log("Updated model to: " + newModel);
     this.saveState();
   }
