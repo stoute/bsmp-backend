@@ -1,4 +1,3 @@
-import { API_BASE_URL_DEV } from "@consts";
 import { v4 as uuid } from "uuid";
 
 // Only import server-side modules when not in browser
@@ -92,7 +91,7 @@ export async function migrateSeedTemplatesToRemote(seedTemplates: any[]) {
         ...template,
         id: undefined,
       };
-      const url = `${API_BASE_URL_DEV}/prompts/index.json`;
+      const url = `/api/prompts/index.json`;
       const response = await fetch(url, {
         method: "POST",
         headers: {
