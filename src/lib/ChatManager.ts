@@ -49,18 +49,8 @@ class ChatManager {
 
     this.model = appState.get().selectedModel || defaultModel;
     // initialize llm
-    // this.llm = new ChatOpenAI(defaultLLMConstructorParams);
     const config = { ...defaultLLMConfig, model: this.model };
-    console.log("config", config);
     this.llm = new ChatOpenAI(config);
-    // this.llm = new ChatOpenAI({
-    //   temperature: 0.7,
-    //   configuration: {
-    //     fetch: proxyFetchHandler,
-    //   },
-    //   model: this.model,
-    //   apiKey: "NONE",
-    // });
     this.setupStateSubscription();
     this.restoreState();
     console.log("ChatManager initialized");
