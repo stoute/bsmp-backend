@@ -61,20 +61,20 @@ export class AppService {
     return this.store.appState.get().currentUser;
   }
 
-  public getMatchingOpenRouterModels(): OpenRouterModel[] {
+  public getAllowedOpenRouterModels(): OpenRouterModel[] {
     const orModels = this.store.openRouterModels.get().models;
     if (!orModels) return [];
 
     const matches = new Set<OpenRouterModel>();
 
-    if (this.store.appState.get().environment === "development") {
+    if (this.store.isLoggedIn.get() == true) {
       LLM_MODELS.forEach((llmModel) => {
         const found = orModels.find(
           (model: OpenRouterModel) => model.id === llmModel,
         );
         if (found) matches.add(found);
       });
-      // add all models in development
+      // add all models for logged
       orModels.forEach((model: OpenRouterModel) => {
         matches.add(model);
       });

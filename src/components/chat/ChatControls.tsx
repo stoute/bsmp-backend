@@ -14,7 +14,7 @@ import {
 } from "@components/ui/select";
 import { Label } from "@components/ui/label";
 import { DEFAULT_MODEL } from "@/consts";
-import { DEFAULT_TEMPLATE_ID } from "@lib/ai/prompt-template";
+import { DEFAULT_TEMPLATE_ID, DEFAULT_TEMPLATE } from "@lib/ai/prompt-template";
 import {
   Popover,
   PopoverContent,
@@ -34,7 +34,8 @@ export default function ChatControls() {
   const [models, setModels] = useState<OpenRouterModel[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedTemplateId, setSelectedTemplateId] = useState(() => {
-    return appState.get().selectedTemplateId || DEFAULT_TEMPLATE_ID;
+    const storedTemplateId = appState.get().selectedTemplateId;
+    return storedTemplateId || DEFAULT_TEMPLATE_ID;
   });
   const [selectedModel, setSelectedModel] = useState(() => {
     const storedModel = appState.get().selectedModel;
@@ -57,16 +58,18 @@ export default function ChatControls() {
   // App service hook
   const { isReady, appService } = useAppService();
 
-  // Group all useEffect hooks together
   useEffect(() => {
-    const storedModel = appState.get().selectedModel;
     const storedTemplateId = appState.get().selectedTemplateId;
-
-    if (storedModel) {
-      setSelectedModel(storedModel);
-    }
+    const storedModel = appState.get().selectedModel;
     if (storedTemplateId) {
       setSelectedTemplateId(storedTemplateId);
+    } else {
+      setSelectedTemplateId(DEFAULT_TEMPLATE_ID);
+    }
+    if (storedModel) {
+      setSelectedModel(storedModel);
+    } else {
+      setSelectedModel(DEFAULT_MODEL);
     }
   }, []);
 
@@ -75,14 +78,13 @@ export default function ChatControls() {
       setLoading(true);
       setError(null);
       try {
-        const response = await fetch(
-          `${appState.get().apiBaseUrl}/prompts/list.json`,
-        );
+        const response = await fetch(`/api/prompts/list.json`);
         if (!response.ok) {
           throw new Error("Failed to fetch templates");
         }
-        const data = await response.json();
-        setTemplates(data);
+        const templates = await response.json();
+        templates.unshift(DEFAULT_TEMPLATE);
+        setTemplates(templates);
       } catch (err) {
         console.error("Error fetching templates:", err);
         setError("Failed to load templates");
@@ -108,7 +110,7 @@ export default function ChatControls() {
     if (!isReady) return;
 
     try {
-      const matchingModels = appService.getMatchingOpenRouterModels();
+      const matchingModels = appService.getAllowedOpenRouterModels();
       // Ensure we always have an array, even if empty
       setModels(Array.isArray(matchingModels) ? matchingModels : []);
     } catch (error) {

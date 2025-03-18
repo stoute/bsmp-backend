@@ -231,7 +231,6 @@ class ChatManager {
     let url = `${appState.get().apiBaseUrl}/sessions/index.json`;
     if (method === "PUT") url = url.replace("index", currentChat.id);
     if (this.messages.length > 2) {
-      // console.log("method", method);
       try {
         const response = await fetch(url, {
           method: method,
@@ -242,11 +241,28 @@ class ChatManager {
         });
 
         if (!response.ok) {
-          throw new Error("Failed to update chat session");
+          throw new Error(
+            `Failed to update chat session: ${response.status} ${response.statusText}`,
+          );
         }
 
-        const updatedSession = await response.json();
-        appState.setKey("currentChat", updatedSession);
+        // Check if response has content before parsing
+        const text = await response.text();
+        if (!text) {
+          console.warn("Empty response received from server");
+          appState.setKey("currentChat", chatState);
+          return;
+        }
+
+        try {
+          const updatedSession = JSON.parse(text);
+          appState.setKey("currentChat", updatedSession);
+        } catch (parseError) {
+          console.error("Error parsing response:", parseError);
+          console.warn("Response text:", text);
+          // Still update local state even if parsing fails
+          appState.setKey("currentChat", chatState);
+        }
       } catch (error) {
         console.error("Error saving chat state:", error);
         // Still update local state even if server update fails
@@ -258,11 +274,12 @@ class ChatManager {
     }
   }
 
-  async handleChatUserInput(input: string, variables?: Record<string, string>) {
+  async handleUserInput(input: string, variables?: Record<string, string>) {
     if (!input.trim()) return null;
 
     this.isLoading = true;
     try {
+      // Process the input
       let processedInput = input;
       const userMessage = new HumanMessage(processedInput);
       const processedMessage = this.parser.processMessage(
@@ -274,7 +291,7 @@ class ChatManager {
       }
       this.messages.push(processedMessage);
 
-      // Filter out template-description messages before sending to LLM
+      // Filter out custom template messages before sending to LLM
       const validMessages = this.messages.filter((msg) => {
         const type = msg.getType();
         return type !== "template-description";
@@ -308,6 +325,7 @@ class ChatManager {
 
   private updateModel(newModel: string) {
     this.model = newModel;
+    // @ts-ignore
     this.llmConfig = { ...this.llmConfig, model: newModel };
 
     this.llm = new ChatOpenAI(this.llmConfig);

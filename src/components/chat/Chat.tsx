@@ -91,7 +91,7 @@ export default function Chat() {
 
       setIsLoading(true);
       try {
-        await chatManager.handleChatUserInput(input);
+        await chatManager.handleUserInput(input);
         setMessages(chatManager.getMessages());
         scrollLastUserMessageToTop();
         setInput("");

@@ -19,6 +19,12 @@ export const LLM_MODELS = [
   "thedrummer/unslopnemo-12b",
   "neversleep/noromaid-20b",
 ];
+const expensiveModelIds = [
+  "anthropic/claude-3-opus-20240229", // Claude Opus (very expensive as per user feedback)
+  "openai/gpt-4-32k", // GPT-4 32K (high token capacity, premium pricing)
+  "cohere/command-r-plus", // Command R Plus (0.015 cents per token)
+  "openai/gpt-4", // GPT-4 (general high cost for OpenAI's flagship model)
+];
 
 // Links
 export const LINKS: Links = [
