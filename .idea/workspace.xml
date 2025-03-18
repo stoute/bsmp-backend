@@ -5,13 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8cf7e9a9-1ddf-43bf-8ddd-96d96e27722b" name="Changes" comment="fix: auth login POST">
-      <change afterPath="$PROJECT_DIR$/src/lib/ai/prompt-templates/preset-templates.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/AugmentWebviewStateStore.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/AugmentWebviewStateStore.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/chat/ChatControls.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/chat/ChatControls.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/ChatManager.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/ChatManager.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/db/models.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/db/models.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/lib/ai/prompt-templates/constants.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/ai/prompt-templates/constants.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/ai/prompt-templates/templates.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/ai/prompt-templates/preset-templates.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/ai/prompt-templates/preset-templates.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

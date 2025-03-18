@@ -85,12 +85,19 @@ export default function ChatControls() {
         if (!response.ok) {
           throw new Error("Failed to fetch templates");
         }
-        const templates = await response.json();
+        let templates = await response.json();
+        const environment = appState.get().environment;
         // Add all preset templates
-        const presetTemplates = Object.values(PRESET_TEMPLATES).reverse();
-        presetTemplates.forEach((template) => {
-          templates.unshift(template);
+        let presets: PromptTemplate[] = [];
+        Object.keys(PRESET_TEMPLATES).map((key, index) => {
+          let boolean = true;
+          // Hide development templates in production
+          if (key.match("Development") && environment === "production") {
+            boolean = false;
+          }
+          if (boolean) presets.push(PRESET_TEMPLATES[key]);
         });
+        templates = [...presets.reverse(), ...templates];
         setTemplates(templates);
       } catch (err) {
         console.error("Error fetching templates:", err);

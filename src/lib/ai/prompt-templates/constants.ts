@@ -2,14 +2,19 @@ import * as presetTemplates from "./preset-templates";
 import { type PromptTemplate } from "@lib/ai/types.ts";
 import { defaultLLMConfig } from "../llm.ts";
 
+const environment = import.meta.env.DEV ? "development" : "production";
+
 for (const template of Object.values(presetTemplates)) {
+  // @ts-ignore
   template.llmConfig = defaultLLMConfig;
 }
+let defaultTemplate = presetTemplates.defaultPrompt;
+if (environment === "development") {
+  defaultTemplate = presetTemplates.defaultPromptDevelopment;
+}
 
-export const DEFAULT_TEMPLATE: PromptTemplate = presetTemplates.expertPrompt;
-export const DEFAULT_TEMPLATE_ID = DEFAULT_TEMPLATE.id;
-
-export const PRESET_TEMPLATES = presetTemplates;
+export const PRESET_TEMPLATES = presetTemplates as PromptTemplate[];
+export const DEFAULT_TEMPLATE_ID: string = defaultTemplate.id;
 
 export const EDITABLE_LLM_CONFIG_PARAMS = [
   "model",

@@ -1,5 +1,5 @@
-export const expertPrompt = {
-  id: "dev-expert-prompt",
+export const defaultPromptDevelopment = {
+  id: "expert-prompt-development",
   name: "Expert Prompt Generator -dev",
   description:
     "I will transform a simple prompt into a detailed expert prompt. ",
@@ -57,9 +57,9 @@ IMPROVED PROMPT:
 `,
 };
 
-export const expertPromptTwo = {
-  id: "dev-expert-prompt-2",
-  name: "Expert Prompt Generator 2 -dev",
+export const defaultPrompt = {
+  id: "expert-prompt",
+  name: "Expert Prompt Generator - prod",
   description:
     "I will transform a simple prompt into a detailed expert prompt. ",
   template: "{lazy_prompt} ",
