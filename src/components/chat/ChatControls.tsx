@@ -26,6 +26,14 @@ import {
 import { Button } from "@components/ui/button";
 import { Check, ChevronsUpDown, Search } from "lucide-react";
 import { cn } from "@lib/utils";
+import {
+  template_label,
+  model_label,
+  loading_templates,
+  error_loading_templates,
+  loading_models,
+  select_model,
+} from "@/paraglide/messages";
 
 export default function ChatControls() {
   // Group all useState hooks together at the top
@@ -193,7 +201,7 @@ export default function ChatControls() {
 
   const modelSection = (
     <div className="flex w-full items-center gap-2 sm:w-auto">
-      <Label htmlFor="model-select">Model</Label>
+      <Label htmlFor="model-select">{model_label()}</Label>
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
@@ -204,13 +212,13 @@ export default function ChatControls() {
             disabled={isLoading}
           >
             {isLoading ? (
-              "Loading models..."
+              loading_models()
             ) : (
               <>
                 {selectedModel
                   ? models.find((model) => model.id === selectedModel)?.name ||
                     selectedModel.split("/")[1]
-                  : "Select model..."}
+                  : select_model()}
                 <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
               </>
             )}
@@ -265,7 +273,7 @@ export default function ChatControls() {
   return (
     <div className="bg-card flex flex-col items-start gap-4 rounded-lg border p-4 sm:flex-row sm:items-center">
       <div className="flex w-full items-center gap-2 sm:w-auto">
-        <Label htmlFor="template-select">Template</Label>
+        <Label htmlFor="template-select">{template_label()}</Label>
         <Select
           value={selectedTemplateId}
           onValueChange={handleTemplateChange}
@@ -277,11 +285,11 @@ export default function ChatControls() {
           <SelectContent>
             {error ? (
               <SelectItem value="error" disabled>
-                Error loading templates
+                {error_loading_templates()}
               </SelectItem>
             ) : loading ? (
               <SelectItem value="loading" disabled>
-                Loading...
+                {loading_templates()}
               </SelectItem>
             ) : (
               templates.map((template) => (

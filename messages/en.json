@@ -1,4 +1,10 @@
 {
   "$schema": "https://inlang.com/schema/inlang-message-format",
-  "example_message": "Hello world {username}"
+  "example_message": "Hello world {username}",
+  "template_label": "Template",
+  "model_label": "Model",
+  "loading_templates": "Loading...",
+  "error_loading_templates": "Error loading templates",
+  "loading_models": "Loading models...",
+  "select_model": "Select model..."
 }

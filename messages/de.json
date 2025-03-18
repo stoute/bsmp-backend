@@ -1,4 +1,10 @@
 {
   "$schema": "https://inlang.com/schema/inlang-message-format",
-  "example_message": "Guten Tag {username}"
+  "example_message": "Guten Tag {username}",
+  "template_label": "Vorlage",
+  "model_label": "Modell",
+  "loading_templates": "Wird geladen...",
+  "error_loading_templates": "Fehler beim Laden der Vorlagen",
+  "loading_models": "Modelle werden geladen...",
+  "select_model": "Modell auswählen..."
 }

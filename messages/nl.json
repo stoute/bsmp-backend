@@ -1,0 +1,10 @@
+{
+  "$schema": "https://inlang.com/schema/inlang-message-format",
+  "example_message": "Hallo wereld {username}",
+  "template_label": "Sjabloon",
+  "model_label": "Model",
+  "loading_templates": "Laden...",
+  "error_loading_templates": "Fout bij het laden van sjablonen",
+  "loading_models": "Modellen laden...",
+  "select_model": "Selecteer model..."
+}
