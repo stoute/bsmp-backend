@@ -7,7 +7,7 @@ import { appState } from "@lib/appStore";
 import { useAppService } from "@lib/hooks/useAppService";
 import { MarkdownRenderer } from "./renderers/MarkdownRenderer.tsx";
 import { MessageErrorBoundary } from "./MessageErrorBoundary";
-import type { IPromptTemplate } from "@lib/ai/types";
+import type { PromptTemplate } from "@lib/ai/types";
 import styles from "./Chat.module.css";
 import { DescriptionRenderer } from "./renderers/DescriptionRenderer";
 
@@ -91,7 +91,7 @@ export default function Chat() {
 
       setIsLoading(true);
       try {
-        await chatManager.sendMessage(input);
+        await chatManager.handleChatUserInput(input);
         setMessages(chatManager.getMessages());
         scrollLastUserMessageToTop();
         setInput("");
@@ -228,7 +228,7 @@ const MessageContent = memo(({ message }: { message: any }) => {
   if (!content) return null;
 
   // custom description message
-  const template: IPromptTemplate = message.additional_kwargs.template;
+  const template: PromptTemplate = message.additional_kwargs.template;
   if (template?.description) {
     return (
       <div className="prose dark:prose-invert max-w-none">

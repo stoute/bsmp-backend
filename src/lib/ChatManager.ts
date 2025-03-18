@@ -12,7 +12,7 @@ import {
 } from "@langchain/core/messages";
 import type { Message } from "@lib/ai/types";
 import { appService } from "@lib/appService.ts";
-import { type ChatState, type IPromptTemplate } from "@lib/ai/types";
+import { type ChatState, type PromptTemplate } from "@lib/ai/types";
 import { appState, openRouterModels } from "@lib/appStore";
 import {
   DEFAULT_MODEL,
@@ -32,7 +32,7 @@ class ChatManager {
   private chatPromptTemplate?: ChatPromptTemplate;
   private model: string;
   private unsubscribe: (() => void) | null = null;
-  public template?: IPromptTemplate;
+  public template?: PromptTemplate;
   public messages: Message[] = [];
   public llmConfig: ChatOpenAI = defaultLLMConfig;
 
@@ -69,7 +69,7 @@ class ChatManager {
     });
   }
 
-  public async init(template?: IPromptTemplate) {
+  public async init(template?: PromptTemplate) {
     await this.restoreState();
 
     if (template) {
@@ -80,7 +80,7 @@ class ChatManager {
     }
   }
 
-  async setTemplate(template: IPromptTemplate) {
+  async setTemplate(template: PromptTemplate) {
     try {
       if (!template) {
         throw new Error("Template is required");
@@ -137,7 +137,7 @@ class ChatManager {
     this.cleanupSubscriptions();
     appState.setKey("currentChat", undefined);
     // define template
-    let template: IPromptTemplate = undefined;
+    let template: PromptTemplate = undefined;
     if (templateId) {
       try {
         if (templateId === DEFAULT_TEMPLATE_ID) {
@@ -258,23 +258,20 @@ class ChatManager {
     }
   }
 
-  async sendMessage(input: string, variables?: Record<string, string>) {
+  async handleChatUserInput(input: string, variables?: Record<string, string>) {
     if (!input.trim()) return null;
 
     this.isLoading = true;
     try {
       let processedInput = input;
       const userMessage = new HumanMessage(processedInput);
-
       const processedMessage = this.parser.processMessage(
         userMessage,
         this.template?.id,
       );
-
       if (!processedMessage) {
         throw new Error("Message was filtered out by parser");
       }
-
       this.messages.push(processedMessage);
 
       // Filter out template-description messages before sending to LLM
@@ -286,7 +283,7 @@ class ChatManager {
       if (validMessages.length === 0) {
         throw new Error("No valid messages to process");
       }
-
+      // Invoke the LLM
       const response = await this.llm.invoke(validMessages);
       if (response) {
         const processedResponse = this.parser.processMessage(

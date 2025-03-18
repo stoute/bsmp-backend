@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { useStore } from "@nanostores/react";
-import type { IPromptTemplate } from "@lib/ai/types";
+import type { PromptTemplate } from "@lib/ai/types";
 import type { OpenRouterModel } from "@lib/ai/open-router.ts";
 import { appState, templateList } from "@lib/appStore";
 import { chatManager } from "@lib/ChatManager";
@@ -26,7 +26,7 @@ import { cn } from "@lib/utils";
 
 export default function ChatControls() {
   // Group all useState hooks together at the top
-  const [templates, setTemplates] = useState<IPromptTemplate[]>([]);
+  const [templates, setTemplates] = useState<PromptTemplate[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [open, setOpen] = useState(false);

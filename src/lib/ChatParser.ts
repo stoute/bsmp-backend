@@ -10,11 +10,11 @@ import {
   HumanMessagePromptTemplate,
 } from "@langchain/core/prompts";
 import { appState } from "./appStore";
-import type { IPromptTemplate } from "@lib/ai/types";
+import type { PromptTemplate } from "@lib/ai/types";
 import type { Message } from "@lib/ai/types";
 
 type MessageProcessor = (message: Message) => Message | null;
-type TemplateProcessor = (template: IPromptTemplate) => IPromptTemplate;
+type TemplateProcessor = (template: PromptTemplate) => PromptTemplate;
 type MessageFilter = (message: Message) => boolean;
 
 export class ChatParser {
@@ -134,7 +134,7 @@ export class ChatParser {
   }
 
   // Process a template
-  public processTemplate(template: IPromptTemplate): IPromptTemplate {
+  public processTemplate(template: PromptTemplate): PromptTemplate {
     // Apply template-specific processor if exists
     if (this.templateProcessors.has(template.id)) {
       // fixme: er
@@ -153,9 +153,9 @@ export class ChatParser {
     };
   }
 
-  // Create a ChatPromptTemplate from IPromptTemplate
+  // Create a ChatPromptTemplate from PromptTemplate
   public createChatPromptTemplate(
-    template: IPromptTemplate,
+    template: PromptTemplate,
   ): ChatPromptTemplate {
     const processedTemplate = this.processTemplate(template);
 
@@ -249,7 +249,7 @@ export class ChatParser {
   public registerDocumentationTemplateProcessor() {
     this.registerTemplateProcessor(
       "documentation",
-      (template: IPromptTemplate) => {
+      (template: PromptTemplate) => {
         return {
           ...template,
           systemPrompt: `${template.systemPrompt}\nPlease provide detailed documentation with examples.`,

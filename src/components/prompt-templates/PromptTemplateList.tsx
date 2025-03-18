@@ -5,7 +5,7 @@ import React, {
   useState,
 } from "react";
 import { Plus, RefreshCw, Search, Loader2 } from "lucide-react";
-import type { IPromptTemplate } from "@lib/ai/types.ts";
+import type { PromptTemplate } from "@lib/ai/types.ts";
 import { Button } from "@components/ui/button.tsx";
 import { Input } from "@components/ui/input.tsx";
 import {
@@ -21,7 +21,7 @@ import { cn } from "@lib/utils";
 import { useAppService } from "@lib/hooks/useAppService";
 
 interface PromptTemplateListProps {
-  onSelect: (promptTemplate: IPromptTemplate) => void;
+  onSelect: (promptTemplate: PromptTemplate) => void;
   onNew: () => void;
   selectedId?: string;
   onRefresh?: () => void; // Add new prop for external refresh
@@ -32,7 +32,7 @@ const PromptTemplateList = forwardRef<
   { fetchPromptTemplates: () => Promise<void> },
   PromptTemplateListProps
 >(({ dataUrl, onSelect, onNew, selectedId }, ref) => {
-  const [promptTemplates, setPromptTemplates] = useState<IPromptTemplate[]>([]);
+  const [promptTemplates, setPromptTemplates] = useState<PromptTemplate[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");

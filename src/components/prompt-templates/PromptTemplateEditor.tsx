@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Trash2, Save, Plus, AlertCircle, Copy } from "lucide-react";
-import type { IPromptTemplate } from "@lib/ai/types.ts";
+import type { PromptTemplate } from "@lib/ai/types.ts";
 import { appState } from "@lib/appStore";
 
 import {
@@ -53,7 +53,7 @@ const formSchema = z.object({
   updated_at: z.string().optional(),
 });
 
-export const defaultNewTemplate: IPromptTemplate = {
+export const defaultNewTemplate: PromptTemplate = {
   name: "",
   description: "",
   systemPrompt: "",
@@ -65,10 +65,10 @@ export const defaultNewTemplate: IPromptTemplate = {
 
 interface PromptTemplateEditorProps {
   apiEndPoint: string;
-  promptTemplate?: IPromptTemplate;
-  onSave?: (template: IPromptTemplate) => void;
-  onDelete?: (template: IPromptTemplate) => void; // Changed to pass full template
-  onDuplicate?: (template: IPromptTemplate) => void;
+  promptTemplate?: PromptTemplate;
+  onSave?: (template: PromptTemplate) => void;
+  onDelete?: (template: PromptTemplate) => void; // Changed to pass full template
+  onDuplicate?: (template: PromptTemplate) => void;
   onCancel?: () => void;
 }
 

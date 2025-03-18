@@ -2,14 +2,14 @@ import React, { useState, useEffect, useRef } from "react";
 import PromptTemplateList from "@components/prompt-templates/PromptTemplateList.tsx";
 import PromptTemplateEditor from "@components/prompt-templates/PromptTemplateEditor.tsx";
 import { appState } from "@lib/appStore";
-import type { IPromptTemplate } from "@types";
+import type { PromptTemplate } from "@types";
 import { useAppService } from "@lib/hooks/useAppService";
 
 interface PromptTemplatesProps {
-  initialTemplate?: IPromptTemplate;
+  initialTemplate?: PromptTemplate;
 }
 
-const newTemplate: IPromptTemplate = {
+const newTemplate: PromptTemplate = {
   id: "",
   name: "",
   description: "",
@@ -27,7 +27,7 @@ const PromptTemplates: React.FC<PromptTemplatesProps> = ({
 }) => {
   // Move all useState declarations to the top
   const [selectedTemplate, setSelectedTemplate] = useState<
-    IPromptTemplate | undefined
+    PromptTemplate | undefined
   >(initialTemplate);
   const [selectedId, setSelectedId] = useState<string | undefined>(() => {
     return appState.get().selectedTemplateId || initialTemplate?.id;
@@ -43,12 +43,12 @@ const PromptTemplates: React.FC<PromptTemplatesProps> = ({
     setSelectedId(undefined);
   };
 
-  const handleSelectTemplate = (template: IPromptTemplate) => {
+  const handleSelectTemplate = (template: PromptTemplate) => {
     setSelectedTemplate(template);
     setSelectedId(template.id);
   };
 
-  const handleSaveTemplate = async (template: IPromptTemplate) => {
+  const handleSaveTemplate = async (template: PromptTemplate) => {
     try {
       // First update the selected template and ID
       setSelectedTemplate(template);
@@ -67,7 +67,7 @@ const PromptTemplates: React.FC<PromptTemplatesProps> = ({
     }
   };
 
-  const handleDeleteTemplate = async (template: IPromptTemplate) => {
+  const handleDeleteTemplate = async (template: PromptTemplate) => {
     setSelectedTemplate(undefined);
     setSelectedId(undefined);
 
@@ -76,7 +76,7 @@ const PromptTemplates: React.FC<PromptTemplatesProps> = ({
     }
   };
 
-  const handleDuplicateTemplate = async (template: IPromptTemplate) => {
+  const handleDuplicateTemplate = async (template: PromptTemplate) => {
     // Set the newly created template as selected
     setSelectedTemplate(template);
     setSelectedId(template.id);
