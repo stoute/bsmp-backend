@@ -7,7 +7,7 @@
     "dev:network": "astro dev --host",
     "start": "astro dev",
     "--build": "astro check && astro build --remote",
-    "build": "astro build --remote",
+    "build": "paraglide-js compile --project ./project.inlang --outdir ./src/paraglide && astro build --remote",
     "--edmulate-firebase": "firebase emulators:start",
     "--deploy-firebase": "firebase deploy",
     "--deploy-vercel": "npm run build && vercel deploy --prebuilt",
@@ -19,7 +19,8 @@
     "lint:fix": "eslint . --fix",
     "db-verify-remote": "astro db verify --remote",
     "db-pull-remote": "astro db pull --remote",
-    "db-push-remote": "astro db push --remote"
+    "db-push-remote": "astro db push --remote",
+    "machine-translate": "inlang machine translate --project project.inlang"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",
@@ -91,6 +92,8 @@
     "prettier": "^3.5.1",
     "prettier-plugin-astro": "^0.14.1",
     "prettier-plugin-tailwindcss": "^0.6.11",
-    "tailwindcss": "^4.0.8"
+    "tailwindcss": "^4.0.8",
+    "@inlang/paraglide-js": "2.0.1",
+    "@inlang/cli": "^3.0.0"
   }
 }

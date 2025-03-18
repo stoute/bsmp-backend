@@ -6,10 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="8cf7e9a9-1ddf-43bf-8ddd-96d96e27722b" name="Changes" comment="fix: auth login POST">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/chat/ChatControls.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/chat/ChatControls.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/db/models.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/db/models.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/ai/prompt-templates/constants.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/ai/prompt-templates/constants.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/ai/prompt-templates/preset-templates.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/ai/prompt-templates/preset-templates.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pnpm-lock.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pnpm-lock.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tsconfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/tsconfig.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -52,7 +51,7 @@
   "keyToString": {
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "develop",
+    "git-widget-placeholder": "feature-18n",
     "last_opened_file_path": "/Users/bobstoute/Git/@bsmp/bsmp-backend/src/lib/ai/prompt-templates",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
