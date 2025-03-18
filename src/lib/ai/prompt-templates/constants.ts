@@ -1,18 +1,14 @@
-import { defaultLLMConfig } from "./llm";
+import defaultTemplates from "./templates.json";
+import { defaultLLMConfig } from "../llm.ts";
+import { PromptTemplateFactory } from "./PromptTemplateFactory.ts";
+import { type PromptTemplate } from "@lib/ai/types.ts";
 
-export const DEFAULT_TEMPLATE_ID = "default";
-export const DEFAULT_TEMPLATE = {
-  id: "default",
-  name: "Vanilla Chat",
-  description: "I am a standard chat bot. Use me to try out different models.",
-  systemPrompt: "You are a helpful assistant.",
-  template: "",
-  variables: [],
-  tags: [],
-  llmConfig: defaultLLMConfig,
-  created_at: "2025-03-06T13:33:25.412Z",
-  updated_at: "2025-03-11T22:37:36.864Z",
-};
+const initialTemplate = PromptTemplateFactory.createDefault();
+
+export const DEFAULT_TEMPLATE_ID = initialTemplate.id;
+export const DEFAULT_TEMPLATE = initialTemplate;
+export const TEMPLATES = defaultTemplates;
+
 export const EDITABLE_LLM_CONFIG_PARAMS = [
   "model",
   "temperature",

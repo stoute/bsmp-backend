@@ -14,7 +14,10 @@ import {
 } from "@components/ui/select";
 import { Label } from "@components/ui/label";
 import { DEFAULT_MODEL } from "@/consts";
-import { DEFAULT_TEMPLATE_ID, DEFAULT_TEMPLATE } from "@lib/ai/prompt-template";
+import {
+  DEFAULT_TEMPLATE_ID,
+  DEFAULT_TEMPLATE,
+} from "@lib/ai/prompt-templates/constants.ts";
 import {
   Popover,
   PopoverContent,
@@ -108,7 +111,6 @@ export default function ChatControls() {
 
   useEffect(() => {
     if (!isReady) return;
-
     try {
       const matchingModels = appService.getAllowedOpenRouterModels();
       // Ensure we always have an array, even if empty

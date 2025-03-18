@@ -19,7 +19,10 @@ import {
   DEFAULT_MODEL_FREE,
   DEFAULT_SYSTEM_MESSAGE,
 } from "@consts";
-import { DEFAULT_TEMPLATE, DEFAULT_TEMPLATE_ID } from "@lib/ai/prompt-template";
+import {
+  DEFAULT_TEMPLATE,
+  DEFAULT_TEMPLATE_ID,
+} from "@lib/ai/prompt-templates/constants.ts";
 import { ChatParser } from "./ChatParser";
 import { proxyFetchHandler } from "@lib/ai/utils";
 import { defaultLLMConfig } from "@lib/ai/llm";

@@ -40,6 +40,7 @@ import {
   AlertDialogAction,
 } from "@components/ui/alert-dialog.tsx";
 import { useAppService } from "@lib/hooks/useAppService.ts";
+import { PromptTemplateFactory } from "@lib/ai/prompt-templates/PromptTemplateFactory";
 
 // Define the form schema using zod
 const formSchema = z.object({
@@ -53,16 +54,6 @@ const formSchema = z.object({
   updated_at: z.string().optional(),
 });
 
-export const defaultNewTemplate: PromptTemplate = {
-  name: "",
-  description: "",
-  systemPrompt: "",
-  template: "",
-  variables: [],
-  tags: [],
-  llmConfig: undefined,
-};
-
 interface PromptTemplateEditorProps {
   apiEndPoint: string;
   promptTemplate?: PromptTemplate;
@@ -73,7 +64,7 @@ interface PromptTemplateEditorProps {
 }
 
 const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
-  apiEndPoint = appState.get().apiBaseUrl + "/prompts/index.json",
+  apiEndPoint = "/api/prompts/index.json",
   promptTemplate,
   onSave,
   onDelete,
@@ -91,7 +82,7 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
   // Initialize form with default values or provided promptTemplate
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: promptTemplate || defaultNewTemplate,
+    defaultValues: promptTemplate || PromptTemplateFactory.createDefault(),
   });
 
   // Reset form when promptTemplate changes
@@ -100,7 +91,7 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
       form.reset(promptTemplate);
       setIsNew(!promptTemplate.id);
     } else {
-      form.reset(defaultNewTemplate);
+      form.reset(PromptTemplateFactory.createDefault());
       setIsNew(true);
     }
   }, [promptTemplate, form]);
@@ -117,6 +108,7 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
 
       if (isNew) {
         // Create new prompt template
+        // values.id = undefined;
         response = await fetch(apiEndPoint, {
           method: "POST",
           headers: {

@@ -2,24 +2,13 @@ import React, { useState, useEffect, useRef } from "react";
 import PromptTemplateList from "@components/prompt-templates/PromptTemplateList.tsx";
 import PromptTemplateEditor from "@components/prompt-templates/PromptTemplateEditor.tsx";
 import { appState } from "@lib/appStore";
-import type { PromptTemplate } from "@types";
+import type { PromptTemplate } from "@lib/ai/types";
 import { useAppService } from "@lib/hooks/useAppService";
+import { PromptTemplateFactory } from "@lib/ai/prompt-templates/PromptTemplateFactory.ts";
 
 interface PromptTemplatesProps {
   initialTemplate?: PromptTemplate;
 }
-
-const newTemplate: PromptTemplate = {
-  id: "",
-  name: "",
-  description: "",
-  systemPrompt: "",
-  template: "",
-  variables: [],
-  created_at: new Date().toISOString(),
-  updated_at: new Date().toISOString(),
-};
-
 const apiEndPoint = appState.get().apiBaseUrl + "/prompts/index.json";
 
 const PromptTemplates: React.FC<PromptTemplatesProps> = ({
@@ -39,7 +28,7 @@ const PromptTemplates: React.FC<PromptTemplatesProps> = ({
 
   // Define all handler functions before useEffect
   const handleNewTemplate = () => {
-    setSelectedTemplate(newTemplate);
+    setSelectedTemplate(PromptTemplateFactory.createDefault());
     setSelectedId(undefined);
   };
 

@@ -11,9 +11,10 @@ const PromptTemplate = defineTable({
     description: column.text(),
     systemPrompt: column.text(),
     template: column.text({ optional: true }),
-    variables: column.json(),
-    tags: column.json(),
+    variables: column.json({ optional: true }),
+    tags: column.json({ optional: true }),
     llmConfig: column.json({
+      optional: true,
       default: JSON.stringify(llmSettings),
     }),
     created_at: column.text(),
