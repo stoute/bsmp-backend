@@ -13,6 +13,11 @@ import { paraglideMiddleware } from "./paraglide/server.js";
 
 // Create a wrapper for the Paraglide middleware to ensure it receives a proper Request object
 const paraglideMiddlewareWrapper = async (context, next) => {
+  // Skip paraglide middleware for API routes to avoid body consumption issues
+  if (context.url.pathname.startsWith("/api/")) {
+    return next();
+  }
+
   // Ensure we have a valid request object with headers
   if (!context.request || !context.request.headers) {
     console.warn("Invalid request object passed to Paraglide middleware");
@@ -21,8 +26,10 @@ const paraglideMiddlewareWrapper = async (context, next) => {
 
   try {
     return await paraglideMiddleware(context.request, ({ request, locale }) => {
-      // Update the context with the locale information using the set method
-      context.locals.paraglide = { locale };
+      // Update the context with the locale information
+      if (context.locals) {
+        context.locals.paraglide = { locale };
+      }
 
       // Continue with the middleware chain
       return next();
