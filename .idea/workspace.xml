@@ -5,18 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8cf7e9a9-1ddf-43bf-8ddd-96d96e27722b" name="Changes" comment="fix: auth login POST">
-      <change afterPath="$PROJECT_DIR$/src/lib/ai/prompt-templates/PromptTemplateFactory.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/lib/ai/prompt-templates/templates.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/AugmentWebviewStateStore.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/AugmentWebviewStateStore.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/db/config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/db/config.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/db/seed-templates.json" beforeDir="false" afterPath="$PROJECT_DIR$/db/seed-templates.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/db/seed.ts" beforeDir="false" afterPath="$PROJECT_DIR$/db/seed.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/chat/ChatControls.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/chat/ChatControls.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/prompt-templates/PromptTemplateEditor.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/prompt-templates/PromptTemplateEditor.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/prompt-templates/PromptTemplates.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/prompt-templates/PromptTemplates.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/ChatManager.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/ChatManager.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/ai/prompt-template.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/ai/prompt-templates/constants.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/ai/prompt-templates/PromptTemplateFactory.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/ai/prompt-templates/PromptTemplateFactory.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/ai/prompt-templates/constants.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/ai/prompt-templates/constants.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/ai/prompt-templates/templates.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/ai/prompt-templates/templates.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

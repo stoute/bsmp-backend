@@ -5,8 +5,8 @@ import { type PromptTemplate } from "@lib/ai/types.ts";
 
 const initialTemplate = PromptTemplateFactory.createDefault();
 
-export const DEFAULT_TEMPLATE_ID = initialTemplate.id;
-export const DEFAULT_TEMPLATE = initialTemplate;
+export const DEFAULT_TEMPLATE: PromptTemplate = defaultTemplates[0];
+export const DEFAULT_TEMPLATE_ID = DEFAULT_TEMPLATE.id;
 export const TEMPLATES = defaultTemplates;
 
 export const EDITABLE_LLM_CONFIG_PARAMS = [
@@ -25,13 +25,16 @@ export const TEMPLATE_TAGS = [
   "prompt-writer",
   "image-prompt-generator",
   "video-prompt-generator",
+  "explainer",
+  "roleplay-character",
+];
+export const TEMPLATE_TAGS_FUTURE = [
   "code-assistant",
   "data-analyzer",
   "creative-writer",
   "storyteller",
   "summarizer",
   "translator",
-  "explainer",
   "debate-coach",
   "interview-prep",
   "research-assistant",
@@ -43,6 +46,36 @@ export const TEMPLATE_TAGS = [
   "social-media",
   "technical-writer",
   "product-description",
-  "roleplay-character",
   "chatbot-personality",
+  // possible future tags
+  "legal-assistant",
+  "medical-consultant",
+  "math-solver",
+  "science-explainer",
+  "language-tutor",
+  "fitness-coach",
+  "nutrition-advisor",
+  "travel-planner",
+  "financial-advisor",
+  "career-counselor",
+  "mental-health",
+  "parenting-advisor",
+  "fact-checker",
+  "debate-moderator",
+  "meeting-facilitator",
+  "presentation-creator",
+  "speech-writer",
+  "poetry-generator",
+  "song-lyricist",
+  "script-writer",
+  "ux-designer",
+  "marketing-strategist",
+  "customer-support",
+  "data-visualizer",
+  "sql-generator",
+  "regex-creator",
+  "documentation-writer",
+  "api-designer",
+  "test-case-generator",
+  "bug-analyzer",
 ];

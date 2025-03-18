@@ -112,6 +112,7 @@ const PromptTemplates: React.FC<PromptTemplatesProps> = ({
           dataUrl={apiEndPoint.replace("index", "list")}
           onSelect={handleSelectTemplate}
           onNew={handleNewTemplate}
+          selectedId={selectedId}
         />
       </div>
       <div className="w-full md:w-2/3">

@@ -1,7 +1,5 @@
-import { v4 as uuid } from "uuid";
 import { type PromptTemplate } from "@lib/ai/types";
 import { defaultLLMConfig } from "../llm";
-// import { TEMPLATE_TAGS } from "./constants";
 
 // usage:
 // const defaultTemplate = PromptTemplateFactory.createDefault()
@@ -14,15 +12,14 @@ export class PromptTemplateFactory {
    */
   static createDefault(): PromptTemplate {
     const now = new Date().toISOString();
-
     return {
       // id: uuid(),
-      name: "New Template",
-      description: "A custom prompt template",
-      systemPrompt: "You are a helpful assistant.",
+      name: "",
+      description: "",
+      systemPrompt: "",
       template: "",
       variables: [],
-      tags: ["prompt-enhancer"],
+      tags: [],
       llmConfig: defaultLLMConfig,
       // created_at: now,
       // updated_at: now,
@@ -35,11 +32,10 @@ export class PromptTemplateFactory {
   static create(params: Partial<PromptTemplate>): PromptTemplate {
     const now = new Date().toISOString();
     const template = this.createDefault();
-
     return {
       ...template,
       ...params,
-      id: params.id || uuid(),
+      // id: params.id || uuid(),
       created_at: params.created_at || now,
       updated_at: params.updated_at || now,
     };
@@ -53,7 +49,7 @@ export class PromptTemplateFactory {
 
     return {
       ...template,
-      id: uuid(),
+      // id: uuid(),
       name: `${template.name} (Copy)`,
       created_at: now,
       updated_at: now,
