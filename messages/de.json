@@ -6,5 +6,27 @@
   "loading_templates": "Wird geladen...",
   "error_loading_templates": "Fehler beim Laden der Vorlagen",
   "loading_models": "Modelle werden geladen...",
-  "select_model": "Modell auswählen..."
+  "select_model": "Modell auswählen...",
+
+  "language_english": "Englisch",
+  "language_german": "Deutsch",
+  "language_dutch": "Niederländisch",
+  "toggle_theme": "Zwischen hellem und dunklem Design wechseln",
+  "search_placeholder": "Suchen...",
+  "search_button": "Suchen",
+  "login": "Anmelden",
+  "logout": "Abmelden",
+  "profile": "Profil",
+  "settings": "Einstellungen",
+  "prompts": "Prompts",
+  "contact": "Kontakt",
+  "about": "Über uns",
+  "projects": "Projekte",
+  "blog": "Blog",
+
+  "chat_thinking": "Denke nach...",
+  "chat_ask_something": "Frage etwas...",
+  "chat_send": "Senden",
+  "chat_loading": "Wird geladen...",
+  "select_language": "Sprache auswählen"
 }

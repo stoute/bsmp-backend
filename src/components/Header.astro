@@ -12,6 +12,14 @@ import UserMenu from "@components/UserMenu.astro";
 interface Props {
   colorMode?: "light" | "dark" | "system";
 }
+// Import Paraglide messages
+import {
+  language_english,
+  language_german,
+  language_dutch,
+  toggle_theme,
+  // select_language
+} from "../paraglide/messages";
 
 const { colorMode } = Astro.props;
 const EMAIL: unknown = SOCIALS.find((SOCIAL) => SOCIAL.NAME === "Email");
@@ -114,21 +122,21 @@ const navigationLinks = LINKS;
               data-language="en"
               class="block px-4 py-2 text-sm text-current hover:bg-black/5 dark:hover:bg-white/20"
             >
-              English
+              {language_english}
             </a>
             <a
               href="#"
               data-language="de"
               class="block px-4 py-2 text-sm text-current hover:bg-black/5 dark:hover:bg-white/20"
             >
-              Deutsch
+              {language_german}
             </a>
             <a
               href="#"
               data-language="nl"
               class="block px-4 py-2 text-sm text-current hover:bg-black/5 dark:hover:bg-white/20"
             >
-              Nederlands
+              {language_dutch()}
             </a>
           </div>
         </div>
@@ -136,7 +144,7 @@ const navigationLinks = LINKS;
         <button
           id="header-theme-button"
           onclick="changeTheme()"
-          aria-label={`Toggle light and dark theme`}
+          aria-label={toggle_theme()}
           class={cn(
             "hidden md:flex",
             "size-9 rounded-full p-2 items-center justify-center",

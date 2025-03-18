@@ -6,5 +6,27 @@
   "loading_templates": "Loading...",
   "error_loading_templates": "Error loading templates",
   "loading_models": "Loading models...",
-  "select_model": "Select model..."
+  "select_model": "Select model...",
+
+  "language_english": "English",
+  "language_german": "German",
+  "language_dutch": "Dutch",
+  "toggle_theme": "Toggle light and dark theme",
+  "search_placeholder": "Search...",
+  "search_button": "Search",
+  "login": "Login",
+  "logout": "Logout",
+  "profile": "Profile",
+  "settings": "Settings",
+  "prompts": "Prompts",
+  "contact": "Contact",
+  "about": "About",
+  "projects": "Projects",
+  "blog": "Blog",
+
+  "chat_thinking": "Thinking...",
+  "chat_ask_something": "Ask something...",
+  "chat_send": "Send",
+  "chat_loading": "Loading...",
+  "select_language": "Select language"
 }

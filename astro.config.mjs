@@ -5,8 +5,8 @@ import sitemap from "@astrojs/sitemap";
 import icon from "astro-icon";
 import react from "@astrojs/react";
 import tailwindcss from "@tailwindcss/vite";
-import node from "@astrojs/node";
-import vercel from "@astrojs/vercel";
+// import node from "@astrojs/node";
+// import vercel from "@astrojs/vercel";
 import netlify from "@astrojs/netlify";
 import { paraglideVitePlugin } from "@inlang/paraglide-js";
 

@@ -6,5 +6,27 @@
   "loading_templates": "Laden...",
   "error_loading_templates": "Fout bij het laden van sjablonen",
   "loading_models": "Modellen laden...",
-  "select_model": "Selecteer model..."
+  "select_model": "Selecteer model...",
+
+  "language_english": "Engels",
+  "language_german": "Duits",
+  "language_dutch": "Nederlands",
+  "toggle_theme": "Wissel tussen licht en donker thema",
+  "search_placeholder": "Zoeken...",
+  "search_button": "Zoeken",
+  "login": "Inloggen",
+  "logout": "Uitloggen",
+  "profile": "Profiel",
+  "settings": "Instellingen",
+  "prompts": "Prompts",
+  "contact": "Contact",
+  "about": "Over ons",
+  "projects": "Projecten",
+  "blog": "Blog",
+
+  "chat_thinking": "Aan het denken...",
+  "chat_ask_something": "Vraag iets...",
+  "chat_send": "Versturen",
+  "chat_loading": "Laden...",
+  "select_language": "Taal selecteren"
 }

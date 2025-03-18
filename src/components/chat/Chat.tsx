@@ -10,6 +10,13 @@ import { MessageErrorBoundary } from "./MessageErrorBoundary";
 import type { PromptTemplate } from "@lib/ai/types";
 import styles from "./Chat.module.css";
 import { DescriptionRenderer } from "./renderers/DescriptionRenderer";
+// Import Paraglide messages
+import {
+  chat_thinking,
+  chat_ask_something,
+  chat_send,
+  chat_loading,
+} from "@paraglide/messages";
 
 export default function Chat() {
   const { appService, isReady } = useAppService();
@@ -109,7 +116,7 @@ export default function Chat() {
   }, []);
 
   if (!isReady) {
-    return <div className={styles.loading}></div>;
+    return <div className={styles.loading}>{chat_loading()}</div>;
   }
 
   return (
@@ -122,7 +129,7 @@ export default function Chat() {
           ))}
         {isLoading && (
           <div className={styles.message}>
-            <div className={styles.loading}>Thinking...</div>
+            <div className={styles.loading}>{chat_thinking()}</div>
           </div>
         )}
       </div>
@@ -164,12 +171,12 @@ const ChatInput = memo(
           ref={inputRef}
           value={input}
           onChange={(e) => onInputChange(e.target.value)}
-          placeholder="Ask something..."
+          placeholder={chat_ask_something()}
           disabled={isLoading}
           className={styles.input}
         />
         <button type="submit" disabled={isLoading} className={styles.button}>
-          Send
+          {chat_send()}
         </button>
       </form>
     );
