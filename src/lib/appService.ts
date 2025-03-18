@@ -67,7 +67,7 @@ export class AppService {
 
     const matches = new Set<OpenRouterModel>();
 
-    if (this.store.isLoggedIn.get() == true) {
+    if (this.store.appState.get().currentUser) {
       LLM_MODELS.forEach((llmModel) => {
         const found = orModels.find(
           (model: OpenRouterModel) => model.id === llmModel,

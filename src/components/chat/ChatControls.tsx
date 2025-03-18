@@ -116,17 +116,32 @@ export default function ChatControls() {
 
   useEffect(() => {
     if (!isReady) return;
-    try {
-      const matchingModels = appService.getAllowedOpenRouterModels();
-      // Ensure we always have an array, even if empty
-      setModels(Array.isArray(matchingModels) ? matchingModels : []);
-    } catch (error) {
-      console.error("Error loading models:", error);
-      setModels([]);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [isReady]);
+
+    const fetchModels = () => {
+      try {
+        const matchingModels = appService.getAllowedOpenRouterModels();
+        // Ensure we always have an array, even if empty
+        setModels(Array.isArray(matchingModels) ? matchingModels : []);
+      } catch (error) {
+        console.error("Error loading models:", error);
+        setModels([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    // Initial fetch
+    fetchModels();
+
+    // Subscribe to login state changes
+    const unsubscribe = appState.listen((state) => {
+      if (state.currentUser !== appState.get().currentUser) {
+        fetchModels();
+      }
+    });
+
+    return () => unsubscribe();
+  }, [isReady, appService]);
 
   // Add subscription to appState changes
   useEffect(() => {
