@@ -1,13 +1,15 @@
-import defaultTemplates from "./templates.json";
-import { defaultLLMConfig } from "../llm.ts";
-import { PromptTemplateFactory } from "./PromptTemplateFactory.ts";
+import * as presetTemplates from "./preset-templates";
 import { type PromptTemplate } from "@lib/ai/types.ts";
+import { defaultLLMConfig } from "../llm.ts";
 
-const initialTemplate = PromptTemplateFactory.createDefault();
+for (const template of Object.values(presetTemplates)) {
+  template.llmConfig = defaultLLMConfig;
+}
 
-export const DEFAULT_TEMPLATE: PromptTemplate = defaultTemplates[0];
+export const DEFAULT_TEMPLATE: PromptTemplate = presetTemplates.expertPrompt;
 export const DEFAULT_TEMPLATE_ID = DEFAULT_TEMPLATE.id;
-export const TEMPLATES = defaultTemplates;
+
+export const PRESET_TEMPLATES = presetTemplates;
 
 export const EDITABLE_LLM_CONFIG_PARAMS = [
   "model",

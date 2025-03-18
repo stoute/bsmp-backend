@@ -16,8 +16,7 @@ import { Label } from "@components/ui/label";
 import { DEFAULT_MODEL } from "@/consts";
 import {
   DEFAULT_TEMPLATE_ID,
-  DEFAULT_TEMPLATE,
-  TEMPLATES,
+  PRESET_TEMPLATES,
 } from "@lib/ai/prompt-templates/constants.ts";
 import {
   Popover,
@@ -87,9 +86,9 @@ export default function ChatControls() {
           throw new Error("Failed to fetch templates");
         }
         const templates = await response.json();
-        // Add default templates in the correct order
-        const defaultTemplates = [...TEMPLATES].reverse();
-        defaultTemplates.forEach((template) => {
+        // Add all preset templates
+        const presetTemplates = Object.values(PRESET_TEMPLATES).reverse();
+        presetTemplates.forEach((template) => {
           templates.unshift(template);
         });
         setTemplates(templates);

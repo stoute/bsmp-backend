@@ -20,8 +20,8 @@ import {
   DEFAULT_SYSTEM_MESSAGE,
 } from "@consts";
 import {
-  DEFAULT_TEMPLATE,
   DEFAULT_TEMPLATE_ID,
+  PRESET_TEMPLATES,
 } from "@lib/ai/prompt-templates/constants.ts";
 import { ChatParser } from "./ChatParser";
 import { proxyFetchHandler } from "@lib/ai/utils";
@@ -52,10 +52,12 @@ class ChatManager {
 
     this.model = appState.get().selectedModel || defaultModel;
     // initialize llm
-    const config = { ...defaultLLMConfig, model: this.model };
-    this.llm = new ChatOpenAI(config);
+    this.llm = new ChatOpenAI({ ...defaultLLMConfig, model: this.model });
     this.setupStateSubscription();
     this.restoreState();
+    if (!appState.get().currentUser) {
+      this.newChat(DEFAULT_TEMPLATE_ID);
+    }
     console.log("ChatManager initialized");
   }
 
@@ -143,13 +145,15 @@ class ChatManager {
     let template: PromptTemplate = undefined;
     if (templateId) {
       try {
-        if (templateId === DEFAULT_TEMPLATE_ID) {
-          template = DEFAULT_TEMPLATE;
-        } else {
+        Object.values(PRESET_TEMPLATES).forEach((presetTemplate) => {
+          if (presetTemplate.id === templateId) {
+            template = { ...presetTemplate, llmConfig: this.llmConfig };
+          }
+        });
+        if (!template) {
           const baseUrl = appState.get().apiBaseUrl;
-          // Fix URL construction
           let fetchUrl = new URL(
-            appState.get().apiBaseUrl + `/prompts/${templateId}.json`,
+            `api/prompts/${templateId}.json`,
             baseUrl,
           ).toString();
           console.log(fetchUrl);
