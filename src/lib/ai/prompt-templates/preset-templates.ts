@@ -5,6 +5,7 @@ export const defaultPromptDevelopment = {
     "I will transform a simple prompt into a detailed expert prompt. ",
   template: "{lazy_prompt} ",
   tags: ["prompt-optimizer"],
+  model: "google/gemini-2.0-flash-lite-001",
   llmConfig: null,
   systemPrompt: `
 You are an expert Prompt Writer for Large Language Models. 
@@ -64,6 +65,7 @@ export const defaultPrompt = {
     "I will transform a simple prompt into a detailed expert prompt. ",
   template: "{lazy_prompt} ",
   tags: ["prompt-optimizer"],
+  model: "google/gemini-2.0-flash-lite-001",
   llmConfig: null,
   systemPrompt: `
 You are an expert Prompt Writer for Large Language Models. Your job is to build clear, detailed, and comprehensive prompts that will help the LLM execute the task at hand. 

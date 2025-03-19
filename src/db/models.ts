@@ -6,6 +6,7 @@ export interface PromptTemplateModel {
   description?: string;
   systemPrompt?: string;
   template?: string;
+  model?: string;
   variables?: string[];
   tags?: string[];
   llmConfig?: ChatOpenAI;

@@ -137,8 +137,6 @@ export class ChatParser {
   public processTemplate(template: PromptTemplate): PromptTemplate {
     // Apply template-specific processor if exists
     if (this.templateProcessors.has(template.id)) {
-      // fixme: er
-      // console.log(template.id);
       template = this.templateProcessors.get(template.id)!(template);
     }
 
@@ -150,6 +148,7 @@ export class ChatParser {
       description: template.description
         ? this.sanitizeTemplateContent(template.description)
         : undefined,
+      model: template.model || DEFAULT_MODEL, // Add model with default fallback
     };
   }
 
