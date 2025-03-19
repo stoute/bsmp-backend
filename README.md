@@ -95,6 +95,7 @@ npm run preview         # Preview build
 ### Core Config Files
 - `astro.config.mjs` - Astro settings and integrations
 - `tailwind.config.mjs` - Tailwind setup
+- `db/config.ts` - Database configuration
 - `src/lib/appStore.ts` - State management
 - `src/consts.ts` - Site-wide constants and navigation
 
