@@ -4,11 +4,11 @@
 
 A modern, server-side rendered website and api built with Astro, featuring dynamic content, 
 AI-powered chat, state management, and optimal performance. 
-Built on top of [Astro Sphere](https://github.com/markhorn-dev/astro-sphere).
+Built on top of [Astro Sphere](https://github.com/markhorn-dev/astro-sphere), this project may serve as a guide on how to create full stack CRUD applications with Astro.
 
-Please take note that this project is under active development, but maybe it can be useful for those
-who want to get insight on howto create server side CRUD applications with Astro.
-I'm using this projects to see just how far I can take the AI, or vise versa.
+Please take note that this project is under active development. 
+I'm using this projects to see just how far I can take the AI, or vise versa. 
+
 
 ## 🛠 Tech Stack
 
