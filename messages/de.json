@@ -54,5 +54,11 @@
   "template_error_deleting": "Fehler beim Löschen der Vorlage",
   "template_error_duplicating": "Fehler beim Duplizieren der Vorlage",
   "template_name_required": "Name ist erforderlich",
-  "template_variables_description": "Die Vorlage mit Variablen in einfachen geschweiften Klammern"
+  "template_variables_description": "Die Vorlage mit Variablen in einfachen geschweiften Klammern",
+  "template_new_created": "Neue Vorlage erstellt",
+  "template_updated": "Vorlage aktualisiert",
+  "template_create_new": "Neue Prompt-Vorlage erstellen",
+  "template_edit": "Prompt-Vorlage bearbeiten",
+  "template_list_title": "Prompt-Vorlagen",
+  "template_list_description": "Wählen Sie eine Vorlage zum Bearbeiten aus oder erstellen Sie eine neue"
 }

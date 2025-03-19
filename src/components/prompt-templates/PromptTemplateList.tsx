@@ -23,6 +23,8 @@ import {
   template_new,
   loading_templates,
   error_loading_templates,
+  template_list_title,
+  template_list_description,
 } from "../../paraglide/messages";
 
 interface PromptTemplateListProps {
@@ -99,10 +101,8 @@ const PromptTemplateList = forwardRef<
   return (
     <Card className="flex h-full flex-col">
       <CardHeader>
-        <CardTitle>Prompt Templates</CardTitle>
-        <CardDescription>
-          Select a template to edit or create a new one
-        </CardDescription>
+        <CardTitle>{template_list_title()}</CardTitle>
+        <CardDescription>{template_list_description()}</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-1 flex-col gap-4">
         <div className="flex gap-2">

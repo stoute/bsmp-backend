@@ -54,5 +54,11 @@
   "template_error_deleting": "Error deleting template",
   "template_error_duplicating": "Error duplicating template",
   "template_name_required": "Name is required",
-  "template_variables_description": "The template with variables in single curly braces"
+  "template_variables_description": "The template with variables in single curly braces",
+  "template_new_created": "New template created",
+  "template_updated": "Template updated",
+  "template_create_new": "Create New Prompt Template",
+  "template_edit": "Edit Prompt Template",
+  "template_list_title": "Prompt Templates",
+  "template_list_description": "Select a template to edit or create a new one"
 }

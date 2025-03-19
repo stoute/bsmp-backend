@@ -54,5 +54,11 @@
   "template_error_deleting": "Fout bij verwijderen van sjabloon",
   "template_error_duplicating": "Fout bij dupliceren van sjabloon",
   "template_name_required": "Naam is verplicht",
-  "template_variables_description": "Het sjabloon met variabelen in enkele accolades"
+  "template_variables_description": "Het sjabloon met variabelen in enkele accolades",
+  "template_new_created": "Nieuw sjabloon aangemaakt",
+  "template_updated": "Sjabloon bijgewerkt",
+  "template_create_new": "Nieuwe Prompt Sjabloon maken",
+  "template_edit": "Prompt Sjabloon bewerken",
+  "template_list_title": "Prompt Sjablonen",
+  "template_list_description": "Selecteer een sjabloon om te bewerken of maak een nieuwe aan"
 }

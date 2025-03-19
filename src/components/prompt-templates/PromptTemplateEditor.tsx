@@ -60,6 +60,11 @@ import {
   template_name_required,
   template_variables_description,
   template_label,
+  template_new_created,
+  template_updated,
+  template_error_saving,
+  template_create_new,
+  template_edit,
 } from "../../paraglide/messages";
 
 // Define the form schema using zod
@@ -156,7 +161,7 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
       // Show success toast here
       toast({
         title: template_saved(),
-        description: isNew ? "New template created" : "Template updated",
+        description: isNew ? template_new_created() : template_updated(),
         variant: "success",
       });
 
@@ -296,13 +301,8 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
       <Card className="w-full">
         <CardHeader>
           <CardTitle>
-            {isNew ? "Create New Prompt Template" : "Edit Prompt Template"}
+            {isNew ? template_create_new() : template_edit()}
           </CardTitle>
-          <CardDescription>
-            {isNew
-              ? "Create a new prompt template for AI generation"
-              : "Edit the selected prompt template"}
-          </CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
@@ -332,9 +332,6 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
                         <FormControl>
                           <Input disabled {...field} />
                         </FormControl>
-                        <FormDescription>
-                          Unique identifier (auto-generated)
-                        </FormDescription>
                         <FormMessage />
                       </FormItem>
                     )}
