@@ -49,6 +49,7 @@ import {
   template_variables,
   template_tags,
   template_save,
+  template_saved,
   template_delete,
   template_duplicate,
   template_cancel,
@@ -152,16 +153,14 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
 
       data = await response.json();
 
-      // Show success toast only once
+      // Show success toast here
       toast({
-        title: isNew
-          ? "Prompt template created successfully!"
-          : "Prompt template updated successfully!",
+        title: template_saved(),
+        description: isNew ? "New template created" : "Template updated",
         variant: "success",
       });
 
       if (onSave) {
-        // Don't show toast in the callback
         onSave(data);
       }
 
@@ -172,7 +171,9 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
     } catch (err) {
       // Show error toast directly
       toast({
-        title: err instanceof Error ? err.message : "An unknown error occurred",
+        title: template_error_saving(),
+        description:
+          err instanceof Error ? err.message : "An unknown error occurred",
         variant: "destructive",
       });
     } finally {

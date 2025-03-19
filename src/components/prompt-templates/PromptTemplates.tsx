@@ -5,15 +5,7 @@ import { appState } from "@lib/appStore";
 import type { PromptTemplate } from "@lib/ai/types";
 import { useAppService } from "@lib/hooks/useAppService";
 import { PromptTemplateFactory } from "@lib/ai/prompt-templates/PromptTemplateFactory.ts";
-import { showToast } from "@lib/toast";
-import {
-  template_saved,
-  template_deleted,
-  template_duplicated,
-  template_error_saving,
-  template_error_deleting,
-  template_error_duplicating,
-} from "../../paraglide/messages";
+// Removed toast-related imports
 
 interface PromptTemplatesProps {
   initialTemplate?: PromptTemplate;
@@ -61,25 +53,10 @@ const PromptTemplates: React.FC<PromptTemplatesProps> = ({
       setSelectedTemplate(template);
       setSelectedId(template.id);
 
-      // Check if this is a new template by looking at the operation that was performed
-      const isNewTemplate =
-        !template.created_at || template.created_at === template.updated_at;
-
-      showToast({
-        title: template_saved(),
-        description: isNewTemplate
-          ? "New template created"
-          : "Template updated",
-        variant: "success",
-      });
+      // No toast here - let the editor component handle it
     } catch (error) {
-      console.error("Error saving template:", error);
-      showToast({
-        title: template_error_saving(),
-        description:
-          error instanceof Error ? error.message : "An unknown error occurred",
-        variant: "destructive",
-      });
+      console.error("Error refreshing template list:", error);
+      // Only log errors related to list refresh, not template saving
     }
   };
 
@@ -90,10 +67,7 @@ const PromptTemplates: React.FC<PromptTemplatesProps> = ({
     if (listRef.current) {
       await listRef.current.fetchPromptTemplates();
     }
-    showToast({
-      title: template_deleted(),
-      variant: "success",
-    });
+    // No toast here - let the editor component handle it
   };
 
   const handleDuplicateTemplate = async (template: PromptTemplate) => {
@@ -104,10 +78,7 @@ const PromptTemplates: React.FC<PromptTemplatesProps> = ({
     if (listRef.current) {
       await listRef.current.fetchPromptTemplates();
     }
-    showToast({
-      title: template_duplicated(),
-      variant: "success",
-    });
+    // Removed toast from here
   };
 
   // Effects after all hooks and function definitions
