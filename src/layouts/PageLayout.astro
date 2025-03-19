@@ -49,9 +49,19 @@ const environment: string = import.meta.env.MODE;
     </main>
     {!isChatPage && <Footer />}
     <Toaster
-      position="top-center"
-      toastOptions={{ duration: 3000 }}
-      closeButton
+      client:load
+      position="bottom-center"
+      toastOptions={{
+        duration: 5000,
+        style: {
+          background: "white",
+          color: "black",
+          border: "1px solid var(--border, rgba(0, 0, 0, 0.1))",
+          boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+        },
+        className: "!bg-white !text-black dark:!bg-zinc-800 dark:!text-white",
+      }}
+      richColors={false}
     />
   </body>
 </html>

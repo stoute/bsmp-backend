@@ -5,6 +5,7 @@ import * as z from "zod";
 import { Trash2, Save, Plus, AlertCircle, Copy } from "lucide-react";
 import type { PromptTemplate } from "@lib/ai/types.ts";
 import { appState } from "@lib/appStore";
+import { toast } from "../../lib/toast";
 
 import {
   Form,
@@ -126,7 +127,6 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
 
       if (isNew) {
         // Create new prompt template
-        // values.id = undefined;
         response = await fetch(apiEndPoint, {
           method: "POST",
           headers: {
@@ -151,13 +151,17 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
       }
 
       data = await response.json();
-      setSuccess(
-        isNew
+
+      // Show success toast only once
+      toast({
+        title: isNew
           ? "Prompt template created successfully!"
           : "Prompt template updated successfully!",
-      );
+        variant: "success",
+      });
 
       if (onSave) {
+        // Don't show toast in the callback
         onSave(data);
       }
 
@@ -166,9 +170,11 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
         setIsNew(false);
       }
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "An unknown error occurred",
-      );
+      // Show error toast directly
+      toast({
+        title: err instanceof Error ? err.message : "An unknown error occurred",
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }
@@ -187,7 +193,6 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
       const response = await fetch(
         apiEndPoint.replace("index", promptTemplate.id),
         {
-          // const response = await fetch(apiBaseUrl + `/${promptTemplate.id}.json`, {
           method: "DELETE",
         },
       );
@@ -196,12 +201,22 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
         throw new Error("Failed to delete template");
       }
 
+      // Show success toast directly
+      toast({
+        title: "Template deleted successfully",
+        variant: "success",
+      });
+
       if (onDelete) {
         onDelete(promptTemplate);
       }
     } catch (error) {
       console.error("Error deleting template:", error);
-      setError("Failed to delete template");
+      // Show error toast directly
+      toast({
+        title: "Failed to delete template",
+        variant: "destructive",
+      });
     }
 
     setShowDeleteDialog(false);
@@ -210,8 +225,6 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
   const handleDuplicate = async () => {
     if (!promptTemplate) return;
     setLoading(true);
-    setError(null);
-    setSuccess(null);
 
     try {
       const response = await fetch(apiEndPoint, {
@@ -236,15 +249,22 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
       }
 
       const data = await response.json();
-      setSuccess("Prompt template duplicated successfully!");
+
+      // Show success toast directly
+      toast({
+        title: "Prompt template duplicated successfully!",
+        variant: "success",
+      });
 
       if (onDuplicate) {
         onDuplicate(data);
       }
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "An unknown error occurred",
-      );
+      // Show error toast directly
+      toast({
+        title: err instanceof Error ? err.message : "An unknown error occurred",
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }
@@ -284,21 +304,6 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {error && (
-            <Alert variant="destructive" className="mb-4">
-              <AlertCircle className="h-4 w-4" />
-              <AlertTitle>Error</AlertTitle>
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
-          )}
-
-          {success && (
-            <Alert className="mb-4 border-green-200 bg-green-50 text-green-800">
-              <AlertTitle>Success</AlertTitle>
-              <AlertDescription>{success}</AlertDescription>
-            </Alert>
-          )}
-
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">

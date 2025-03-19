@@ -5,7 +5,7 @@ import { appState } from "@lib/appStore";
 import type { PromptTemplate } from "@lib/ai/types";
 import { useAppService } from "@lib/hooks/useAppService";
 import { PromptTemplateFactory } from "@lib/ai/prompt-templates/PromptTemplateFactory.ts";
-import { toast } from "@/lib/toast"; // Fixed import path
+import { showToast } from "@lib/toast";
 import {
   template_saved,
   template_deleted,
@@ -60,14 +60,24 @@ const PromptTemplates: React.FC<PromptTemplatesProps> = ({
       // After list refresh, ensure the template is still selected
       setSelectedTemplate(template);
       setSelectedId(template.id);
-      toast({
+
+      // Check if this is a new template by looking at the operation that was performed
+      const isNewTemplate =
+        !template.created_at || template.created_at === template.updated_at;
+
+      showToast({
         title: template_saved(),
-        variant: "default",
+        description: isNewTemplate
+          ? "New template created"
+          : "Template updated",
+        variant: "success",
       });
     } catch (error) {
       console.error("Error saving template:", error);
-      toast({
+      showToast({
         title: template_error_saving(),
+        description:
+          error instanceof Error ? error.message : "An unknown error occurred",
         variant: "destructive",
       });
     }
@@ -80,9 +90,9 @@ const PromptTemplates: React.FC<PromptTemplatesProps> = ({
     if (listRef.current) {
       await listRef.current.fetchPromptTemplates();
     }
-    toast({
+    showToast({
       title: template_deleted(),
-      variant: "default",
+      variant: "success",
     });
   };
 
@@ -94,9 +104,9 @@ const PromptTemplates: React.FC<PromptTemplatesProps> = ({
     if (listRef.current) {
       await listRef.current.fetchPromptTemplates();
     }
-    toast({
+    showToast({
       title: template_duplicated(),
-      variant: "default",
+      variant: "success",
     });
   };
 
