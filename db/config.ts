@@ -29,8 +29,8 @@ const ChatSession = defineTable({
     messages: column.json(), // Array of Message objects
     metadata: column.json({
       default: {
-        topic: "",
-        model: "",
+        topic: null,
+        model: null,
         template: null,
         templateId: null,
       },

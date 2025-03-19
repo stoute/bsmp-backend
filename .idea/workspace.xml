@@ -5,7 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8cf7e9a9-1ddf-43bf-8ddd-96d96e27722b" name="Changes" comment="fix: auth login POST">
+      <change beforePath="$PROJECT_DIR$/.idea/AugmentWebviewStateStore.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/AugmentWebviewStateStore.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/db/config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/db/config.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/db/models.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/db/models.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/ChatParser.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/ChatParser.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/ai/prompt-templates/constants.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/ai/prompt-templates/constants.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/ai/prompt-templates/preset-templates.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/ai/prompt-templates/preset-templates.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/ai/types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/ai/types.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/api/sessions/index.json.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/api/sessions/index.json.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -153,8 +162,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="npm.build" />
         <item itemvalue="npm.dev:network" />
+        <item itemvalue="npm.build" />
         <item itemvalue="npm.----build" />
         <item itemvalue="npm.---build" />
         <item itemvalue="npm.db-push-remote" />

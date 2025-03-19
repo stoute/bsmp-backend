@@ -58,7 +58,7 @@ export async function POST({ request }: { request: Request }) {
       created_at: now,
       updated_at: now,
     };
-    console.log("newChatSession", newChatSession);
+    // console.log("newChatSession", newChatSession);
 
     // Create the new chat session in the database
     await db.insert(ChatSession).values(newChatSession).run();

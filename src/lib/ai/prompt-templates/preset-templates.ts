@@ -2,11 +2,18 @@ export const defaultPromptDevelopment = {
   id: "expert-prompt-development",
   name: "Expert Prompt Generator -dev",
   description:
-    "I will transform a simple prompt into a detailed expert prompt. ",
+    "I will transform a simple prompt into a detailed expert prompt.",
   template: "{lazy_prompt} ",
   tags: ["prompt-optimizer"],
   model: "google/gemini-2.0-flash-lite-001",
-  llmConfig: null,
+  llmConfig: {
+    model: "openai/gpt-3.5-turbo",
+    temperature: 0.7,
+    maxTokens: 256,
+    stream: false,
+    suffix: null,
+    returnPrompt: false,
+  },
   systemPrompt: `
 You are an expert Prompt Writer for Large Language Models. 
 Your job is to build clear, detailed, and comprehensive prompts that will help the LLM execute the task at hand. 
@@ -66,7 +73,14 @@ export const defaultPrompt = {
   template: "{lazy_prompt} ",
   tags: ["prompt-optimizer"],
   model: "google/gemini-2.0-flash-lite-001",
-  llmConfig: null,
+  llmConfig: {
+    model: "google/gemini-2.0-flash-lite-001",
+    temperature: 0.7,
+    maxTokens: 256,
+    stream: false,
+    suffix: null,
+    returnPrompt: false,
+  },
   systemPrompt: `
 You are an expert Prompt Writer for Large Language Models. Your job is to build clear, detailed, and comprehensive prompts that will help the LLM execute the task at hand. 
 For portions of the prompt that require the user to enter information, use “[type of information]” to indicate this is something the user will have to enter. 

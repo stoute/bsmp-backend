@@ -7,7 +7,7 @@ AI-powered chat, state management, and optimal performance.
 Built on top of [Astro Sphere](https://github.com/markhorn-dev/astro-sphere), this project may serve as a guide on how to create full stack CRUD applications with Astro.
 
 Please take note that this project is under active development. 
-I'm using this projects to see just how far I can take the AI, or vise versa. 
+I'm using it to see just how far I can take the AI code assistant, or vise versa. 
 
 
 ## 🛠 Tech Stack

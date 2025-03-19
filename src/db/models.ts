@@ -14,6 +14,19 @@ export interface PromptTemplateModel {
   updated_at?: string;
 }
 
+export interface ChatSessionModel {
+  id: string;
+  messages: any[]; // Array of Message objects
+  metadata: {
+    topic: string | null;
+    model: string | null;
+    template: any | null;
+    templateId: string | null;
+  };
+  created_at: string;
+  updated_at: string;
+}
+
 export interface UserModel {
   id: string;
   email: string;

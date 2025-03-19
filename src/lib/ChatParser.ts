@@ -12,6 +12,7 @@ import {
 import { appState } from "./appStore";
 import type { PromptTemplate } from "@lib/ai/types";
 import type { Message } from "@lib/ai/types";
+import { DEFAULT_MODEL } from "@consts";
 
 type MessageProcessor = (message: Message) => Message | null;
 type TemplateProcessor = (template: PromptTemplate) => PromptTemplate;
