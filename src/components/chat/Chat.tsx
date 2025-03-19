@@ -16,7 +16,7 @@ import {
   chat_ask_something,
   chat_send,
   chat_loading,
-  loading,
+  thinking,
 } from "@paraglide/messages";
 
 export default function Chat() {
@@ -117,7 +117,7 @@ export default function Chat() {
   }, []);
 
   if (!isReady) {
-    return <div className={styles.loading}>{loading()}</div>;
+    return <div className={styles.loading}>{thinking()}</div>;
   }
 
   return (
@@ -130,7 +130,7 @@ export default function Chat() {
           ))}
         {isLoading && (
           <div className={styles.message}>
-            <div className={styles.loading}>{loading()}</div>
+            <div className={styles.loading}>{thinking()}</div>
           </div>
         )}
       </div>

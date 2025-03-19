@@ -8,6 +8,7 @@
   "error_loading_templates": "Error loading templates",
   "loading_models": "Loading models...",
   "select_model": "Select model...",
+  "thinking": "...Thinking",
 
   "language_english": "English",
   "language_german": "German",
