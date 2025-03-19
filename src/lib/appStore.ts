@@ -1,5 +1,5 @@
 import { persistentAtom, persistentMap } from "@nanostores/persistent";
-import type { ChatState } from "@lib/ai/types";
+import type { ChatSessionModel } from "@db/models";
 import type { OpenRouterModelIndex } from "@lib/ai/open-router.ts";
 import type { PromptTemplate } from "@lib/ai/types";
 import { type UserModel as User } from "@db/models";
@@ -12,8 +12,8 @@ export type AppState = {
   selectedModel?: string;
   selectedTemplate?: PromptTemplate;
   selectedTemplateId?: string;
-  currentChat?: ChatState;
-  currentSession?: ChatState;
+  currentChat?: ChatSessionModel;
+  currentSession?: ChatSessionModel;
   currentSessionId?: string;
   currentUser?: User;
 };

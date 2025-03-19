@@ -1,7 +1,7 @@
 export const prerender = false;
 import { v4 as uuid } from "uuid";
 import { ChatSession, db, eq, and, column } from "astro:db";
-import type { ChatState } from "@lib/ai/types";
+import type { ChatSessionModel } from "@db/models";
 
 // GET /api/prompts/[id]: Retrieves a specific session by its id.
 export async function GET({ params }: { params: { id: string } }) {
@@ -71,7 +71,7 @@ export async function PUT({
     // Set updated_at to the current ISO datetime.
     const now = new Date().toISOString();
 
-    const updatedPrompt: Partial<ChatState> = {
+    const updatedPrompt: Partial<ChatSessionModel> = {
       messages,
       metadata,
       updated_at: now,

@@ -5,7 +5,7 @@ export const defaultPromptDevelopment = {
     "I will transform a simple prompt into a detailed expert prompt.",
   template: "{lazy_prompt} ",
   tags: ["prompt-optimizer"],
-  model: "google/gemini-2.0-flash-lite-001",
+  context: "",
   llmConfig: {
     model: "openai/gpt-3.5-turbo",
     temperature: 0.7,
@@ -72,7 +72,7 @@ export const defaultPrompt = {
     "I will transform a simple prompt into a detailed expert prompt. ",
   template: "{lazy_prompt} ",
   tags: ["prompt-optimizer"],
-  model: "google/gemini-2.0-flash-lite-001",
+  context: "",
   llmConfig: {
     model: "google/gemini-2.0-flash-lite-001",
     temperature: 0.7,

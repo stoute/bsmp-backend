@@ -12,7 +12,7 @@ import {
 } from "@langchain/core/messages";
 import type { Message } from "@lib/ai/types";
 import { appService } from "@lib/appService.ts";
-import { type ChatState, type PromptTemplate } from "@lib/ai/types";
+import type { ChatSessionModel } from "@db/models";
 import { appState, openRouterModels } from "@lib/appStore";
 import {
   DEFAULT_MODEL,
@@ -24,7 +24,6 @@ import {
   PRESET_TEMPLATES,
 } from "@lib/ai/prompt-templates/constants.ts";
 import { ChatParser } from "./ChatParser";
-import { proxyFetchHandler } from "@lib/ai/utils";
 import { defaultLLMConfig } from "@lib/ai/llm";
 
 class ChatManager {
@@ -163,7 +162,7 @@ class ChatManager {
           }
           template = await response.json();
         }
-        const chatState: Partial<ChatState> = {
+        const chatState: Partial<ChatSessionModel> = {
           messages: this.messages,
           metadata: {
             templateId: template.id,
@@ -223,7 +222,7 @@ class ChatManager {
     if (serializedMessages.length > 2)
       topic =
         "Topic: " + serializedMessages[1]?.content.slice(0, 120 - 3) + "...";
-    const chatState: Partial<ChatState> = {
+    const chatState: Partial<ChatSessionModel> = {
       messages: serializedMessages,
       metadata: {
         topic,

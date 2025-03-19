@@ -7,6 +7,7 @@ import { registerUser } from "../src/lib/utils/dbUtils";
 const formatSeedTemplates = (templates: any) => {
   templates.forEach((template: any) => {
     template.model = null;
+    template.context = null;
     if (!template.llm_settings) {
       template.llm_settings = JSON.stringify(defaultLLMConfig);
       template.tags = JSON.stringify(template.tags || [TEMPLATE_TAGS[0]]);

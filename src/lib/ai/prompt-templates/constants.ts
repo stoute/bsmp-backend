@@ -7,7 +7,6 @@ const environment = import.meta.env.DEV ? "development" : "production";
 for (const template of Object.values(presetTemplates)) {
   // @ts-ignore
   template.llmConfig = { ...defaultLLMConfig, ...template.llmConfig };
-  console.log(template.llmConfig);
 }
 let defaultTemplate = presetTemplates.defaultPrompt;
 if (environment === "development") {

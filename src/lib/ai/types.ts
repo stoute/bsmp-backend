@@ -1,6 +1,5 @@
 import type { BaseMessage } from "@langchain/core/messages";
-import type { PromptTemplateModel } from "@db/models";
-import type { ChatSessionModel } from "@db/models";
+import type { PromptTemplateModel, ChatSessionModel } from "@db/models";
 
 export type PromptTemplate = PromptTemplateModel & {};
 
@@ -10,4 +9,4 @@ export type Message = BaseMessage & {
   metadata?: Record<string, any>; // Optional metadata for the message (e.g., token usage)
 };
 
-export type ChatState = ChatSessionModel;
+// export type ChatState = ChatSessionModel;
