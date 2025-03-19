@@ -1,8 +1,10 @@
 import { persistentAtom, persistentMap } from "@nanostores/persistent";
-import type { OpenRouterModelIndex, ChatState } from "@lib/ai/types";
+import type { ChatState } from "@lib/ai/types";
+import type { OpenRouterModelIndex } from "@lib/ai/open-router.ts";
 import type { PromptTemplate } from "@lib/ai/types";
 import { type UserModel as User } from "@db/models";
 import { atom } from "nanostores";
+import { logout_error } from "../paraglide/messages";
 
 export type AppState = {
   apiBaseUrl: string;
@@ -45,7 +47,6 @@ export const openRouterModels = persistentMap<OpenRouterModelIndex>(
 );
 
 // export const chatManager = atom<ChatManager | null>(null);
-
 export const templateList = atom([]);
 
 // USER
@@ -65,6 +66,6 @@ export async function logout() {
     // Redirect to home page instead of login page
     window.location.href = "/";
   } catch (error) {
-    console.error("Logout error:", error);
+    console.error(`${logout_error()}:`, error);
   }
 }

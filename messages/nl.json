@@ -8,7 +8,6 @@
   "error_loading_templates": "Fout bij het laden van sjablonen",
   "loading_models": "Modellen laden...",
   "select_model": "Selecteer model...",
-  "thinking": "...Nadenken",
 
   "language_english": "Engels",
   "language_german": "Duits",
@@ -25,6 +24,8 @@
   "about": "Over ons",
   "projects": "Projecten",
   "blog": "Blog",
+
+  "logout_error": "Uitlogfout",
 
   "chat_thinking": "Aan het denken...",
   "chat_ask_something": "Vraag iets...",

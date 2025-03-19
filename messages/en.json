@@ -8,7 +8,6 @@
   "error_loading_templates": "Error loading templates",
   "loading_models": "Loading models...",
   "select_model": "Select model...",
-  "thinking": "...Thinking",
 
   "language_english": "English",
   "language_german": "German",
@@ -25,6 +24,8 @@
   "about": "About",
   "projects": "Projects",
   "blog": "Blog",
+
+  "logout_error": "Logout error",
 
   "chat_thinking": "Thinking...",
   "chat_ask_something": "Ask something...",

@@ -5,7 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8cf7e9a9-1ddf-43bf-8ddd-96d96e27722b" name="Changes" comment="fix: auth login POST">
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/messages/de.json" beforeDir="false" afterPath="$PROJECT_DIR$/messages/de.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/messages/en.json" beforeDir="false" afterPath="$PROJECT_DIR$/messages/en.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/messages/nl.json" beforeDir="false" afterPath="$PROJECT_DIR$/messages/nl.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/chat/Chat.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/chat/Chat.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/appStore.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/appStore.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -65,7 +69,7 @@
     "npm.db-verify-remote.executor": "Run",
     "npm.dev:network.executor": "Run",
     "prettierjs.PrettierConfiguration.Package": "/Users/bobstoute/Git/@bsmp/bsmp-backend/node_modules/prettier",
-    "settings.editor.selected.configurable": "com.albertoventurini.graphdbplugin.jetbrains.configuration.GraphDatabaseConfiguration",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
     "ts.external.directory.path": "/Users/bobstoute/Git/@bsmp/bsmp-backend/node_modules/typescript/lib",
     "vue.rearranger.settings.migration": "true"
   },
@@ -153,8 +157,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="npm.build" />
         <item itemvalue="npm.dev:network" />
+        <item itemvalue="npm.build" />
         <item itemvalue="npm.----build" />
         <item itemvalue="npm.---build" />
         <item itemvalue="npm.db-push-remote" />
