@@ -3,6 +3,7 @@
   "example_message": "Hello world {username}",
   "template_label": "Template",
   "model_label": "Model",
+  "loading": "Loading...",
   "loading_templates": "Loading...",
   "error_loading_templates": "Error loading templates",
   "loading_models": "Loading models...",

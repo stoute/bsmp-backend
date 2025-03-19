@@ -3,6 +3,7 @@
   "example_message": "Guten Tag {username}",
   "template_label": "Vorlage",
   "model_label": "Modell",
+  "loading": "Wird geladen...",
   "loading_templates": "Wird geladen...",
   "error_loading_templates": "Fehler beim Laden der Vorlagen",
   "loading_models": "Modelle werden geladen...",

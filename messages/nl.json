@@ -3,6 +3,7 @@
   "example_message": "Hallo wereld {username}",
   "template_label": "Sjabloon",
   "model_label": "Model",
+  "loading": "Laden...",
   "loading_templates": "Laden...",
   "error_loading_templates": "Fout bij het laden van sjablonen",
   "loading_models": "Modellen laden...",

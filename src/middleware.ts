@@ -17,13 +17,11 @@ const paraglideMiddlewareWrapper = async (context, next) => {
   if (context.url.pathname.startsWith("/api/")) {
     return next();
   }
-
   // Ensure we have a valid request object with headers
   if (!context.request || !context.request.headers) {
     console.warn("Invalid request object passed to Paraglide middleware");
     return next();
   }
-
   try {
     return await paraglideMiddleware(context.request, ({ request, locale }) => {
       // Update the context with the locale information
