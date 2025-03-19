@@ -41,11 +41,29 @@ import {
 } from "@components/ui/alert-dialog.tsx";
 import { useAppService } from "@lib/hooks/useAppService.ts";
 import { PromptTemplateFactory } from "@lib/ai/prompt-templates/PromptTemplateFactory";
+import {
+  template_name,
+  template_description,
+  template_system_prompt,
+  template_variables,
+  template_tags,
+  template_save,
+  template_delete,
+  template_duplicate,
+  template_cancel,
+  template_confirm_delete,
+  template_confirm_delete_description,
+  template_confirm_delete_cancel,
+  template_confirm_delete_continue,
+  template_name_required,
+  template_variables_description,
+  template_label,
+} from "../../paraglide/messages";
 
 // Define the form schema using zod
 const formSchema = z.object({
   id: z.string().optional(),
-  name: z.string().min(1, "Name is required"),
+  name: z.string().min(1, template_name_required()),
   description: z.string().optional(),
   systemPrompt: z.string().optional(),
   template: z.string().optional(), // Remove min validation
@@ -289,13 +307,10 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Name</FormLabel>
+                      <FormLabel>{template_name()}</FormLabel>
                       <FormControl>
-                        <Input placeholder="" {...field} />
+                        <Input placeholder="My Template" {...field} />
                       </FormControl>
-                      <FormDescription>
-                        A descriptive name for this prompt template
-                      </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -326,17 +341,14 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
                 name="description"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Description</FormLabel>
+                    <FormLabel>{template_description()}</FormLabel>
                     <FormControl>
                       <Textarea
-                        placeholder=""
+                        placeholder="A brief description of what this template does"
                         className="resize-none"
                         {...field}
                       />
                     </FormControl>
-                    <FormDescription>
-                      A brief explanation of what this template does
-                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -347,17 +359,14 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
                 name="systemPrompt"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>System Prompt</FormLabel>
+                    <FormLabel>{template_system_prompt()}</FormLabel>
                     <FormControl>
                       <Textarea
-                        placeholder=""
-                        className="min-h-[100px] resize-none"
+                        placeholder="You are a helpful assistant..."
+                        className="min-h-[200px] resize-none font-mono text-sm"
                         {...field}
                       />
                     </FormControl>
-                    <FormDescription>
-                      The system instructions for the AI model
-                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -368,7 +377,7 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
                 name="template"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Template</FormLabel>
+                    <FormLabel>{template_label()}</FormLabel>
                     <FormControl>
                       <Textarea
                         placeholder="Write a short story about {character} in a {setting}."
@@ -377,8 +386,7 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
                       />
                     </FormControl>
                     <FormDescription>
-                      The template with variables in single curly braces:{" "}
-                      {/* { variable } */}
+                      {template_variables_description()}
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -386,7 +394,7 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
               />
 
               <div>
-                <FormLabel>Variables</FormLabel>
+                <FormLabel>{template_variables()}</FormLabel>
                 <div className="mt-2 mb-4 flex flex-wrap gap-2">
                   {form.watch("variables")?.map((variable) => (
                     <Badge key={variable} variant="secondary">
@@ -484,18 +492,17 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogTitle>{template_confirm_delete()}</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the
-              prompt template.
+              {template_confirm_delete_description()}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel onClick={() => setShowDeleteDialog(false)}>
-              Cancel
+              {template_confirm_delete_cancel()}
             </AlertDialogCancel>
             <AlertDialogAction onClick={confirmDelete}>
-              Delete
+              {template_confirm_delete_continue()}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

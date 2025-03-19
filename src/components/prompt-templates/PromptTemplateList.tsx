@@ -19,6 +19,11 @@ import { ScrollArea } from "@components/ui/scroll-area.tsx";
 import { Separator } from "@components/ui/separator.tsx";
 import { cn } from "@lib/utils";
 import { useAppService } from "@lib/hooks/useAppService";
+import {
+  template_new,
+  loading_templates,
+  error_loading_templates,
+} from "../../paraglide/messages";
 
 interface PromptTemplateListProps {
   onSelect: (promptTemplate: PromptTemplate) => void;
@@ -123,11 +128,17 @@ const PromptTemplateList = forwardRef<
           </Button>
         </div>
         <Button onClick={onNew} className="w-full">
-          <Plus className="mr-2 h-4 w-4" />
-          Create New Template
+          {template_new()}
         </Button>
 
-        {error && <p className="text-destructive text-sm">{error}</p>}
+        {loading && (
+          <div className="py-4 text-center">{loading_templates()}</div>
+        )}
+        {error && (
+          <div className="py-4 text-center text-red-500">
+            {error_loading_templates()}
+          </div>
+        )}
 
         <ScrollArea className="flex-1 rounded-md border">
           {loading ? (

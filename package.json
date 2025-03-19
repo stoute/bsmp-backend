@@ -79,6 +79,7 @@
     "sharp": "^0.33.2",
     "shiki": "^3.1.0",
     "solid-js": "^1.8.15",
+    "sonner": "^2.0.1",
     "tailwind-merge": "^2.2.2",
     "typescript": "^5.4.2",
     "uuid": "^11.1.0",
@@ -87,13 +88,13 @@
   },
   "devDependencies": {
     "@iconify-json/mdi": "^1.2.3",
+    "@inlang/cli": "^3.0.0",
+    "@inlang/paraglide-js": "2.0.1",
     "autoprefixer": "^10.4.20",
     "postcss": "^8.5.3",
     "prettier": "^3.5.1",
     "prettier-plugin-astro": "^0.14.1",
     "prettier-plugin-tailwindcss": "^0.6.11",
-    "tailwindcss": "^4.0.8",
-    "@inlang/paraglide-js": "2.0.1",
-    "@inlang/cli": "^3.0.0"
+    "tailwindcss": "^4.0.8"
   }
 }

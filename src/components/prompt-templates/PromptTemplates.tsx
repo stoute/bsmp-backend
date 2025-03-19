@@ -5,6 +5,15 @@ import { appState } from "@lib/appStore";
 import type { PromptTemplate } from "@lib/ai/types";
 import { useAppService } from "@lib/hooks/useAppService";
 import { PromptTemplateFactory } from "@lib/ai/prompt-templates/PromptTemplateFactory.ts";
+import { toast } from "@/lib/toast"; // Fixed import path
+import {
+  template_saved,
+  template_deleted,
+  template_duplicated,
+  template_error_saving,
+  template_error_deleting,
+  template_error_duplicating,
+} from "../../paraglide/messages";
 
 interface PromptTemplatesProps {
   initialTemplate?: PromptTemplate;
@@ -51,8 +60,16 @@ const PromptTemplates: React.FC<PromptTemplatesProps> = ({
       // After list refresh, ensure the template is still selected
       setSelectedTemplate(template);
       setSelectedId(template.id);
+      toast({
+        title: template_saved(),
+        variant: "default",
+      });
     } catch (error) {
-      console.error("Error handling template save:", error);
+      console.error("Error saving template:", error);
+      toast({
+        title: template_error_saving(),
+        variant: "destructive",
+      });
     }
   };
 
@@ -63,6 +80,10 @@ const PromptTemplates: React.FC<PromptTemplatesProps> = ({
     if (listRef.current) {
       await listRef.current.fetchPromptTemplates();
     }
+    toast({
+      title: template_deleted(),
+      variant: "default",
+    });
   };
 
   const handleDuplicateTemplate = async (template: PromptTemplate) => {
@@ -73,6 +94,10 @@ const PromptTemplates: React.FC<PromptTemplatesProps> = ({
     if (listRef.current) {
       await listRef.current.fetchPromptTemplates();
     }
+    toast({
+      title: template_duplicated(),
+      variant: "default",
+    });
   };
 
   // Effects after all hooks and function definitions
