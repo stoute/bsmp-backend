@@ -59,6 +59,5 @@
   "template_updated": "Template updated",
   "template_create_new": "Create New Prompt Template",
   "template_edit": "Edit Prompt Template",
-  "template_list_title": "Prompt Templates",
-  "template_list_description": "Select a template to edit or create a new one"
+  "template_list_title": "Prompt Templates"
 }

@@ -59,6 +59,5 @@
   "template_updated": "Vorlage aktualisiert",
   "template_create_new": "Neue Prompt-Vorlage erstellen",
   "template_edit": "Prompt-Vorlage bearbeiten",
-  "template_list_title": "Prompt-Vorlagen",
-  "template_list_description": "Wählen Sie eine Vorlage zum Bearbeiten aus oder erstellen Sie eine neue"
+  "template_list_title": "Prompt-Vorlagen"
 }

@@ -59,6 +59,5 @@
   "template_updated": "Sjabloon bijgewerkt",
   "template_create_new": "Nieuwe Prompt Sjabloon maken",
   "template_edit": "Prompt Sjabloon bewerken",
-  "template_list_title": "Prompt Sjablonen",
-  "template_list_description": "Selecteer een sjabloon om te bewerken of maak een nieuwe aan"
+  "template_list_title": "Prompt Sjablonen"
 }
