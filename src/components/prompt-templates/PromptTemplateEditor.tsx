@@ -452,7 +452,7 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
                           disabled={loading}
                         >
                           <Trash2 className="mr-2 h-4 w-4" />
-                          Delete
+                          {template_delete()}
                         </Button>
                       )}
                       <Button
@@ -462,7 +462,7 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
                         disabled={loading}
                       >
                         <Copy className="mr-2 h-4 w-4" />
-                        Duplicate
+                        {template_duplicate()}
                       </Button>
                     </div>
                   )}
@@ -474,12 +474,12 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
                         onClick={onCancel}
                         disabled={loading}
                       >
-                        Cancel
+                        {template_cancel()}
                       </Button>
                     )}
                     <Button type="submit" disabled={loading}>
                       <Save className="mr-2 h-4 w-4" />
-                      {isNew ? "Create" : "Update"}
+                      {isNew ? template_save() : template_save()}
                     </Button>
                   </div>
                 </div>
