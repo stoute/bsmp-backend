@@ -65,5 +65,10 @@
   "template_system_prompt_placeholder": "De systeemprompt die het LLM zal gebruiken voor het sjabloon",
   "template_template_placeholder": "Het sjabloon met variabelen in enkele accolades",
   "template_variable_placeholder": "variabele_naam",
-  "template_add_variable": "Toevoegen"
+  "template_add_variable": "Toevoegen",
+
+  "search_templates_placeholder": "Zoek sjablonen...",
+  "refresh_templates_title": "Sjablonen vernieuwen",
+  "no_templates_match_search": "Geen sjablonen gevonden voor je zoekopdracht",
+  "no_templates_found": "Geen sjablonen gevonden"
 }

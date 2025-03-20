@@ -24,6 +24,10 @@ import {
   loading_templates,
   error_loading_templates,
   template_list_title,
+  search_templates_placeholder,
+  refresh_templates_title,
+  no_templates_match_search,
+  no_templates_found,
 } from "../../paraglide/messages";
 
 interface PromptTemplateListProps {
@@ -107,7 +111,7 @@ const PromptTemplateList = forwardRef<
           <div className="relative flex-1">
             <Search className="text-muted-foreground absolute top-2.5 left-2 h-4 w-4" />
             <Input
-              placeholder="Search templates..."
+              placeholder={search_templates_placeholder()}
               className="pl-8"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -118,7 +122,7 @@ const PromptTemplateList = forwardRef<
             variant="outline"
             onClick={fetchPromptTemplates}
             disabled={loading}
-            title="Refresh templates"
+            title={refresh_templates_title()}
           >
             <RefreshCw
               className={`h-4 w-4 opacity-50 ${loading ? "animate-spin" : ""}`}
@@ -149,8 +153,8 @@ const PromptTemplateList = forwardRef<
               {!loading && filteredTemplates.length === 0 ? (
                 <div className="text-muted-foreground p-4 text-center">
                   {searchTerm
-                    ? "No templates match your search"
-                    : "No templates found"}
+                    ? no_templates_match_search()
+                    : no_templates_found()}
                 </div>
               ) : (
                 <div className="space-y-1">
