@@ -59,5 +59,11 @@
   "template_updated": "Vorlage aktualisiert",
   "template_create_new": "Neue Prompt-Vorlage erstellen",
   "template_edit": "Prompt-Vorlage bearbeiten",
-  "template_list_title": "Prompt-Vorlagen"
+  "template_list_title": "Prompt-Vorlagen",
+  "template_name_placeholder": "Vorlagenname",
+  "template_description_placeholder": "Eine kurze Beschreibung, was diese Vorlage macht",
+  "template_system_prompt_placeholder": "Der Systemprompt, den das LLM für die Vorlage verwenden wird",
+  "template_template_placeholder": "Die Vorlage mit Variablen in einfachen geschweiften Klammern",
+  "template_variable_placeholder": "variable_name",
+  "template_add_variable": "Hinzufügen"
 }

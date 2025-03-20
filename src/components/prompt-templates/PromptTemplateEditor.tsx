@@ -67,6 +67,12 @@ import {
   template_error_saving,
   template_create_new,
   template_edit,
+  template_name_placeholder,
+  template_description_placeholder,
+  template_system_prompt_placeholder,
+  template_template_placeholder,
+  template_variable_placeholder,
+  template_add_variable,
 } from "../../paraglide/messages";
 
 // Define the form schema using zod
@@ -403,7 +409,10 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
                     <FormItem>
                       <FormLabel>{template_name()}</FormLabel>
                       <FormControl>
-                        <Input placeholder="Template Name" {...field} />
+                        <Input
+                          placeholder={template_name_placeholder()}
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -435,7 +444,7 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
                     <FormLabel>{template_description()}</FormLabel>
                     <FormControl>
                       <Textarea
-                        placeholder="A brief description of what this template does"
+                        placeholder={template_description_placeholder()}
                         className="resize-none"
                         {...field}
                       />
@@ -453,7 +462,7 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
                     <FormLabel>{template_system_prompt()}</FormLabel>
                     <FormControl>
                       <Textarea
-                        placeholder="The system prompt that the LLM wil use for the template"
+                        placeholder={template_system_prompt_placeholder()}
                         className="min-h-[200px] resize-none font-mono text-sm"
                         {...field}
                       />
@@ -471,7 +480,7 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
                     <FormLabel>{template_label()}</FormLabel>
                     <FormControl>
                       <Textarea
-                        placeholder="The template with variables in single curly braces"
+                        placeholder={template_template_placeholder()}
                         className="min-h-[100px] resize-none"
                         {...field}
                       />
@@ -502,7 +511,7 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
                 </div>
                 <div className="flex gap-2">
                   <Input
-                    placeholder="variable_name"
+                    placeholder={template_variable_placeholder()}
                     value={variableInput}
                     onChange={(e) => setVariableInput(e.target.value)}
                     onKeyDown={(e) => {
@@ -519,7 +528,7 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
                     disabled={!variableInput.trim()}
                   >
                     <Plus className="mr-2 h-4 w-4" />
-                    Add
+                    {template_add_variable()}
                   </Button>
                 </div>
                 {form.formState.errors.variables && (

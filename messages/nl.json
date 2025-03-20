@@ -59,5 +59,11 @@
   "template_updated": "Sjabloon bijgewerkt",
   "template_create_new": "Nieuwe Prompt Sjabloon maken",
   "template_edit": "Prompt Sjabloon bewerken",
-  "template_list_title": "Prompt Sjablonen"
+  "template_list_title": "Prompt Sjablonen",
+  "template_name_placeholder": "Sjabloonnaam",
+  "template_description_placeholder": "Een korte beschrijving van wat dit sjabloon doet",
+  "template_system_prompt_placeholder": "De systeemprompt die het LLM zal gebruiken voor het sjabloon",
+  "template_template_placeholder": "Het sjabloon met variabelen in enkele accolades",
+  "template_variable_placeholder": "variabele_naam",
+  "template_add_variable": "Toevoegen"
 }
