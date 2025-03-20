@@ -1,56 +1,138 @@
 ---
-import { LINKS_AUTHENTICATED, LINKS_ADMIN } from "@/consts";
-import { cn } from "@/lib/utils";
-import { useUser } from "@/lib/useUser";
-// Import Paraglide messages
-import { prompts, contact, about, projects, blog } from "../paraglide/messages";
+import { SITE, LINKS, LINKS_AUTHENTICATED, SOCIALS } from "@consts";
+import { cn } from "@lib/utils";
+const { pathname } = Astro.url;
+const subpath = pathname.match(/[^/]+/g);
 
-// Map the link text to the corresponding message function
-const linkTextMap = {
-  Prompts: prompts,
-  Contact: contact,
-  About: about,
-  Projects: projects,
-  Blog: blog,
-};
+const EMAIL: any = SOCIALS.find((SOCIAL) => SOCIAL.NAME === "Email");
+const environment: string = import.meta.env.MODE;
 
-// Get user if available
-const user = Astro.locals.user;
+// Handle links based on environment
+const navigationLinks = LINKS;
 ---
 
 <div
   id="drawer"
-  class="fixed top-14 -left-full z-40 h-[calc(100vh-3.5rem)] w-full overflow-y-auto bg-white p-4 transition-all duration-300 ease-in-out md:w-80 dark:bg-neutral-900"
+  class="fixed inset-0 z-40 flex h-0 flex-col items-center justify-center overflow-hidden bg-neutral-100 transition-[height] duration-300 ease-in-out md:hidden dark:bg-neutral-900"
 >
-  <nav class="flex flex-col gap-2">
+  <nav id="drawer-nav" class="flex flex-col items-center space-y-2">
     {
-      user &&
-        LINKS_AUTHENTICATED.map((link) => (
-          <a
-            href={link.HREF}
-            class={cn(
-              "flex items-center gap-2 rounded-md p-2",
-              "text-current hover:bg-black/5 dark:hover:bg-white/20",
-              "transition-colors duration-300 ease-in-out",
-            )}
-          >
-            {linkTextMap[link.TEXT] ? linkTextMap[link.TEXT]() : link.TEXT}
-          </a>
-        ))
-    }
-    {
-      LINKS_ADMIN.map((link) => (
+      navigationLinks.map((LINK) => (
         <a
-          href={link.HREF}
+          href={LINK.HREF}
           class={cn(
-            "flex items-center gap-2 rounded-md p-2",
-            "text-current hover:bg-black/5 dark:hover:bg-white/20",
+            "flex items-center justify-center rounded-full px-3 py-1",
+            "text-current hover:text-black dark:hover:text-white",
+            "hover:bg-black/5 dark:hover:bg-white/20",
             "transition-colors duration-300 ease-in-out",
+            pathname === LINK.HREF || "/" + subpath?.[0] === LINK.HREF
+              ? "bg-black text-white dark:bg-white dark:text-black"
+              : "",
           )}
         >
-          {linkTextMap[link.TEXT] ? linkTextMap[link.TEXT]() : link.TEXT}
+          {LINK.TEXT}
         </a>
       ))
     }
+    <!-- Authenticated links will be added here dynamically -->
   </nav>
+
+  <div class="mt-5 flex gap-1">
+    <a
+      href={EMAIL.HREF}
+      target="_blank"
+      aria-label={`${SITE.TITLE} on ${EMAIL.NAME}`}
+      class="group blend items-center justify-center rounded-full p-[0.8rem] hover:bg-black/5 md:flex dark:bg-white/20"
+    >
+      <svg
+        class="blend h-7 w-7 fill-current group-hover:fill-black dark:group-hover:fill-white"
+      >
+        <use href={`/social.svg#${EMAIL.ICON}`}></use>
+      </svg>
+    </a>
+
+    <!--<a href="/search" aria-label={`Search blog posts and projects on ${SITE.TITLE}`} class={cn("size-9 rounded-full p-2 items-center justify-center bg-transparent hover:bg-black/5 dark:hover:bg-white/20 stroke-current hover:stroke-black dark:hover:stroke-white border border-black/10 dark:border-white/25 transition-colors duration-300 ease-in-out", pathname === "/search" || "/" + subpath?.[0] === "search" ? "pointer-events-none bg-black dark:bg-white text-white dark:text-black" : "")}>-->
+    <!--  <svg class="size-full">-->
+    <!--    <use href="/ui.svg#search"></use>-->
+    <!--  </svg>-->
+    <!--</a>-->
+
+    <!--<a href="/rss.xml" target="_blank" aria-label={`Rss feed for ${SITE.TITLE}`} class="size-9 rounded-full p-2 items-center justify-center bg-transparent hover:bg-black/5 dark:hover:bg-white/20 stroke-current hover:stroke-black dark:hover:stroke-white border border-black/10 dark:border-white/25 transition-colors duration-300 ease-in-out">-->
+    <!--  <svg class="size-full">-->
+    <!--    <use href="/ui.svg#rss"></use>-->
+    <!--  </svg>-->
+    <!--</a>-->
+
+    <!--<button id="drawer-theme-button" aria-label={`Toggle light and dark theme`} class="size-9 rounded-full p-2 items-center justify-center bg-transparent hover:bg-black/5 dark:hover:bg-white/20 stroke-current hover:stroke-black dark:hover:stroke-white border border-black/10 dark:border-white/25 transition-colors duration-300 ease-in-out">-->
+    <!--  <svg class="block dark:hidden size-full">-->
+    <!--    <use href="/ui.svg#sun"></use>-->
+    <!--  </svg>-->
+    <!--  <svg class="hidden dark:block size-full">-->
+    <!--    <use href="/ui.svg#moon"></use>-->
+    <!--  </svg>-->
+    <!--</button>-->
+  </div>
 </div>
+
+<style>
+  #drawer.open {
+    @apply h-full;
+  }
+</style>
+
+<script define:vars={{ LINKS, LINKS_AUTHENTICATED }}>
+  // Function to update navigation links based on login state
+  function updateDrawerNavLinks() {
+    const drawerNav = document.getElementById("drawer-nav");
+    if (!drawerNav) return;
+
+    // Check if user is logged in
+    const isLoggedIn = localStorage.getItem("is-logged-in") === "true";
+
+    // Get current path for active state
+    const pathname = window.location.pathname;
+    const subpath = pathname.match(/[^/]+/g);
+
+    // Clear existing links
+    drawerNav.innerHTML = "";
+
+    // Determine which links to show
+    const linksToShow = isLoggedIn ? [...LINKS, ...LINKS_AUTHENTICATED] : LINKS;
+
+    // Add links to drawer
+    linksToShow.forEach((link) => {
+      const isActive =
+        pathname === link.HREF || "/" + subpath?.[0] === link.HREF;
+
+      const linkElement = document.createElement("a");
+      linkElement.href = link.HREF;
+      linkElement.className = `
+        flex items-center justify-center rounded-full px-3 py-1
+        text-current hover:text-black dark:hover:text-white
+        hover:bg-black/5 dark:hover:bg-white/20
+        transition-colors duration-300 ease-in-out
+        ${isActive ? "bg-black text-white dark:bg-white dark:text-black" : ""}
+      `;
+      linkElement.textContent = link.TEXT;
+
+      drawerNav.appendChild(linkElement);
+    });
+  }
+
+  // Initialize on page load
+  document.addEventListener("DOMContentLoaded", updateDrawerNavLinks);
+
+  // Update after Astro view transitions
+  document.addEventListener("astro:page-load", updateDrawerNavLinks);
+  document.addEventListener("astro:after-swap", updateDrawerNavLinks);
+
+  // Update when login state changes
+  window.addEventListener("login-state-changed", updateDrawerNavLinks);
+
+  // Update on storage events (for cross-tab synchronization)
+  window.addEventListener("storage", (event) => {
+    if (event.key === "is-logged-in") {
+      updateDrawerNavLinks();
+    }
+  });
+</script>
