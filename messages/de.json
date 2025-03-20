@@ -64,8 +64,8 @@
   "template_description_placeholder": "Eine kurze Beschreibung, was diese Vorlage macht",
   "template_system_prompt_placeholder": "Der Systemprompt, den das LLM für die Vorlage verwenden wird",
   "template_template_placeholder": "Die Vorlage mit Variablen in einfachen geschweiften Klammern",
+  "template_context_placeholder": "Hintergrundinformationen oder relevanter Kontext zur Anleitung des KI-Modells",
   "template_variable_placeholder": "variable_name",
-  "template_add_variable": "Hinzufügen",
 
   "search_templates_placeholder": "Vorlagen suchen...",
   "refresh_templates_title": "Vorlagen aktualisieren",

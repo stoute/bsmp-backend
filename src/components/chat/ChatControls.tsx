@@ -98,6 +98,7 @@ export default function ChatControls() {
         // Add all preset templates
         let presets: PromptTemplate[] = [];
         Object.keys(PRESET_TEMPLATES).map((key, index) => {
+          console.log(key);
           let boolean = true;
           // Hide development templates in production
           if (key.match("Development") && environment === "production") {

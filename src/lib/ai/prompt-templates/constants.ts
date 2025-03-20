@@ -30,6 +30,7 @@ export const TEMPLATE_TAGS = [
   "prompt-optimizer",
   "prompt-refiner",
   "prompt-writer",
+  "system-prompt-generator",
   "image-prompt-generator",
   "video-prompt-generator",
   "explainer",

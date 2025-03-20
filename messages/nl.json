@@ -64,6 +64,7 @@
   "template_description_placeholder": "Een korte beschrijving van wat dit sjabloon doet",
   "template_system_prompt_placeholder": "De systeemprompt die het LLM zal gebruiken voor het sjabloon",
   "template_template_placeholder": "Het sjabloon met variabelen in enkele accolades",
+  "template_context_placeholder": "Achtergrondinformatie of relevante context om het AI-model te begeleiden",
   "template_variable_placeholder": "variabele_naam",
   "template_add_variable": "Toevoegen",
 

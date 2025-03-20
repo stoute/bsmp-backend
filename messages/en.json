@@ -64,6 +64,7 @@
   "template_description_placeholder": "A brief description of what this template does",
   "template_system_prompt_placeholder": "The system prompt that the LLM will use for the template",
   "template_template_placeholder": "The template with variables in single curly braces",
+  "template_context_placeholder": "Background information or relevant context to guide the AI model",
   "template_variable_placeholder": "variable_name",
   "template_add_variable": "Add",
   "search_templates_placeholder": "Search templates...",
