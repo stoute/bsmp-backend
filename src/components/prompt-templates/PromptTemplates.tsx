@@ -5,7 +5,6 @@ import { appState } from "@lib/appStore";
 import type { PromptTemplate } from "@lib/ai/types";
 import { useAppService } from "@lib/hooks/useAppService";
 import { PromptTemplateFactory } from "@lib/ai/prompt-templates/PromptTemplateFactory.ts";
-// Removed toast-related imports
 
 interface PromptTemplatesProps {
   initialTemplate?: PromptTemplate;
@@ -130,7 +129,9 @@ const PromptTemplates: React.FC<PromptTemplatesProps> = ({
             onSave={handleSaveTemplate}
             onDelete={handleDeleteTemplate}
             onDuplicate={handleDuplicateTemplate}
-            onCancel={() => setSelectedTemplate(undefined)}
+            onCancel={() => {
+              // setSelectedTemplate(PromptTemplateFactory.createDefault());
+            }}
           />
         )}
       </div>

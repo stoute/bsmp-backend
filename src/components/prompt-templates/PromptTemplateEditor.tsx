@@ -6,6 +6,8 @@ import { Trash2, Save, Plus, AlertCircle, Copy } from "lucide-react";
 import type { PromptTemplate } from "@lib/ai/types.ts";
 import { appState } from "@lib/appStore";
 import { toast } from "../../lib/toast";
+import { persistentAtom } from "@nanostores/persistent";
+import { useStore } from "@nanostores/react";
 
 import {
   Form,
@@ -79,6 +81,16 @@ const formSchema = z.object({
   updated_at: z.string().optional(),
 });
 
+// Create a persistent store for the form state
+export const templateEditorState = persistentAtom<Record<string, any>>(
+  "template-editor-state:",
+  {},
+  {
+    encode: JSON.stringify,
+    decode: JSON.parse,
+  },
+);
+
 interface PromptTemplateEditorProps {
   apiEndPoint: string;
   promptTemplate?: PromptTemplate;
@@ -104,22 +116,85 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const { appService } = useAppService();
 
-  // Initialize form with default values or provided promptTemplate
+  // Get the current stored state
+  const storedState = useStore(templateEditorState);
+
+  // Log the incoming template data for debugging
+  useEffect(() => {
+    console.log("Prompt template received:", promptTemplate);
+  }, [promptTemplate]);
+
+  // Create a complete template object by merging with defaults
+  const getCompleteTemplate = (template) => {
+    if (!template) return PromptTemplateFactory.createDefault();
+
+    // Create a complete template with all required fields
+    const defaultTemplate = PromptTemplateFactory.createDefault();
+    return { ...defaultTemplate, ...template };
+  };
+
+  // Get stored template or create a complete one
+  const getInitialValues = () => {
+    if (promptTemplate?.id && storedState[promptTemplate.id]) {
+      // Log the stored state for debugging
+      console.log("Using stored state:", storedState[promptTemplate.id]);
+      return getCompleteTemplate(storedState[promptTemplate.id]);
+    }
+    return getCompleteTemplate(promptTemplate);
+  };
+
+  // Initialize form with complete values
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: promptTemplate || PromptTemplateFactory.createDefault(),
+    defaultValues: getInitialValues(),
   });
 
-  // Reset form when promptTemplate changes
+  // Store initial state for cancel functionality
+  const [initialState] = useState(getCompleteTemplate(promptTemplate));
+
+  // Reset form when template changes
   useEffect(() => {
     if (promptTemplate) {
-      form.reset(promptTemplate);
-      setIsNew(!promptTemplate.id);
-    } else {
-      form.reset(PromptTemplateFactory.createDefault());
-      setIsNew(true);
+      const values = getInitialValues();
+      console.log("Resetting form with values:", values);
+      form.reset(values);
+    }
+  }, [promptTemplate?.id]);
+
+  // Log form values for debugging
+  useEffect(() => {
+    const subscription = form.watch((value) => {
+      // console.log("Current form values:", value);
+    });
+    return () => subscription.unsubscribe();
+  }, [form]);
+
+  // Make sure all fields are properly registered
+  useEffect(() => {
+    // Explicitly register all fields to ensure they're tracked
+    if (promptTemplate) {
+      const template = getCompleteTemplate(promptTemplate);
+      Object.entries(template).forEach(([key, value]) => {
+        if (!form.getValues(key)) {
+          form.setValue(key, value);
+        }
+      });
     }
   }, [promptTemplate, form]);
+
+  // Update store when form changes
+  useEffect(() => {
+    const subscription = form.watch((value) => {
+      if (promptTemplate?.id && Object.keys(value).length > 0) {
+        templateEditorState.set({
+          ...storedState,
+          [promptTemplate.id]: value,
+        });
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [form, promptTemplate?.id, storedState]);
 
   // Handle form submission
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
@@ -296,6 +371,19 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
     );
   };
 
+  // Handle cancel - restore initial state and clear stored state
+  const handleCancel = () => {
+    form.reset(initialState);
+
+    if (promptTemplate?.id) {
+      const newState = { ...storedState };
+      delete newState[promptTemplate.id];
+      templateEditorState.set(newState);
+    }
+
+    if (onCancel) onCancel();
+  };
+
   return (
     <>
       <Card className="w-full">
@@ -315,7 +403,7 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
                     <FormItem>
                       <FormLabel>{template_name()}</FormLabel>
                       <FormControl>
-                        <Input placeholder="My Template" {...field} />
+                        <Input placeholder="Template Name" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -365,7 +453,7 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
                     <FormLabel>{template_system_prompt()}</FormLabel>
                     <FormControl>
                       <Textarea
-                        placeholder="You are a helpful assistant..."
+                        placeholder="The system prompt that the LLM wil use for the template"
                         className="min-h-[200px] resize-none font-mono text-sm"
                         {...field}
                       />
@@ -383,7 +471,7 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
                     <FormLabel>{template_label()}</FormLabel>
                     <FormControl>
                       <Textarea
-                        placeholder="Write a short story about {character} in a {setting}."
+                        placeholder="The template with variables in single curly braces"
                         className="min-h-[100px] resize-none"
                         {...field}
                       />
@@ -470,17 +558,20 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
                     </div>
                   )}
                   <div className="ml-auto flex gap-2">
-                    {onCancel && (
+                    {form.formState.isDirty && (
                       <Button
                         type="button"
                         variant="outline"
-                        onClick={onCancel}
+                        onClick={handleCancel}
                         disabled={loading}
                       >
                         {template_cancel()}
                       </Button>
                     )}
-                    <Button type="submit" disabled={loading}>
+                    <Button
+                      type="submit"
+                      disabled={loading || !form.formState.isDirty}
+                    >
                       <Save className="mr-2 h-4 w-4" />
                       {isNew ? template_save() : template_save()}
                     </Button>

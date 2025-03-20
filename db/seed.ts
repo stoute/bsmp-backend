@@ -17,6 +17,7 @@ const formatSeedTemplates = (templates: any) => {
 };
 
 export default async function () {
+  // @ts-ignore
   const adminEmail = import.meta.env.PUBLIC_ADMIN_EMAIL;
   // set some development user accounts
   await registerUser(adminEmail, "binnen", "admin");

@@ -127,6 +127,7 @@ const PromptTemplateList = forwardRef<
         </div>
         <Button onClick={onNew} className="w-full">
           {template_new()}
+          <Plus className="ml-2 h-4 w-4" />
         </Button>
 
         {loading && (

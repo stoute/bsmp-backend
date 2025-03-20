@@ -183,7 +183,7 @@ importers:
         specifier: ^2.2.2
         version: 2.6.0
       typescript:
-        specifier: ^5.4.2
+        specifier: ^5.8.2
         version: 5.8.2
       uuid:
         specifier: ^11.1.0
