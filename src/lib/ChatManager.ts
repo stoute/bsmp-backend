@@ -12,7 +12,6 @@ import {
 } from "@langchain/core/messages";
 import type { Message } from "@lib/ai/types";
 import { appService } from "@lib/appService.ts";
-import type { ChatSessionModel } from "@db/models";
 import { appState, openRouterModels } from "@lib/appStore";
 import {
   DEFAULT_MODEL,
@@ -25,6 +24,7 @@ import {
 } from "@lib/ai/prompt-templates/constants.ts";
 import { ChatParser } from "./ChatParser";
 import { defaultLLMConfig } from "@lib/ai/llm";
+import type { ChatSessionModel, PromptTemplateModel } from "@db/models";
 
 class ChatManager {
   private static instance: ChatManager;
@@ -34,7 +34,7 @@ class ChatManager {
   private chatPromptTemplate?: ChatPromptTemplate;
   private model: string;
   private unsubscribe: (() => void) | null = null;
-  public template?: PromptTemplate;
+  public template?: PromptTemplateModel;
   public messages: Message[] = [];
   public llmConfig: ChatOpenAI = defaultLLMConfig;
 
@@ -51,7 +51,7 @@ class ChatManager {
 
     this.model = appState.get().selectedModel || defaultModel;
     // initialize llm
-    this.llm = new ChatOpenAI({ ...defaultLLMConfig, model: this.model });
+    this.setLLM({ ...defaultLLMConfig, model: this.model });
     this.setupStateSubscription();
     this.restoreState();
     if (!appState.get().currentUser) {
@@ -73,7 +73,7 @@ class ChatManager {
     });
   }
 
-  public async init(template?: PromptTemplate) {
+  public async init(template?: PromptTemplateModel) {
     await this.restoreState();
 
     if (template) {
@@ -84,7 +84,17 @@ class ChatManager {
     }
   }
 
-  async setTemplate(template: PromptTemplate) {
+  public async setLLM(config: ChatOpenAI) {
+    this.llmConfig = config;
+    this.llm = new ChatOpenAI(this.llmConfig);
+    this.parser.llm = this.llm;
+  }
+
+  public getLLM(): ChatOpenAI {
+    return this.llm;
+  }
+
+  async setTemplate(template: PromptTemplateModel) {
     try {
       if (!template) {
         throw new Error("Template is required");
@@ -141,7 +151,7 @@ class ChatManager {
     this.cleanupSubscriptions();
     appState.setKey("currentChat", undefined);
     // define template
-    let template: PromptTemplate = undefined;
+    let template: PromptTemplateModel = undefined;
     if (templateId) {
       try {
         Object.values(PRESET_TEMPLATES).forEach((presetTemplate) => {
@@ -331,10 +341,7 @@ class ChatManager {
 
   private updateModel(newModel: string) {
     this.model = newModel;
-    // @ts-ignore
-    this.llmConfig = { ...this.llmConfig, model: newModel };
-
-    this.llm = new ChatOpenAI(this.llmConfig);
+    this.setLLM({ ...this.llmConfig, model: newModel });
     console.log("Updated model to: " + newModel);
     this.saveState();
   }
@@ -373,10 +380,6 @@ class ChatManager {
     }
     // Save the state
     this.saveState();
-  }
-
-  getLLM(): ChatOpenAI {
-    return this.llm;
   }
 
   isProcessing(): boolean {

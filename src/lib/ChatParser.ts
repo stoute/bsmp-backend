@@ -1,5 +1,4 @@
 import {
-  BaseMessage,
   HumanMessage,
   AIMessage,
   SystemMessage,
@@ -12,7 +11,7 @@ import {
 import { appState } from "./appStore";
 import type { PromptTemplate } from "@lib/ai/types";
 import type { Message } from "@lib/ai/types";
-import { DEFAULT_MODEL } from "@consts";
+import { ChatOpenAI } from "@langchain/openai";
 
 type MessageProcessor = (message: Message) => Message | null;
 type TemplateProcessor = (template: PromptTemplate) => PromptTemplate;
@@ -22,6 +21,7 @@ export class ChatParser {
   private messageProcessors: Map<string, MessageProcessor> = new Map();
   private templateProcessors: Map<string, TemplateProcessor> = new Map();
   private messageFilters: MessageFilter[] = [];
+  public llm: ChatOpenAI;
 
   constructor() {
     this.registerDefaultProcessors();
@@ -31,9 +31,7 @@ export class ChatParser {
     // Default system message processor
     this.registerMessageProcessor("system", (message: Message) => {
       if (message.getType() !== "system") return message;
-      // Checks if the system message contains code blocks (```), and if so,
-      // removes all code blocks from the system message to prevent code injection
-      // or unintended execution instructions in the system prompt
+      // Prevent code injection or unintended execution instructions in the system prompt
       const content = message.content.toString();
       if (content.includes("```")) {
         return new SystemMessage(content.replace(/```[\s\S]*?```/g, ""));
@@ -62,12 +60,8 @@ export class ChatParser {
     // Add default message filter
     this.addMessageFilter((message: Message) => {
       /*
-      The filter returns false for empty messages or messages containing only whitespace
-      Examples:
-        Input messages:
-        - new AIMessage("  ") -> filtered out (returns false)
-        - new AIMessage("") -> filtered out (returns false)
-        - new AIMessage("Hello world") -> kept (returns true)
+      Returns false for empty messages or messages containing only whitespace
+      to prevent sending empty messages to the LLM.
       */
       let content = message.content.toString();
       return content.length > 0 && content.trim() !== "";
@@ -149,7 +143,6 @@ export class ChatParser {
       description: template.description
         ? this.sanitizeTemplateContent(template.description)
         : undefined,
-      model: template.model || DEFAULT_MODEL, // Add model with default fallback
     };
   }
 

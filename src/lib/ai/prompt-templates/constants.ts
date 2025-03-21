@@ -31,6 +31,7 @@ export const TEMPLATE_TAGS = [
   "prompt-refiner",
   "prompt-writer",
   "system-prompt-generator",
+  "conversation-chain-generator",
   "image-prompt-generator",
   "video-prompt-generator",
   "explainer",
