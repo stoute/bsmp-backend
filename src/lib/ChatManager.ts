@@ -75,7 +75,6 @@ class ChatManager {
 
   public async init(template?: PromptTemplateModel) {
     await this.restoreState();
-
     if (template) {
       await this.setTemplate(template);
     } else {
