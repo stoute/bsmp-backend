@@ -1,15 +1,21 @@
+import { ChatOpenAI } from "@langchain/openai";
 import {
   ChatPromptTemplate,
   SystemMessagePromptTemplate,
   HumanMessagePromptTemplate,
 } from "@langchain/core/prompts";
-import type { PromptTemplate } from "@lib/ai/types";
+import type { Message, PromptTemplate } from "@lib/ai/types";
 import { chatMessageParser } from "./ChatMessageParser";
+import { type chatManager } from "./ChatManager";
+import { AIMessage, SystemMessage } from "@langchain/core/messages";
+import { DEFAULT_SYSTEM_MESSAGE } from "@consts.ts";
 
 type TemplateProcessor = (template: PromptTemplate) => PromptTemplate;
 
 export class PromptTemplateParser {
   private templateProcessors: Map<string, TemplateProcessor> = new Map();
+  public chatManager: typeof chatManager;
+  public llm: ChatOpenAI;
 
   constructor() {
     // No default template processors
@@ -61,6 +67,30 @@ export class PromptTemplateParser {
       SystemMessagePromptTemplate.fromTemplate(safeSystemPrompt);
     const humanMessageTemplate =
       HumanMessagePromptTemplate.fromTemplate(safeHumanPrompt);
+
+    // todo:
+    const systemMessage = new SystemMessage(
+      processedTemplate.systemPrompt || DEFAULT_SYSTEM_MESSAGE,
+    );
+    this.chatManager.replaceSystemMessage(systemMessage);
+    let messages: Message[] = [systemMessage];
+
+    // todo: custom description message
+    if (processedTemplate.description) {
+      const descriptionMessage = new AIMessage({
+        content: processedTemplate.description,
+        id: "template-description",
+        additional_kwargs: {
+          template,
+        },
+      });
+      descriptionMessage.getType = () => "template-description";
+      messages.push(descriptionMessage);
+    }
+    console.log("messages", messages);
+    this.chatManager.setMessages(messages);
+
+    // Create chat prompt template
 
     return ChatPromptTemplate.fromMessages([
       systemMessageTemplate,

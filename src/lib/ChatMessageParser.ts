@@ -47,11 +47,8 @@ export class ChatMessageParser {
 
     // Add default message filter
     this.addMessageFilter((message: Message) => {
-      /*
-      Returns false for empty messages or messages containing only whitespace
-      to prevent sending empty messages to the LLM.
-      */
       let content = message.content.toString();
+      // prevent sending empty messages to the LLM.
       return content.length > 0 && content.trim() !== "";
     });
   }
@@ -68,6 +65,8 @@ export class ChatMessageParser {
 
   // Process a single message
   public processMessage(message: Message, templateId?: string): Message | null {
+    console.log("Processing message:", message);
+
     // Apply template-specific processor if exists
     if (templateId && this.messageProcessors.has(templateId)) {
       const processed = this.messageProcessors.get(templateId)!(message);

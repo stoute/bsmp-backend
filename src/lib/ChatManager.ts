@@ -1,15 +1,6 @@
 import { ChatOpenAI } from "@langchain/openai";
-import {
-  ChatPromptTemplate,
-  SystemMessagePromptTemplate,
-  HumanMessagePromptTemplate,
-} from "@langchain/core/prompts";
-
-import {
-  HumanMessage,
-  SystemMessage,
-  AIMessage,
-} from "@langchain/core/messages";
+import { ChatPromptTemplate } from "@langchain/core/prompts";
+import { HumanMessage, SystemMessage } from "@langchain/core/messages";
 import type { Message } from "@lib/ai/types";
 import { appService } from "@lib/appService.ts";
 import { appState, openRouterModels } from "@lib/appStore";
@@ -22,14 +13,14 @@ import {
   DEFAULT_TEMPLATE_ID,
   PRESET_TEMPLATES,
 } from "@lib/ai/prompt-templates/constants.ts";
-import { ChatParser } from "./ChatParser";
+import { chatMessageParser } from "@lib/ChatMessageParser";
+import { promptTemplateParser } from "@lib/PromptTemplateParser";
 import { defaultLLMConfig } from "@lib/ai/llm";
 import type { ChatSessionModel, PromptTemplateModel } from "@db/models";
 
 class ChatManager {
   private static instance: ChatManager;
   private llm: ChatOpenAI;
-  private parser: ChatParser;
   private isLoading: boolean = false;
   private chatPromptTemplate?: ChatPromptTemplate;
   private model: string;
@@ -39,10 +30,10 @@ class ChatManager {
   public llmConfig: ChatOpenAI = defaultLLMConfig;
 
   private constructor() {
-    this.parser = new ChatParser();
+    promptTemplateParser.chatManager = this;
     // Register any custom processors needed
-    this.parser.registerCodeProcessor();
-    this.parser.registerDocumentationTemplateProcessor();
+    chatMessageParser.registerCodeProcessor();
+    promptTemplateParser.registerDocumentationTemplateProcessor();
 
     let defaultModel = DEFAULT_MODEL;
     if (appState.get().environment === "production") {
@@ -60,19 +51,6 @@ class ChatManager {
     console.log("ChatManager initialized");
   }
 
-  private setupStateSubscription() {
-    this.unsubscribe = appState.subscribe((state) => {
-      // Only update model if it's different and not already being updated
-      if (
-        state.selectedModel &&
-        state.selectedModel !== this.model &&
-        state.selectedModel !== appState.get().currentChat?.metadata.model
-      ) {
-        this.updateModel(state.selectedModel);
-      }
-    });
-  }
-
   public async init(template?: PromptTemplateModel) {
     await this.restoreState();
     if (template) {
@@ -86,7 +64,7 @@ class ChatManager {
   public async setLLM(config: ChatOpenAI) {
     this.llmConfig = config;
     this.llm = new ChatOpenAI(this.llmConfig);
-    this.parser.llm = this.llm;
+    promptTemplateParser.llm = this.llm;
   }
 
   public getLLM(): ChatOpenAI {
@@ -98,37 +76,19 @@ class ChatManager {
       if (!template) {
         throw new Error("Template is required");
       }
-      // todo:Process the template
-      const processedTemplate = this.parser.processTemplate(template);
+      // Process the template
+      const processedTemplate = promptTemplateParser.processTemplate(template);
       this.template = processedTemplate;
-
-      // Create chat prompt template
       this.chatPromptTemplate =
-        this.parser.createChatPromptTemplate(processedTemplate);
-
-      // Process messages
+        promptTemplateParser.createChatPromptTemplate(processedTemplate);
+      // Process the messages
+      this.messages = chatMessageParser.processMessages(
+        this.messages,
+        template.id,
+      );
+      // Update the state
       this.cleanupSubscriptions();
       this.setupStateSubscription();
-      const systemMessage = new SystemMessage(
-        processedTemplate.systemPrompt || DEFAULT_SYSTEM_MESSAGE,
-      );
-      this.replaceSystemMessage(systemMessage);
-      let messages: Message[] = [systemMessage];
-
-      // custom description message
-      if (processedTemplate.description) {
-        const descriptionMessage = new AIMessage({
-          content: processedTemplate.description,
-          id: "template-description",
-          additional_kwargs: {
-            template,
-          },
-        });
-        descriptionMessage.getType = () => "template-description";
-        messages.push(descriptionMessage);
-      }
-      // todo:Process and filter messages
-      this.messages = this.parser.processMessages(messages, template.id);
       this.saveState();
       return this.messages;
     } catch (error) {
@@ -139,10 +99,58 @@ class ChatManager {
     }
   }
 
+  async handleUserInput(input: string) {
+    if (!input || this.isLoading) return;
+
+    this.isLoading = true;
+    try {
+      // Process the input
+      let processedInput = input;
+      const userMessage = new HumanMessage(processedInput);
+      const processedMessage = chatMessageParser.processMessage(
+        userMessage,
+        this.template?.id,
+      );
+      if (!processedMessage) {
+        throw new Error("Message was filtered out by parser");
+      }
+      this.messages.push(processedMessage);
+
+      // Filter out custom template messages before sending to LLM
+      const validMessages = this.messages.filter((msg) => {
+        const type = msg.getType();
+        return type !== "template-description";
+      });
+
+      if (validMessages.length === 0) {
+        throw new Error("No valid messages to process");
+      }
+      // Invoke the LLM
+      const response = await this.llm.invoke(validMessages);
+      if (response) {
+        const processedResponse = chatMessageParser.processMessage(
+          response,
+          this.template?.id,
+        );
+        if (processedResponse) {
+          this.messages.push(processedResponse);
+          // this.saveState();
+        }
+      }
+      return response;
+    } catch (error) {
+      console.error("Error in chat:", error);
+      this.messages.pop();
+      throw error;
+    } finally {
+      this.saveState();
+      this.isLoading = false;
+    }
+  }
+
   async newChat(templateId?: string) {
     // Early return if running on server
     if (typeof window === "undefined") return;
-
     if (!templateId) {
       templateId = DEFAULT_TEMPLATE_ID;
     }
@@ -289,53 +297,17 @@ class ChatManager {
     }
   }
 
-  async handleUserInput(input: string, variables?: Record<string, string>) {
-    if (!input.trim()) return null;
-
-    this.isLoading = true;
-    try {
-      // Process the input
-      let processedInput = input;
-      const userMessage = new HumanMessage(processedInput);
-      const processedMessage = this.parser.processMessage(
-        userMessage,
-        this.template?.id,
-      );
-      if (!processedMessage) {
-        throw new Error("Message was filtered out by parser");
+  private setupStateSubscription() {
+    this.unsubscribe = appState.subscribe((state) => {
+      // Only update model if it's different and not already being updated
+      if (
+        state.selectedModel &&
+        state.selectedModel !== this.model &&
+        state.selectedModel !== appState.get().currentChat?.metadata.model
+      ) {
+        this.updateModel(state.selectedModel);
       }
-      this.messages.push(processedMessage);
-
-      // Filter out custom template messages before sending to LLM
-      const validMessages = this.messages.filter((msg) => {
-        const type = msg.getType();
-        return type !== "template-description";
-      });
-
-      if (validMessages.length === 0) {
-        throw new Error("No valid messages to process");
-      }
-      // Invoke the LLM
-      const response = await this.llm.invoke(validMessages);
-      if (response) {
-        const processedResponse = this.parser.processMessage(
-          response,
-          this.template?.id,
-        );
-        if (processedResponse) {
-          this.messages.push(processedResponse);
-          // this.saveState();
-        }
-      }
-      return response;
-    } catch (error) {
-      console.error("Error in chat:", error);
-      this.messages.pop();
-      throw error;
-    } finally {
-      this.saveState();
-      this.isLoading = false;
-    }
+    });
   }
 
   private updateModel(newModel: string) {
