@@ -63,39 +63,41 @@ export class PromptTemplateParser {
     const safeSystemPrompt = this.makeTemplateSafe(systemPrompt);
     const safeHumanPrompt = this.makeTemplateSafe(humanPromptTemplate);
 
-    const systemMessageTemplate =
-      SystemMessagePromptTemplate.fromTemplate(safeSystemPrompt);
+    const systemMessageTemplate = SystemMessagePromptTemplate.fromTemplate(
+      safeSystemPrompt || DEFAULT_SYSTEM_MESSAGE,
+    );
     const humanMessageTemplate =
       HumanMessagePromptTemplate.fromTemplate(safeHumanPrompt);
 
-    // todo:
+    // fixme: use
     const systemMessage = new SystemMessage(
       processedTemplate.systemPrompt || DEFAULT_SYSTEM_MESSAGE,
     );
     this.chatManager.replaceSystemMessage(systemMessage);
     let messages: Message[] = [systemMessage];
 
-    // todo: custom description message
+    // fixme:: custom description message
     if (processedTemplate.description) {
       const descriptionMessage = new AIMessage({
         content: processedTemplate.description,
-        id: "template-description",
+        id: "ai-template-description",
         additional_kwargs: {
           template,
         },
       });
-      descriptionMessage.getType = () => "template-description";
+      descriptionMessage.getType = () => "ai-template-description";
       messages.push(descriptionMessage);
     }
     console.log("messages", messages);
     this.chatManager.setMessages(messages);
 
     // Create chat prompt template
-
-    return ChatPromptTemplate.fromMessages([
+    const chatPromptTemplate = ChatPromptTemplate.fromMessages([
       systemMessageTemplate,
       humanMessageTemplate,
     ]);
+    console.log(chatPromptTemplate);
+    return chatPromptTemplate;
   }
 
   private makeTemplateSafe(template: string): string {

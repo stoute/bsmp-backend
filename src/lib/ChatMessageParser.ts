@@ -86,13 +86,20 @@ export class ChatMessageParser {
     for (const filter of this.messageFilters) {
       if (!filter(message)) return null;
     }
-
     return message;
   }
 
   // Process an array of messages
   public processMessages(messages: Message[], templateId?: string): Message[] {
-    return messages.filter((msg) => true);
+    // Custom message types that should be excluded when sending to LLM
+    const customMessageTypes = ["ai-template-description"];
+
+    return messages
+      .filter(
+        (msg) => msg && !customMessageTypes.includes(msg.getType?.() || ""),
+      )
+      .map((msg) => this.processMessage(msg, templateId))
+      .filter((msg): msg is Message => msg !== null);
   }
 
   // Example of adding a custom processor for code-related messages

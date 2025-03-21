@@ -116,11 +116,11 @@ class ChatManager {
       }
       this.messages.push(processedMessage);
 
-      // Filter out custom template messages before sending to LLM
-      const validMessages = this.messages.filter((msg) => {
-        const type = msg.getType();
-        return type !== "template-description";
-      });
+      // Use chatMessageParser to filter and process messages
+      const validMessages = chatMessageParser.processMessages(
+        this.messages,
+        this.template?.id,
+      );
 
       if (validMessages.length === 0) {
         throw new Error("No valid messages to process");
