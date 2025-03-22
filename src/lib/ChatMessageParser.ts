@@ -47,9 +47,9 @@ export class ChatMessageParser {
 
     // Add default message filter
     this.addMessageFilter((message: Message) => {
-      let content = message.content.toString();
+      let content = message.content?.toString();
       // prevent sending empty messages to the LLM.
-      return content.length > 0 && content.trim() !== "";
+      return content?.length > 0 && content?.trim() !== "";
     });
   }
 
@@ -65,7 +65,16 @@ export class ChatMessageParser {
 
   // Process a single message
   public processMessage(message: Message, templateId?: string): Message | null {
-    console.log("Processing message:", message);
+    if (!message) return null;
+    if (typeof message.getType === "function") {
+      message.additional_kwargs = {
+        ...message.additional_kwargs,
+        type: message.getType(),
+      };
+    } else {
+      message.getType = (): string => message.additional_kwargs?.type;
+      //message = new HumanMessage(message);
+    }
 
     // Apply template-specific processor if exists
     if (templateId && this.messageProcessors.has(templateId)) {
@@ -86,6 +95,12 @@ export class ChatMessageParser {
     for (const filter of this.messageFilters) {
       if (!filter(message)) return null;
     }
+    // console.log("");
+    // console.log("processMessage() => ", message);
+    // console.log("msg.getType() => ", message.getType());
+    // console.log("msgadditional_kwargs => ", message.additional_kwargs);
+    // console.log("msg.role => ", message.role);
+    // console.log("");
     return message;
   }
 
@@ -93,7 +108,6 @@ export class ChatMessageParser {
   public processMessages(messages: Message[], templateId?: string): Message[] {
     // Custom message types that should be excluded when sending to LLM
     const customMessageTypes = ["ai-template-description"];
-
     return messages
       .filter(
         (msg) => msg && !customMessageTypes.includes(msg.getType?.() || ""),

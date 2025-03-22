@@ -17,6 +17,7 @@ import { chatMessageParser } from "@lib/ChatMessageParser";
 import { promptTemplateParser } from "@lib/PromptTemplateParser";
 import { defaultLLMConfig } from "@lib/ai/llm";
 import type { ChatSessionModel, PromptTemplateModel } from "@db/models";
+import { deserializeMessagesToJSON } from "@lib/ai/langchain/utils";
 
 class ChatManager {
   private static instance: ChatManager;
@@ -39,7 +40,6 @@ class ChatManager {
     if (appState.get().environment === "production") {
       defaultModel = DEFAULT_MODEL_FREE;
     }
-
     this.model = appState.get().selectedModel || defaultModel;
     // initialize llm
     this.setLLM({ ...defaultLLMConfig, model: this.model });
@@ -61,31 +61,18 @@ class ChatManager {
     }
   }
 
-  public async setLLM(config: ChatOpenAI) {
-    this.llmConfig = config;
-    this.llm = new ChatOpenAI(this.llmConfig);
-    promptTemplateParser.llm = this.llm;
-  }
-
-  public getLLM(): ChatOpenAI {
-    return this.llm;
-  }
-
   async setTemplate(template: PromptTemplateModel) {
     try {
       if (!template) {
         throw new Error("Template is required");
       }
-      // Process the template
-      const processedTemplate = promptTemplateParser.processTemplate(template);
-      this.template = processedTemplate;
-      this.chatPromptTemplate =
-        promptTemplateParser.createChatPromptTemplate(processedTemplate);
-      // Process the messages
-      this.messages = chatMessageParser.processMessages(
-        this.messages,
-        template.id,
+      this.template = promptTemplateParser.processTemplate(template);
+      // todo: implement
+      this.chatPromptTemplate = promptTemplateParser.createChatPromptTemplate(
+        this.template,
       );
+      await promptTemplateParser.renderTemplate(this.template);
+
       // Update the state
       this.cleanupSubscriptions();
       this.setupStateSubscription();
@@ -121,6 +108,7 @@ class ChatManager {
         this.messages,
         this.template?.id,
       );
+      console.log("validMessages", validMessages);
 
       if (validMessages.length === 0) {
         throw new Error("No valid messages to process");
@@ -201,66 +189,45 @@ class ChatManager {
     }
   }
 
-  private async restoreState() {
-    const savedChat = appState.get().currentChat;
-    if (!savedChat) return;
-
-    // Check if we have a model in the saved chat metadata
-    if (savedChat.metadata && savedChat.metadata.model) {
-      this.model = savedChat.metadata.model;
-      appState.setKey("selectedModel", savedChat.metadata.model);
-    } else if (appState.get().selectedModel) {
-      // If no model in saved chat but we have one in appState, use that
-      this.model = appState.get().selectedModel;
-    }
-
-    if (savedChat?.metadata?.template) {
-      appState.setKey("selectedTemplateId", savedChat.metadata.template.id);
-      this.template = savedChat.metadata.template;
-    }
-
-    if (savedChat?.messages && Array.isArray(savedChat.messages)) {
-      const restoredMessages = savedChat.messages;
-      if (restoredMessages.length > 0) {
-        restoredMessages.forEach((msg: Message) => {
-          // @ts-ignore
-          msg.getType = () => msg.role;
-        });
-        this.messages = restoredMessages;
-      }
-    }
-  }
-
+  // fixme:
   private async saveState() {
-    const serializedMessages = this.messages.map((msg) => {
-      return { ...msg, ...{ role: msg.getType() } };
-    });
+    const serializedMessages = chatMessageParser.processMessages(this.messages);
+    const currentChat = appState.get().currentChat;
+
     let topic = "Chat template: " + this.template?.name;
     if (serializedMessages.length > 2)
       topic =
-        "Topic: " + serializedMessages[1]?.content.slice(0, 120 - 3) + "...";
+        "Topic: " + serializedMessages[1]?.content.slice(0, 60 - 3) + "...";
+    const metadata = {
+      topic,
+      model: this.model,
+      templateId: this.template?.id,
+      template: this.template,
+    };
     const chatState: Partial<ChatSessionModel> = {
       messages: serializedMessages,
-      metadata: {
-        topic,
-        model: this.model,
-        templateId: this.template?.id,
-        template: this.template,
-      },
+      metadata,
     };
-    // POST or PUT to db
-    const currentChat = appState.get().currentChat;
+    // POST or PUT to database
+
     const method = currentChat?.id ? "PUT" : "POST";
     let url = `${appState.get().apiBaseUrl}/sessions/index.json`;
     if (method === "PUT") url = url.replace("index", currentChat.id);
+    // fixme: hard coded logic ?
     if (this.messages.length > 2) {
+      const serializedMessages = deserializeMessagesToJSON(this.messages);
+      const body = {
+        ...chatState,
+        messages: serializedMessages,
+        metadata: { ...metadata, template: undefined },
+      };
       try {
         const response = await fetch(url, {
           method: method,
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(chatState),
+          body: JSON.stringify(body),
         });
 
         if (!response.ok) {
@@ -297,6 +264,41 @@ class ChatManager {
     }
   }
 
+  private async restoreState() {
+    const savedChat = appState.get().currentChat;
+    if (!savedChat) return;
+    console.log("Restoring state: ", savedChat);
+
+    // Check if we have a model in the saved chat metadata
+    console.log("meta", savedChat.metadata);
+    // console.log('additional_kwargs',savedChat.additional_kwargs);
+    if (savedChat.metadata && savedChat.metadata.model) {
+      this.model = savedChat.metadata.model;
+      appState.setKey("selectedModel", savedChat.metadata.model);
+    } else if (appState.get().selectedModel) {
+      // If no model in saved chat but we have one in appState, use that
+      this.model = appState.get().selectedModel;
+    }
+
+    if (savedChat?.metadata?.template) {
+      appState.setKey("selectedTemplateId", savedChat.metadata.template.id);
+      this.template = savedChat.metadata.template;
+    }
+
+    if (savedChat?.messages && Array.isArray(savedChat.messages)) {
+      const restoredMessages = savedChat.messages;
+      if (restoredMessages.length > 0) {
+        restoredMessages.forEach((msg: Message) => {
+          chatMessageParser.processMessage(msg, this.template?.id);
+          // console.log(msg?.kwargs);
+        });
+        console.log("Restored messages: ", restoredMessages);
+        // await this.llm.invoke(restoredMessages);
+        this.messages = restoredMessages;
+      }
+    }
+  }
+
   private setupStateSubscription() {
     this.unsubscribe = appState.subscribe((state) => {
       // Only update model if it's different and not already being updated
@@ -315,6 +317,16 @@ class ChatManager {
     this.setLLM({ ...this.llmConfig, model: newModel });
     console.log("Updated model to: " + newModel);
     this.saveState();
+  }
+
+  public async setLLM(config: ChatOpenAI) {
+    this.llmConfig = config;
+    this.llm = new ChatOpenAI(this.llmConfig);
+    promptTemplateParser.llm = this.llm;
+  }
+
+  public getLLM(): ChatOpenAI {
+    return this.llm;
   }
 
   getMessages(): Message[] {

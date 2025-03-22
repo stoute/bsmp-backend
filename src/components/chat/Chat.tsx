@@ -234,6 +234,11 @@ const MessageContent = memo(({ message }: { message: any }) => {
       : message.content?.toString() || "";
   if (!content) return null;
 
+  console.log(
+    "Chat.tsx: message.additional_kwargs",
+    message?.additional_kwargs,
+  );
+
   // custom description message
   const template: PromptTemplate = message.additional_kwargs.template;
   if (template?.description) {

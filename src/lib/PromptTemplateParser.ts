@@ -35,7 +35,6 @@ export class PromptTemplateParser {
     if (this.templateProcessors.has(template.id)) {
       template = this.templateProcessors.get(template.id)!(template);
     }
-
     // Apply default template processing
     return {
       ...template,
@@ -47,56 +46,50 @@ export class PromptTemplateParser {
     };
   }
 
+  // Render a template
+  public async renderTemplate(template: PromptTemplate) {
+    // Create system message
+    const sanitizedSystemPrompt = this.sanitizeTemplateContent(
+      template.systemPrompt || DEFAULT_SYSTEM_MESSAGE,
+    );
+    const systemMessage = new SystemMessage(sanitizedSystemPrompt);
+    // Create description message
+    let descriptionMessage: AIMessage | undefined;
+    if (template.description) {
+      descriptionMessage = new AIMessage({
+        content: template.description,
+        additional_kwargs: {
+          type: "ai-template-description",
+          template,
+        },
+      });
+    }
+    let messages: Message[] = [systemMessage, descriptionMessage];
+    this.chatManager.setMessages(messages);
+  }
+
   // Create a ChatPromptTemplate from PromptTemplate
   public createChatPromptTemplate(
     template: PromptTemplate,
   ): ChatPromptTemplate {
-    const processedTemplate = this.processTemplate(template);
-
     // First sanitize the content
-    const systemPrompt = this.sanitizeTemplateContent(
-      processedTemplate.systemPrompt,
-    );
-    const humanPromptTemplate = processedTemplate.template || "{input}";
-
+    const systemPrompt = this.sanitizeTemplateContent(template.systemPrompt);
+    const humanPromptTemplate = template.template || "{input}";
     // Create a safer version of the templates by properly escaping curly braces
     const safeSystemPrompt = this.makeTemplateSafe(systemPrompt);
     const safeHumanPrompt = this.makeTemplateSafe(humanPromptTemplate);
 
-    const systemMessageTemplate = SystemMessagePromptTemplate.fromTemplate(
-      safeSystemPrompt || DEFAULT_SYSTEM_MESSAGE,
-    );
+    const systemMessageTemplate =
+      SystemMessagePromptTemplate.fromTemplate(safeSystemPrompt);
     const humanMessageTemplate =
       HumanMessagePromptTemplate.fromTemplate(safeHumanPrompt);
-
-    // fixme: use
-    const systemMessage = new SystemMessage(
-      processedTemplate.systemPrompt || DEFAULT_SYSTEM_MESSAGE,
-    );
-    this.chatManager.replaceSystemMessage(systemMessage);
-    let messages: Message[] = [systemMessage];
-
-    // fixme:: custom description message
-    if (processedTemplate.description) {
-      const descriptionMessage = new AIMessage({
-        content: processedTemplate.description,
-        id: "ai-template-description",
-        additional_kwargs: {
-          template,
-        },
-      });
-      descriptionMessage.getType = () => "ai-template-description";
-      messages.push(descriptionMessage);
-    }
-    console.log("messages", messages);
-    this.chatManager.setMessages(messages);
 
     // Create chat prompt template
     const chatPromptTemplate = ChatPromptTemplate.fromMessages([
       systemMessageTemplate,
       humanMessageTemplate,
+      // descriptionMessage,
     ]);
-    console.log(chatPromptTemplate);
     return chatPromptTemplate;
   }
 
