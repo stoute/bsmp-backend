@@ -73,7 +73,6 @@ export class ChatMessageParser {
       };
     } else {
       message.getType = (): string => message.additional_kwargs?.type;
-      //message = new HumanMessage(message);
     }
 
     // Apply template-specific processor if exists

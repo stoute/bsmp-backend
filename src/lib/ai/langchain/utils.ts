@@ -46,7 +46,6 @@ export function serializeMessageFromJSON(jsonData) {
 
 // Function to deserialize a BaseMessage object to JSON
 export function deserializeMessageToJSON(message) {
-  // Check if message is null or undefined
   if (!message) {
     console.warn("Attempted to deserialize null or undefined message");
     return null;
@@ -56,40 +55,38 @@ export function deserializeMessageToJSON(message) {
     console.log("Message is already in JSON format:", message);
     return message;
   }
-
   // Determine message type
   let type;
-  if (message.additional_kwargs?.type) {
-    type = message.additional_kwargs.type;
-  }
   if (message instanceof HumanMessage) {
     type = "human";
   } else if (message instanceof AIMessage) {
     type = "ai";
   } else if (message instanceof SystemMessage) {
     type = "system";
-    // } else if (message instanceof BaseMessage) {
+  } else if (message instanceof BaseMessage) {
+    type = "ai";
     // fixme:
     // For custom message types, use the _getType method or fall back to a default
     // type = message.getType?.() || message.additional_kwargs?.type;
     // type = message.additional_kwargs?.type;
     // type = "ai";
   } else {
-    //console.error("Unknown message type:", message);
+    console.warn("Unknown message type:", message);
     // Return a safe default instead of throwing an error
     return {
-      type: type,
+      type: "ai",
       content: String(message.content || ""),
       additional_kwargs: message.additional_kwargs || {},
+      metadata: message.metadata || {},
     };
   }
+  console.log("type", type);
 
   // Create JSON object with common properties
   const jsonData = {
     type,
     content: message.content,
   };
-
   // Add additional properties if they exist
   if (
     message.additional_kwargs &&
@@ -100,7 +97,6 @@ export function deserializeMessageToJSON(message) {
   if (message.metadata) {
     jsonData.metadata = message.metadata;
   }
-
   if (message._example === true) {
     jsonData.example = true;
   }
