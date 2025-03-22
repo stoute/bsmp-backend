@@ -3,8 +3,11 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Trash2, Save, Plus, AlertCircle, Copy } from "lucide-react";
-import type { IPromptTemplate } from "@lib/ai/types.ts";
+import type { PromptTemplate } from "@lib/ai/types.ts";
 import { appState } from "@lib/appStore";
+import { toast } from "../../lib/toast";
+import { persistentAtom } from "@nanostores/persistent";
+import { useStore } from "@nanostores/react";
 
 import {
   Form,
@@ -40,11 +43,42 @@ import {
   AlertDialogAction,
 } from "@components/ui/alert-dialog.tsx";
 import { useAppService } from "@lib/hooks/useAppService.ts";
+import { PromptTemplateFactory } from "@lib/ai/prompt-templates/PromptTemplateFactory";
+import {
+  template_name,
+  template_description,
+  template_system_prompt,
+  template_variables,
+  template_tags,
+  template_save,
+  template_saved,
+  template_delete,
+  template_duplicate,
+  template_cancel,
+  template_confirm_delete,
+  template_confirm_delete_description,
+  template_confirm_delete_cancel,
+  template_confirm_delete_continue,
+  template_name_required,
+  template_variables_description,
+  template_label,
+  template_new_created,
+  template_updated,
+  template_error_saving,
+  template_create_new,
+  template_edit,
+  template_name_placeholder,
+  template_description_placeholder,
+  template_system_prompt_placeholder,
+  template_template_placeholder,
+  template_variable_placeholder,
+  template_add_variable,
+} from "../../paraglide/messages";
 
 // Define the form schema using zod
 const formSchema = z.object({
   id: z.string().optional(),
-  name: z.string().min(1, "Name is required"),
+  name: z.string().min(1, template_name_required()),
   description: z.string().optional(),
   systemPrompt: z.string().optional(),
   template: z.string().optional(), // Remove min validation
@@ -53,25 +87,27 @@ const formSchema = z.object({
   updated_at: z.string().optional(),
 });
 
-const emptyTemplate = {
-  name: "",
-  description: "",
-  systemPrompt: "",
-  template: "",
-  variables: [],
-};
+// Create a persistent store for the form state
+export const templateEditorState = persistentAtom<Record<string, any>>(
+  "template-editor-state:",
+  {},
+  {
+    encode: JSON.stringify,
+    decode: JSON.parse,
+  },
+);
 
 interface PromptTemplateEditorProps {
   apiEndPoint: string;
-  promptTemplate?: IPromptTemplate;
-  onSave?: (template: IPromptTemplate) => void;
-  onDelete?: (template: IPromptTemplate) => void; // Changed to pass full template
-  onDuplicate?: (template: IPromptTemplate) => void;
+  promptTemplate?: PromptTemplate;
+  onSave?: (template: PromptTemplate) => void;
+  onDelete?: (template: PromptTemplate) => void; // Changed to pass full template
+  onDuplicate?: (template: PromptTemplate) => void;
   onCancel?: () => void;
 }
 
 const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
-  apiEndPoint = appState.get().apiBaseUrl + "/prompts/index.json",
+  apiEndPoint = "/api/prompts/index.json",
   promptTemplate,
   onSave,
   onDelete,
@@ -86,22 +122,85 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const { appService } = useAppService();
 
-  // Initialize form with default values or provided promptTemplate
+  // Get the current stored state
+  const storedState = useStore(templateEditorState);
+
+  // Log the incoming template data for debugging
+  useEffect(() => {
+    console.log("Prompt template received:", promptTemplate);
+  }, [promptTemplate]);
+
+  // Create a complete template object by merging with defaults
+  const getCompleteTemplate = (template) => {
+    if (!template) return PromptTemplateFactory.createDefault();
+
+    // Create a complete template with all required fields
+    const defaultTemplate = PromptTemplateFactory.createDefault();
+    return { ...defaultTemplate, ...template };
+  };
+
+  // Get stored template or create a complete one
+  const getInitialValues = () => {
+    if (promptTemplate?.id && storedState[promptTemplate.id]) {
+      // Log the stored state for debugging
+      console.log("Using stored state:", storedState[promptTemplate.id]);
+      return getCompleteTemplate(storedState[promptTemplate.id]);
+    }
+    return getCompleteTemplate(promptTemplate);
+  };
+
+  // Initialize form with complete values
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: promptTemplate || emptyTemplate,
+    defaultValues: getInitialValues(),
   });
 
-  // Reset form when promptTemplate changes
+  // Store initial state for cancel functionality
+  const [initialState] = useState(getCompleteTemplate(promptTemplate));
+
+  // Reset form when template changes
   useEffect(() => {
     if (promptTemplate) {
-      form.reset(promptTemplate);
-      setIsNew(!promptTemplate.id);
-    } else {
-      form.reset(emptyTemplate);
-      setIsNew(true);
+      const values = getInitialValues();
+      console.log("Resetting form with values:", values);
+      form.reset(values);
+    }
+  }, [promptTemplate?.id]);
+
+  // Log form values for debugging
+  useEffect(() => {
+    const subscription = form.watch((value) => {
+      // console.log("Current form values:", value);
+    });
+    return () => subscription.unsubscribe();
+  }, [form]);
+
+  // Make sure all fields are properly registered
+  useEffect(() => {
+    // Explicitly register all fields to ensure they're tracked
+    if (promptTemplate) {
+      const template = getCompleteTemplate(promptTemplate);
+      Object.entries(template).forEach(([key, value]) => {
+        if (!form.getValues(key)) {
+          form.setValue(key, value);
+        }
+      });
     }
   }, [promptTemplate, form]);
+
+  // Update store when form changes
+  useEffect(() => {
+    const subscription = form.watch((value) => {
+      if (promptTemplate?.id && Object.keys(value).length > 0) {
+        templateEditorState.set({
+          ...storedState,
+          [promptTemplate.id]: value,
+        });
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [form, promptTemplate?.id, storedState]);
 
   // Handle form submission
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
@@ -139,11 +238,13 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
       }
 
       data = await response.json();
-      setSuccess(
-        isNew
-          ? "Prompt template created successfully!"
-          : "Prompt template updated successfully!",
-      );
+
+      // Show success toast here
+      toast({
+        title: template_saved(),
+        description: isNew ? template_new_created() : template_updated(),
+        variant: "success",
+      });
 
       if (onSave) {
         onSave(data);
@@ -154,9 +255,13 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
         setIsNew(false);
       }
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "An unknown error occurred",
-      );
+      // Show error toast directly
+      toast({
+        title: template_error_saving(),
+        description:
+          err instanceof Error ? err.message : "An unknown error occurred",
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }
@@ -175,7 +280,6 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
       const response = await fetch(
         apiEndPoint.replace("index", promptTemplate.id),
         {
-          // const response = await fetch(apiBaseUrl + `/${promptTemplate.id}.json`, {
           method: "DELETE",
         },
       );
@@ -184,12 +288,22 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
         throw new Error("Failed to delete template");
       }
 
+      // Show success toast directly
+      toast({
+        title: "Template deleted successfully",
+        variant: "success",
+      });
+
       if (onDelete) {
         onDelete(promptTemplate);
       }
     } catch (error) {
       console.error("Error deleting template:", error);
-      setError("Failed to delete template");
+      // Show error toast directly
+      toast({
+        title: "Failed to delete template",
+        variant: "destructive",
+      });
     }
 
     setShowDeleteDialog(false);
@@ -198,8 +312,6 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
   const handleDuplicate = async () => {
     if (!promptTemplate) return;
     setLoading(true);
-    setError(null);
-    setSuccess(null);
 
     try {
       const response = await fetch(apiEndPoint, {
@@ -224,15 +336,22 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
       }
 
       const data = await response.json();
-      setSuccess("Prompt template duplicated successfully!");
+
+      // Show success toast directly
+      toast({
+        title: "Prompt template duplicated successfully!",
+        variant: "success",
+      });
 
       if (onDuplicate) {
         onDuplicate(data);
       }
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "An unknown error occurred",
-      );
+      // Show error toast directly
+      toast({
+        title: err instanceof Error ? err.message : "An unknown error occurred",
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }
@@ -258,35 +377,28 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
     );
   };
 
+  // Handle cancel - restore initial state and clear stored state
+  const handleCancel = () => {
+    form.reset(initialState);
+
+    if (promptTemplate?.id) {
+      const newState = { ...storedState };
+      delete newState[promptTemplate.id];
+      templateEditorState.set(newState);
+    }
+
+    if (onCancel) onCancel();
+  };
+
   return (
     <>
       <Card className="w-full">
         <CardHeader>
           <CardTitle>
-            {isNew ? "Create New Prompt Template" : "Edit Prompt Template"}
+            {isNew ? template_create_new() : template_edit()}
           </CardTitle>
-          <CardDescription>
-            {isNew
-              ? "Create a new prompt template for AI generation"
-              : "Edit the selected prompt template"}
-          </CardDescription>
         </CardHeader>
         <CardContent>
-          {error && (
-            <Alert variant="destructive" className="mb-4">
-              <AlertCircle className="h-4 w-4" />
-              <AlertTitle>Error</AlertTitle>
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
-          )}
-
-          {success && (
-            <Alert className="mb-4 border-green-200 bg-green-50 text-green-800">
-              <AlertTitle>Success</AlertTitle>
-              <AlertDescription>{success}</AlertDescription>
-            </Alert>
-          )}
-
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -295,13 +407,13 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Name</FormLabel>
+                      <FormLabel>{template_name()}</FormLabel>
                       <FormControl>
-                        <Input placeholder="" {...field} />
+                        <Input
+                          placeholder={template_name_placeholder()}
+                          {...field}
+                        />
                       </FormControl>
-                      <FormDescription>
-                        A descriptive name for this prompt template
-                      </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -317,9 +429,6 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
                         <FormControl>
                           <Input disabled {...field} />
                         </FormControl>
-                        <FormDescription>
-                          Unique identifier (auto-generated)
-                        </FormDescription>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -332,17 +441,14 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
                 name="description"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Description</FormLabel>
+                    <FormLabel>{template_description()}</FormLabel>
                     <FormControl>
                       <Textarea
-                        placeholder=""
+                        placeholder={template_description_placeholder()}
                         className="resize-none"
                         {...field}
                       />
                     </FormControl>
-                    <FormDescription>
-                      A brief explanation of what this template does
-                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -353,17 +459,14 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
                 name="systemPrompt"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>System Prompt</FormLabel>
+                    <FormLabel>{template_system_prompt()}</FormLabel>
                     <FormControl>
                       <Textarea
-                        placeholder=""
-                        className="min-h-[100px] resize-none"
+                        placeholder={template_system_prompt_placeholder()}
+                        className="min-h-[200px] resize-none font-mono text-sm"
                         {...field}
                       />
                     </FormControl>
-                    <FormDescription>
-                      The system instructions for the AI model
-                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -374,17 +477,16 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
                 name="template"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Template</FormLabel>
+                    <FormLabel>{template_label()}</FormLabel>
                     <FormControl>
                       <Textarea
-                        placeholder="Write a short story about {character} in a {setting}."
+                        placeholder={template_template_placeholder()}
                         className="min-h-[100px] resize-none"
                         {...field}
                       />
                     </FormControl>
                     <FormDescription>
-                      The template with variables in single curly braces:{" "}
-                      {/* { variable } */}
+                      {template_variables_description()}
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -392,7 +494,7 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
               />
 
               <div>
-                <FormLabel>Variables</FormLabel>
+                <FormLabel>{template_variables()}</FormLabel>
                 <div className="mt-2 mb-4 flex flex-wrap gap-2">
                   {form.watch("variables")?.map((variable) => (
                     <Badge key={variable} variant="secondary">
@@ -409,7 +511,7 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
                 </div>
                 <div className="flex gap-2">
                   <Input
-                    placeholder="variable_name"
+                    placeholder={template_variable_placeholder()}
                     value={variableInput}
                     onChange={(e) => setVariableInput(e.target.value)}
                     onKeyDown={(e) => {
@@ -426,7 +528,7 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
                     disabled={!variableInput.trim()}
                   >
                     <Plus className="mr-2 h-4 w-4" />
-                    Add
+                    {template_add_variable()}
                   </Button>
                 </div>
                 {form.formState.errors.variables && (
@@ -450,7 +552,7 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
                           disabled={loading}
                         >
                           <Trash2 className="mr-2 h-4 w-4" />
-                          Delete
+                          {template_delete()}
                         </Button>
                       )}
                       <Button
@@ -460,24 +562,27 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
                         disabled={loading}
                       >
                         <Copy className="mr-2 h-4 w-4" />
-                        Duplicate
+                        {template_duplicate()}
                       </Button>
                     </div>
                   )}
                   <div className="ml-auto flex gap-2">
-                    {onCancel && (
+                    {form.formState.isDirty && (
                       <Button
                         type="button"
                         variant="outline"
-                        onClick={onCancel}
+                        onClick={handleCancel}
                         disabled={loading}
                       >
-                        Cancel
+                        {template_cancel()}
                       </Button>
                     )}
-                    <Button type="submit" disabled={loading}>
+                    <Button
+                      type="submit"
+                      disabled={loading || !form.formState.isDirty}
+                    >
                       <Save className="mr-2 h-4 w-4" />
-                      {isNew ? "Create" : "Update"}
+                      {isNew ? template_save() : template_save()}
                     </Button>
                   </div>
                 </div>
@@ -490,18 +595,17 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogTitle>{template_confirm_delete()}</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the
-              prompt template.
+              {template_confirm_delete_description()}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel onClick={() => setShowDeleteDialog(false)}>
-              Cancel
+              {template_confirm_delete_cancel()}
             </AlertDialogCancel>
             <AlertDialogAction onClick={confirmDelete}>
-              Delete
+              {template_confirm_delete_continue()}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

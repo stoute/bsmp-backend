@@ -1,5 +1,5 @@
 ---
-export const prerender = true;
+export const prerender = false; // Change from true to false to ensure consistent rendering
 
 import PageLayout from "@layouts/PageLayout.astro";
 import ChatTemplates from "@components/chat/ChatTemplates";
@@ -9,6 +9,6 @@ import ChatTemplates from "@components/chat/ChatTemplates";
   <div
     class="fixed top-16 bottom-0 left-0 w-full md:left-1/2 md:w-[768px] md:-translate-x-1/2"
   >
-    <ChatTemplates client:load />
+    <ChatTemplates client:only="react" />
   </div>
 </PageLayout>

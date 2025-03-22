@@ -23,8 +23,8 @@
   },
   {
     "id": "be0a2289-88ca-42b5-860c-a97bae747362",
-    "name": "Vanilla Chat",
-    "description": "I am your standard boring chat. Use me to try out different models.",
+    "name": "Standard Chat",
+    "description": "I am a standard chat bot. Use me to try out different models.",
     "systemPrompt": "",
     "template": "",
     "variables": [],

@@ -120,8 +120,6 @@ import Container from "@components/Container.astro";
       return;
     }
 
-    console.log("Register form initialized");
-
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
 
@@ -141,11 +139,6 @@ import Container from "@components/Container.astro";
       try {
         // Create the request payload
         const payload = { email, password };
-
-        console.log(
-          "Sending register request with payload:",
-          JSON.stringify(payload),
-        );
 
         const response = await fetch("/api/auth/register.json", {
           method: "POST",

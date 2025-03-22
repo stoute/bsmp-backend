@@ -6,6 +6,7 @@ import { eq } from "astro:db";
 
 export async function POST({ request }: { request: Request }) {
   try {
+    // Read the request body once and store it
     const requestBody = await request.json();
     const { email, password } = requestBody;
 

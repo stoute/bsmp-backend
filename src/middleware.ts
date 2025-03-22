@@ -9,7 +9,36 @@ import {
   validation,
   redaction,
 } from "@lib/middleware-utils";
+import { paraglideMiddleware } from "./paraglide/server.js";
 
+// Create a wrapper for the Paraglide middleware to ensure it receives a proper Request object
+const paraglideMiddlewareWrapper = async (context, next) => {
+  // Skip paraglide middleware for API routes to avoid body consumption issues
+  if (context.url.pathname.startsWith("/api/")) {
+    return next();
+  }
+  // Ensure we have a valid request object with headers
+  if (!context.request || !context.request.headers) {
+    console.warn("Invalid request object passed to Paraglide middleware");
+    return next();
+  }
+  try {
+    return await paraglideMiddleware(context.request, ({ request, locale }) => {
+      // Update the context with the locale information
+      if (context.locals) {
+        context.locals.paraglide = { locale };
+      }
+
+      // Continue with the middleware chain
+      return next();
+    });
+  } catch (error) {
+    console.error("Paraglide middleware error:", error);
+    return next();
+  }
+};
+
+// Create a sequence that includes the Paraglide middleware
 export const onRequest = sequence(
   errorHandler, // 1. Catch all errors
   // logger, // 2. Log request and response
@@ -19,6 +48,7 @@ export const onRequest = sequence(
   // rateLimit, // 6. Enforce rate limits
   // validation, // 7. Validate request body for API routes
   // redaction, // 8. Redact sensitive information from responses
+  paraglideMiddlewareWrapper, // 9. Handle i18n routing and locale detection
 );
 
 // https://grok.com/share/bGVnYWN5_8199dbd4-732c-426f-ace8-509e0bf618d0

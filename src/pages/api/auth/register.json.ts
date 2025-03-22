@@ -8,6 +8,7 @@ import { eq } from "astro:db";
 
 export async function POST({ request }: { request: Request }) {
   try {
+    // Read the request body once and store it
     const requestBody = await request.json();
     const { email, password } = requestBody;
 
@@ -40,41 +41,16 @@ export async function POST({ request }: { request: Request }) {
         },
       );
     }
+
     // Determine role (admin or authenticated)
     const isAdmin = email === import.meta.env.PUBLIC_ADMIN_EMAIL;
     const role = isAdmin ? "admin" : "authenticated";
 
+    // Register the user and get user data without password
     const userWithoutPassword = await registerUser(email, password, role);
-
-    // Hash password with Argon2
-    // const hashedPassword = await argon2.hash(password, {
-    //   type: argon2.argon2id, // Use argon2id variant
-    //   memoryCost: 1024 * 16, // 16MB memory cost
-    //   timeCost: 3, // 3 iterations
-    //   parallelism: 1, // 1 degree of parallelism
-    // });
-    //
-    // // Generate user ID and timestamps
-    // const id = uuid();
-    // const now = new Date().toISOString();
-    //
-    // // Create new user
-    // const newUser = {
-    //   id,
-    //   email,
-    //   password: hashedPassword,
-    //   role,
-    //   created_at: now,
-    //   updated_at: now,
-    // };
-
-    // await db.insert(User).values(newUser).run();
 
     // Create session
     const sessionId = uuid();
-
-    // Return user info (excluding password)
-    // const { password: _, ...userWithoutPassword } = newUser;
 
     return new Response(
       JSON.stringify({

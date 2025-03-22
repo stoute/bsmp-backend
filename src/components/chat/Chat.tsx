@@ -7,9 +7,16 @@ import { appState } from "@lib/appStore";
 import { useAppService } from "@lib/hooks/useAppService";
 import { MarkdownRenderer } from "./renderers/MarkdownRenderer.tsx";
 import { MessageErrorBoundary } from "./MessageErrorBoundary";
-import type { IPromptTemplate } from "@lib/ai/types";
+import type { PromptTemplate } from "@lib/ai/types";
 import styles from "./Chat.module.css";
 import { DescriptionRenderer } from "./renderers/DescriptionRenderer";
+// Import Paraglide messages
+import {
+  chat_thinking,
+  chat_ask_something,
+  chat_send,
+  chat_loading,
+} from "@paraglide/messages";
 
 export default function Chat() {
   const { appService, isReady } = useAppService();
@@ -55,6 +62,7 @@ export default function Chat() {
   // Initialize chat manager only when appService is ready
   useEffect(() => {
     if (!isReady) return;
+
     const savedChat = state.currentChat;
     isRestoringRef.current = savedChat?.messages?.length > 0;
     setMessages(chatManager.getMessages());
@@ -90,7 +98,7 @@ export default function Chat() {
 
       setIsLoading(true);
       try {
-        await chatManager.sendMessage(input);
+        await chatManager.handleUserInput(input);
         setMessages(chatManager.getMessages());
         scrollLastUserMessageToTop();
         setInput("");
@@ -108,7 +116,7 @@ export default function Chat() {
   }, []);
 
   if (!isReady) {
-    return <div className={styles.loading}></div>;
+    return <div className={styles.loading}>{chat_loading()}</div>;
   }
 
   return (
@@ -121,7 +129,7 @@ export default function Chat() {
           ))}
         {isLoading && (
           <div className={styles.message}>
-            <div className={styles.loading}>Thinking...</div>
+            <div className={styles.loading}>{chat_thinking()}</div>
           </div>
         )}
       </div>
@@ -163,12 +171,12 @@ const ChatInput = memo(
           ref={inputRef}
           value={input}
           onChange={(e) => onInputChange(e.target.value)}
-          placeholder="Ask something..."
+          placeholder={chat_ask_something()}
           disabled={isLoading}
           className={styles.input}
         />
         <button type="submit" disabled={isLoading} className={styles.button}>
-          Send
+          {chat_send()}
         </button>
       </form>
     );
@@ -227,7 +235,7 @@ const MessageContent = memo(({ message }: { message: any }) => {
   if (!content) return null;
 
   // custom description message
-  const template: IPromptTemplate = message.additional_kwargs.template;
+  const template: PromptTemplate = message.additional_kwargs.template;
   if (template?.description) {
     return (
       <div className="prose dark:prose-invert max-w-none">

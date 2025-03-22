@@ -1,5 +1,5 @@
 import { type LLMOutputComponent } from "@llm-ui/react";
-import { type IPromptTemplate } from "@types";
+import { type PromptTemplate } from "@types";
 
 interface BlockMatch {
   output: string;
@@ -7,7 +7,7 @@ interface BlockMatch {
 
 interface Props {
   blockMatch: BlockMatch;
-  template?: IPromptTemplate;
+  template?: PromptTemplate;
 }
 
 export const DescriptionRenderer: LLMOutputComponent<Props> = ({

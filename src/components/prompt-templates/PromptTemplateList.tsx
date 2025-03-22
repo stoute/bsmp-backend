@@ -5,7 +5,7 @@ import React, {
   useState,
 } from "react";
 import { Plus, RefreshCw, Search, Loader2 } from "lucide-react";
-import type { IPromptTemplate } from "@lib/ai/types.ts";
+import type { PromptTemplate } from "@lib/ai/types.ts";
 import { Button } from "@components/ui/button.tsx";
 import { Input } from "@components/ui/input.tsx";
 import {
@@ -19,9 +19,19 @@ import { ScrollArea } from "@components/ui/scroll-area.tsx";
 import { Separator } from "@components/ui/separator.tsx";
 import { cn } from "@lib/utils";
 import { useAppService } from "@lib/hooks/useAppService";
+import {
+  template_new,
+  loading_templates,
+  error_loading_templates,
+  template_list_title,
+  search_templates_placeholder,
+  refresh_templates_title,
+  no_templates_match_search,
+  no_templates_found,
+} from "../../paraglide/messages";
 
 interface PromptTemplateListProps {
-  onSelect: (promptTemplate: IPromptTemplate) => void;
+  onSelect: (promptTemplate: PromptTemplate) => void;
   onNew: () => void;
   selectedId?: string;
   onRefresh?: () => void; // Add new prop for external refresh
@@ -32,7 +42,7 @@ const PromptTemplateList = forwardRef<
   { fetchPromptTemplates: () => Promise<void> },
   PromptTemplateListProps
 >(({ dataUrl, onSelect, onNew, selectedId }, ref) => {
-  const [promptTemplates, setPromptTemplates] = useState<IPromptTemplate[]>([]);
+  const [promptTemplates, setPromptTemplates] = useState<PromptTemplate[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
@@ -94,17 +104,14 @@ const PromptTemplateList = forwardRef<
   return (
     <Card className="flex h-full flex-col">
       <CardHeader>
-        <CardTitle>Prompt Templates</CardTitle>
-        <CardDescription>
-          Select a template to edit or create a new one
-        </CardDescription>
+        <CardTitle>{template_list_title()}</CardTitle>
       </CardHeader>
       <CardContent className="flex flex-1 flex-col gap-4">
         <div className="flex gap-2">
           <div className="relative flex-1">
             <Search className="text-muted-foreground absolute top-2.5 left-2 h-4 w-4" />
             <Input
-              placeholder="Search templates..."
+              placeholder={search_templates_placeholder()}
               className="pl-8"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -115,7 +122,7 @@ const PromptTemplateList = forwardRef<
             variant="outline"
             onClick={fetchPromptTemplates}
             disabled={loading}
-            title="Refresh templates"
+            title={refresh_templates_title()}
           >
             <RefreshCw
               className={`h-4 w-4 opacity-50 ${loading ? "animate-spin" : ""}`}
@@ -123,11 +130,18 @@ const PromptTemplateList = forwardRef<
           </Button>
         </div>
         <Button onClick={onNew} className="w-full">
-          <Plus className="mr-2 h-4 w-4" />
-          Create New Template
+          {template_new()}
+          <Plus className="ml-2 h-4 w-4" />
         </Button>
 
-        {error && <p className="text-destructive text-sm">{error}</p>}
+        {loading && (
+          <div className="py-4 text-center">{loading_templates()}</div>
+        )}
+        {error && (
+          <div className="py-4 text-center text-red-500">
+            {error_loading_templates()}
+          </div>
+        )}
 
         <ScrollArea className="flex-1 rounded-md border">
           {loading ? (
@@ -139,8 +153,8 @@ const PromptTemplateList = forwardRef<
               {!loading && filteredTemplates.length === 0 ? (
                 <div className="text-muted-foreground p-4 text-center">
                   {searchTerm
-                    ? "No templates match your search"
-                    : "No templates found"}
+                    ? no_templates_match_search()
+                    : no_templates_found()}
                 </div>
               ) : (
                 <div className="space-y-1">

@@ -1,0 +1,105 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Open Router Response",
+  "type": "object",
+  "description": "Schema for LLM interaction response objects",
+  "required": ["id", "provider", "model", "object", "created", "choices", "usage"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Request operation identifier"
+    },
+    "provider": {
+      "type": "string",
+      "description": "Parent service provider"
+    },
+    "model": {
+      "type": "string",
+      "description": "Base LLM model identifier"
+    },
+    "object": {
+      "const": "chat.completion",
+      "description": "Operation type indicator"
+    },
+    "created": {
+      "type": "number",
+      "description": "Unix timestamp of creation",
+      "format": "float"
+    },
+    "choices": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["finish_reason", "index", "message"],
+        "properties": {
+          "logprobs": {
+            "type": ["null", "any"],
+            "description": "Log probabilities of tokens (optional)"
+          },
+          "finish_reason": {
+            "type": "string",
+            "enum": ["avori", "stop", "length"],
+            "description": "Response termination reason"
+          },
+          "native_finish_reason": {
+            "type": "string",
+            "description": "Details about completion reason"
+          },
+          "index": {
+            "type": "integer",
+            "description": "Choice index"
+          },
+          "message": {
+            "type": "object",
+            "properties": {
+              "role": {
+                "type": "string",
+                "description": "Interaction participant role"
+              },
+              "content": {
+                "type": "string",
+                "description": "Message contents"
+              }
+            },
+            "required": ["role", "content"]
+          },
+          "refusal": {
+            "description": "Reason describing refusal (if present)",
+            "type": ["null", "object"]
+          },
+          "reasoning": {
+            "type": "string",
+            "description": "Internal reasoning process"
+          }
+        }
+      }
+    },
+    "citations": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri",
+        "description": "External resources cited"
+      },
+      "description": "List of supporting resource identifiers"
+    },
+    "usage": {
+      "type": "object",
+      "properties": {
+        "prompt_tokens": {
+          "type": "integer",
+          "description": "Number of tokens in prompt"
+        },
+        "completion_tokens": {
+          "type": "integer",
+          "description": "Number of tokens in completion"
+        },
+        "total_tokens": {
+          "type": "integer",
+          "description": "Total tokens used (prompt + completion)"
+        }
+      },
+      "required": ["prompt_tokens", "completion_tokens", "total_tokens"]
+    }
+  }
+}

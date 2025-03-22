@@ -2,7 +2,7 @@ export const prerender = false;
 
 import { v4 as uuid } from "uuid";
 import { PromptTemplate, db, eq, and } from "astro:db";
-import type { IPromptTemplate } from "@types";
+import type { PromptTemplate } from "@types";
 
 // GET /api/prompts/[id]: Retrieves a specific prompt template by its id.
 export async function GET({ params }: { params: { id: string } }) {
@@ -74,7 +74,7 @@ export async function PUT({
     // Set updated_at to the current ISO datetime.
     const now = new Date().toISOString();
 
-    const updatedPrompt: Partial<IPromptTemplate> = {
+    const updatedPrompt: Partial<PromptTemplate> = {
       name,
       description,
       systemPrompt,

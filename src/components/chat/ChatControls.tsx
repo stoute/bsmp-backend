@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { useStore } from "@nanostores/react";
-import type { IPromptTemplate } from "@lib/ai/types";
-import type { OpenRouterModel } from "@lib/ai/types";
+import type { PromptTemplate } from "@lib/ai/types";
+import type { OpenRouterModel } from "@lib/ai/open-router.ts";
 import { appState, templateList } from "@lib/appStore";
 import { chatManager } from "@lib/ChatManager";
 import { useAppService } from "@lib/hooks/useAppService";
@@ -13,8 +13,11 @@ import {
   SelectValue,
 } from "@components/ui/select";
 import { Label } from "@components/ui/label";
-import { DEFAULT_TEMPLATE_ID, DEFAULT_MODEL } from "@/consts";
-import { getMatchingOpenRouterModels } from "@lib/ai/modelUtils.ts";
+import { DEFAULT_MODEL } from "@/consts";
+import {
+  DEFAULT_TEMPLATE_ID,
+  PRESET_TEMPLATES,
+} from "@lib/ai/prompt-templates/constants.ts";
 import {
   Popover,
   PopoverContent,
@@ -23,10 +26,18 @@ import {
 import { Button } from "@components/ui/button";
 import { Check, ChevronsUpDown, Search } from "lucide-react";
 import { cn } from "@lib/utils";
+import {
+  template_label,
+  model_label,
+  loading_templates,
+  error_loading_templates,
+  loading_models,
+  select_model,
+} from "@/paraglide/messages";
 
 export default function ChatControls() {
   // Group all useState hooks together at the top
-  const [templates, setTemplates] = useState<IPromptTemplate[]>([]);
+  const [templates, setTemplates] = useState<PromptTemplate[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
@@ -34,7 +45,8 @@ export default function ChatControls() {
   const [models, setModels] = useState<OpenRouterModel[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedTemplateId, setSelectedTemplateId] = useState(() => {
-    return appState.get().selectedTemplateId || DEFAULT_TEMPLATE_ID;
+    const storedTemplateId = appState.get().selectedTemplateId;
+    return storedTemplateId || DEFAULT_TEMPLATE_ID;
   });
   const [selectedModel, setSelectedModel] = useState(() => {
     const storedModel = appState.get().selectedModel;
@@ -55,17 +67,20 @@ export default function ChatControls() {
   const templateListStore = useStore(templateList);
 
   // App service hook
-  const { isReady } = useAppService();
+  const { isReady, appService } = useAppService();
 
-  // Group all useEffect hooks together
   useEffect(() => {
-    const storedModel = appState.get().selectedModel;
     const storedTemplateId = appState.get().selectedTemplateId;
-    if (storedModel) {
-      setSelectedModel(storedModel);
-    }
+    const storedModel = appState.get().selectedModel;
     if (storedTemplateId) {
       setSelectedTemplateId(storedTemplateId);
+    } else {
+      setSelectedTemplateId(DEFAULT_TEMPLATE_ID);
+    }
+    if (storedModel) {
+      setSelectedModel(storedModel);
+    } else {
+      setSelectedModel(DEFAULT_MODEL);
     }
   }, []);
 
@@ -74,14 +89,25 @@ export default function ChatControls() {
       setLoading(true);
       setError(null);
       try {
-        const response = await fetch(
-          `${appState.get().apiBaseUrl}/prompts/list.json`,
-        );
+        const response = await fetch(`/api/prompts/list.json`);
         if (!response.ok) {
           throw new Error("Failed to fetch templates");
         }
-        const data = await response.json();
-        setTemplates(data);
+        let templates = await response.json();
+        const environment = appState.get().environment;
+        // Add all preset templates
+        let presets: PromptTemplate[] = [];
+        Object.keys(PRESET_TEMPLATES).map((key, index) => {
+          // console.log(key);
+          let boolean = true;
+          // Hide development templates in production
+          if (key.match("Development") && environment === "production") {
+            boolean = false;
+          }
+          if (boolean) presets.push(PRESET_TEMPLATES[key]);
+        });
+        templates = [...presets.reverse(), ...templates];
+        setTemplates(templates);
       } catch (err) {
         console.error("Error fetching templates:", err);
         setError("Failed to load templates");
@@ -106,24 +132,40 @@ export default function ChatControls() {
   useEffect(() => {
     if (!isReady) return;
 
-    try {
-      const matchingModels = getMatchingOpenRouterModels();
-      // Ensure we always have an array, even if empty
-      setModels(Array.isArray(matchingModels) ? matchingModels : []);
-    } catch (error) {
-      console.error("Error loading models:", error);
-      setModels([]);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [isReady]);
+    const fetchModels = () => {
+      try {
+        const matchingModels = appService.getAllowedOpenRouterModels();
+        // Ensure we always have an array, even if empty
+        setModels(Array.isArray(matchingModels) ? matchingModels : []);
+      } catch (error) {
+        console.error("Error loading models:", error);
+        setModels([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    // Initial fetch
+    fetchModels();
+
+    // Subscribe to login state changes
+    const unsubscribe = appState.listen((state) => {
+      if (state.currentUser !== appState.get().currentUser) {
+        fetchModels();
+      }
+    });
+
+    return () => unsubscribe();
+  }, [isReady, appService]);
 
   // Add subscription to appState changes
   useEffect(() => {
     const unsubscribe = appState.subscribe((state) => {
       setSelectedTemplateId(state.selectedTemplateId || DEFAULT_TEMPLATE_ID);
+      if (state.selectedModel) {
+        setSelectedModel(state.selectedModel);
+      }
     });
-
     return () => unsubscribe();
   }, []); // Empty dependency array since we want to set up the subscription once
 
@@ -160,7 +202,7 @@ export default function ChatControls() {
 
   const modelSection = (
     <div className="flex w-full items-center gap-2 sm:w-auto">
-      <Label htmlFor="model-select">Model</Label>
+      <Label htmlFor="model-select">{model_label()}</Label>
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
@@ -171,13 +213,13 @@ export default function ChatControls() {
             disabled={isLoading}
           >
             {isLoading ? (
-              "Loading models..."
+              loading_models()
             ) : (
               <>
                 {selectedModel
                   ? models.find((model) => model.id === selectedModel)?.name ||
                     selectedModel.split("/")[1]
-                  : "Select model..."}
+                  : select_model()}
                 <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
               </>
             )}
@@ -232,7 +274,7 @@ export default function ChatControls() {
   return (
     <div className="bg-card flex flex-col items-start gap-4 rounded-lg border p-4 sm:flex-row sm:items-center">
       <div className="flex w-full items-center gap-2 sm:w-auto">
-        <Label htmlFor="template-select">Template</Label>
+        <Label htmlFor="template-select">{template_label()}</Label>
         <Select
           value={selectedTemplateId}
           onValueChange={handleTemplateChange}
@@ -244,11 +286,11 @@ export default function ChatControls() {
           <SelectContent>
             {error ? (
               <SelectItem value="error" disabled>
-                Error loading templates
+                {error_loading_templates()}
               </SelectItem>
             ) : loading ? (
               <SelectItem value="loading" disabled>
-                Loading...
+                {loading_templates()}
               </SelectItem>
             ) : (
               templates.map((template) => (

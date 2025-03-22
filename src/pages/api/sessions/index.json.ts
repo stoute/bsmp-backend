@@ -1,7 +1,6 @@
 export const prerender = false;
 import { v4 as uuid } from "uuid";
 import { db, ChatSession } from "astro:db";
-import type { ChatState } from "@lib/ai/types";
 
 // GET /api/sessions: Retrieves all sessions.
 export async function GET() {

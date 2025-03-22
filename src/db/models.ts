@@ -1,10 +1,28 @@
+import { type ChatOpenAI } from "@langchain/openai";
+
 export interface PromptTemplateModel {
   id: string;
   name: string;
   description?: string;
   systemPrompt?: string;
   template?: string;
+  context?: string;
   variables?: string[];
+  tags?: string[];
+  llmConfig?: ChatOpenAI;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface ChatSessionModel {
+  id: string;
+  messages: any[]; // Array of Message objects
+  metadata: {
+    topic: string | null;
+    model: string | null;
+    template: any | null;
+    templateId: string | null;
+  };
   created_at: string;
   updated_at: string;
 }
@@ -30,5 +48,3 @@ export interface AuthorModel {
   id: number;
   name: string;
 }
-
-export type PromptTemplateTable = PromptTemplateModel;

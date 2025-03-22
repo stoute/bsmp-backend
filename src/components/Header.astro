@@ -12,6 +12,14 @@ import UserMenu from "@components/UserMenu.astro";
 interface Props {
   colorMode?: "light" | "dark" | "system";
 }
+// Import Paraglide messages
+import {
+  language_english,
+  language_german,
+  language_dutch,
+  toggle_theme,
+  // select_language
+} from "../paraglide/messages";
 
 const { colorMode } = Astro.props;
 const EMAIL: unknown = SOCIALS.find((SOCIAL) => SOCIAL.NAME === "Email");
@@ -71,10 +79,72 @@ const navigationLinks = LINKS;
         <!-- Use the UserMenu component -->
         <UserMenu />
 
+        <!-- Language Selector Button -->
+        <div class="language-menu-container relative">
+          <button
+            id="language-button"
+            aria-label="Language menu"
+            class={cn(
+              "flex md:flex",
+              "size-9 rounded-full p-2 items-center justify-center",
+              "bg-transparent hover:bg-black/5 dark:hover:bg-white/20",
+              "stroke-current hover:stroke-black dark:hover:stroke-white",
+              "border border-black/10 dark:border-white/25",
+              "transition-colors duration-300 ease-in-out",
+            )}
+          >
+            <svg
+              class="size-full"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path
+                d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"
+              ></path>
+              <path d="M2 12h20"></path>
+              <path
+                d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"
+              ></path>
+            </svg>
+          </button>
+
+          <!-- Language dropdown menu -->
+          <div
+            id="language-dropdown"
+            class="absolute right-0 mt-2 hidden w-48 rounded-md bg-white shadow-lg dark:bg-neutral-800"
+          >
+            <a
+              href="#"
+              data-language="en"
+              class="block px-4 py-2 text-sm text-current hover:bg-black/5 dark:hover:bg-white/20"
+            >
+              English
+            </a>
+            <a
+              href="#"
+              data-language="de"
+              class="block px-4 py-2 text-sm text-current hover:bg-black/5 dark:hover:bg-white/20"
+            >
+              Deutsch
+            </a>
+            <a
+              href="#"
+              data-language="nl"
+              class="block px-4 py-2 text-sm text-current hover:bg-black/5 dark:hover:bg-white/20"
+            >
+              Nederlands
+            </a>
+          </div>
+        </div>
+
         <button
           id="header-theme-button"
           onclick="changeTheme()"
-          aria-label={`Toggle light and dark theme`}
+          aria-label={toggle_theme()}
           class={cn(
             "hidden md:flex",
             "size-9 rounded-full p-2 items-center justify-center",
@@ -135,6 +205,12 @@ const navigationLinks = LINKS;
   #header-drawer-button.open > #drawer-close {
     @apply block;
   }
+
+  /* Language dropdown styles */
+  #language-dropdown {
+    z-index: 100;
+    transition: all 0.2s ease-in-out;
+  }
 </style>
 
 <script>
@@ -156,6 +232,99 @@ const navigationLinks = LINKS;
       });
     }
   });
+</script>
+
+<!-- Language selector script -->
+<script>
+  import { setLocale, getLocale } from "../paraglide/runtime.js";
+
+  function initializeLanguageMenu() {
+    const languageButton = document.getElementById("language-button");
+    const languageDropdown = document.getElementById("language-dropdown");
+    const languageLinks = document.querySelectorAll("[data-language]");
+    let closeTimeout = null;
+
+    // Toggle dropdown on button click
+    languageButton?.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      languageDropdown?.classList.toggle("hidden");
+    });
+
+    // Handle mouse enter/leave for both button and dropdown
+    languageButton?.addEventListener("mouseenter", () => {
+      if (closeTimeout) {
+        clearTimeout(closeTimeout);
+        closeTimeout = null;
+      }
+      languageDropdown?.classList.remove("hidden");
+    });
+
+    languageButton?.addEventListener("mouseleave", () => {
+      closeTimeout = setTimeout(() => {
+        languageDropdown?.classList.add("hidden");
+      }, 300);
+    });
+
+    languageDropdown?.addEventListener("mouseenter", () => {
+      if (closeTimeout) {
+        clearTimeout(closeTimeout);
+        closeTimeout = null;
+      }
+    });
+
+    languageDropdown?.addEventListener("mouseleave", () => {
+      languageDropdown.classList.add("hidden");
+    });
+
+    // Handle language selection
+    languageLinks.forEach((link) => {
+      link.addEventListener("click", (e) => {
+        e.preventDefault();
+        const language = link.getAttribute("data-language");
+        if (language) {
+          // Set the new locale using Paraglide's setLocale function
+          setLocale(language);
+          // The page will reload by default due to setLocale behavior
+        }
+      });
+    });
+
+    // Highlight current language
+    try {
+      const currentLocale = getLocale();
+      const currentLanguageLink = document.querySelector(
+        `[data-language="${currentLocale}"]`,
+      );
+      if (currentLanguageLink) {
+        currentLanguageLink.classList.add(
+          "font-semibold",
+          "bg-black/5",
+          "dark:bg-white/10",
+        );
+      }
+    } catch (error) {
+      console.error("Error getting current locale:", error);
+    }
+
+    // Close dropdown when clicking outside
+    document.addEventListener("click", (e) => {
+      if (
+        languageDropdown &&
+        !languageDropdown.contains(e.target as Node) &&
+        !languageButton?.contains(e.target as Node)
+      ) {
+        languageDropdown.classList.add("hidden");
+      }
+    });
+  }
+
+  // Initialize on page load
+  document.addEventListener("DOMContentLoaded", initializeLanguageMenu);
+
+  // Re-initialize after Astro view transitions
+  document.addEventListener("astro:page-load", initializeLanguageMenu);
+  document.addEventListener("astro:after-swap", initializeLanguageMenu);
 </script>
 
 <!-- Expose links to client-side JavaScript -->

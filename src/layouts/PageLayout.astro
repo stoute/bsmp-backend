@@ -5,6 +5,7 @@ import Header from "@components/Header.astro";
 import Footer from "@components/Footer.astro";
 import Drawer from "@components/Drawer.astro";
 import { SITE } from "@consts";
+import { Toaster } from "sonner";
 
 interface Props {
   title: string;
@@ -47,5 +48,20 @@ const environment: string = import.meta.env.MODE;
       <slot />
     </main>
     {!isChatPage && <Footer />}
+    <Toaster
+      client:load
+      position="bottom-center"
+      toastOptions={{
+        duration: 5000,
+        style: {
+          background: "white",
+          color: "black",
+          border: "1px solid var(--border, rgba(0, 0, 0, 0.1))",
+          boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+        },
+        className: "!bg-white !text-black dark:!bg-zinc-800 dark:!text-white",
+      }}
+      richColors={false}
+    />
   </body>
 </html>

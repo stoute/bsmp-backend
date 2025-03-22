@@ -5,9 +5,10 @@ import sitemap from "@astrojs/sitemap";
 import icon from "astro-icon";
 import react from "@astrojs/react";
 import tailwindcss from "@tailwindcss/vite";
-import node from "@astrojs/node";
-import vercel from "@astrojs/vercel";
+// import node from "@astrojs/node";
+// import vercel from "@astrojs/vercel";
 import netlify from "@astrojs/netlify";
+import { paraglideVitePlugin } from "@inlang/paraglide-js";
 
 // https://astro.build/config
 export default defineConfig({
@@ -38,7 +39,13 @@ export default defineConfig({
   },
 
   vite: {
-    plugins: [tailwindcss()],
+    plugins: [
+      tailwindcss(),
+      paraglideVitePlugin({
+        project: "./project.inlang",
+        outdir: "./src/paraglide",
+      }),
+    ],
   },
   markdown: {
     shikiConfig: {

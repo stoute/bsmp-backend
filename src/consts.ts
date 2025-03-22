@@ -1,32 +1,13 @@
 import type { Site, Page, Links, Socials } from "@types";
-// Get the window location origin
-const getWindowLocationOrigin = () => {
-  if (typeof window !== "undefined") {
-    return window.location.origin;
-  }
-  return "";
-};
+import { getWindowLocationOrigin } from "@lib/utils";
 
 export const API_BASE_URL_PROD = "/api";
 export const API_BASE_URL_DEV = getWindowLocationOrigin() + "/api";
 // export const API_BASE_URL_DEV = "https://bsmp.netlify.app/api";
-
 export const DEFAULT_MODEL = "google/gemini-2.0-flash-lite-001";
 export const DEFAULT_MODEL_FREE = "mistralai/mistral-7b-instruct";
-
 export const DEFAULT_SYSTEM_MESSAGE = "You are a helpful assistant.";
-export const DEFAULT_TEMPLATE_ID = "default";
-export const DEFAULT_TEMPLATE = {
-  id: "default",
-  name: "Vanilla Chat",
-  description:
-    "I am a standard boring chat. Use me to try out different models.",
-  systemPrompt: "You are a helpful assistant.",
-  template: "",
-  variables: [],
-  created_at: "2025-03-06T13:33:25.412Z",
-  updated_at: "2025-03-11T22:37:36.864Z",
-};
+
 export const LLM_MODELS = [
   "google/gemini-2.0-flash-lite-001",
   // "google/gemini-2.0-flash-001",
@@ -38,6 +19,12 @@ export const LLM_MODELS = [
   "thedrummer/unslopnemo-12b",
   "neversleep/noromaid-20b",
 ];
+const expensiveModelIds = [
+  "anthropic/claude-3-opus-20240229", // Claude Opus (very expensive as per user feedback)
+  "openai/gpt-4-32k", // GPT-4 32K (high token capacity, premium pricing)
+  "cohere/command-r-plus", // Command R Plus (0.015 cents per token)
+  "openai/gpt-4", // GPT-4 (general high cost for OpenAI's flagship model)
+];
 
 // Links
 export const LINKS: Links = [
@@ -48,26 +35,25 @@ export const LINKS: Links = [
 ];
 export const LINKS_AUTHENTICATED: Links = [
   {
-    TEXT: "Prompts",
+    TEXT: "Prompts", // This matches our message key "prompts"
     HREF: "/prompts",
   },
 ]; // Global
-export const LINKS_DEV: Links = [
+export const LINKS_ADMIN: Links = [
   {
-    TEXT: "Contact",
+    TEXT: "Contact", // This matches our message key "contact"
     HREF: "/contact",
   },
   {
-    TEXT: "About",
+    TEXT: "About", // This matches our message key "about"
     HREF: "/about",
   },
   {
-    TEXT: "Projects",
+    TEXT: "Projects", // This matches our message key "projects"
     HREF: "/projects",
   },
-
   {
-    TEXT: "Blog",
+    TEXT: "Blog", // This matches our message key "blog"
     HREF: "/blog",
   },
 ];

@@ -120,8 +120,6 @@ import Container from "@components/Container.astro";
       return;
     }
 
-    console.log("Login form initialized");
-
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
 
@@ -142,11 +140,6 @@ import Container from "@components/Container.astro";
         // Create the request payload
         const payload = { email, password };
 
-        console.log(
-          "Sending login request with payload:",
-          JSON.stringify(payload),
-        );
-
         const response = await fetch("/api/auth/login.json", {
           method: "POST",
           headers: {
@@ -157,7 +150,6 @@ import Container from "@components/Container.astro";
         });
 
         const data = await response.json();
-        console.log("Login response data:", data);
 
         if (!response.ok) {
           errorMessage.textContent = data.message || "Login failed";

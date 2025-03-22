@@ -19,6 +19,8 @@
     environment: string
     selectedModel?: string
     currentChat?: ChatState
+    selectedTemplate?: PromptTemplate
+    currentUser?: User
   }>
   ```
 - **Persistence**: `@nanostores/persistent` for critical data
@@ -29,16 +31,19 @@
 - **Components**:
   - `ChatParser`: Handles message processing
   - `MarkdownRenderer`: Renders AI responses
-  - Template system for structured prompts
-- **Integration**: LangChain/OpenAI via proxy
+  - `TemplateParser`: Processes prompt templates
+- **Integration**: LangChain/OpenAI via OpenRouter proxy
+- **Models**: Dynamic model selection via OpenRouter API
 
 ### Data Layer
-- **Database**: Astro DB
+- **Database**: Astro DB with Turso backend
 - **Content**: File-based MDX/Markdown
 - **Collections**:
   - Blog posts
   - Projects
   - Legal documents
+  - Chat sessions
+  - Prompt templates
 
 ## Key Features
 
@@ -55,26 +60,36 @@ class ChatManager {
   private llm: ChatOpenAI;
   public messages: Message[] = [];
   private parser: ChatParser;
+  private model: string;
+  private template?: PromptTemplate;
 }
 ```
 
 ### Template System
 ```typescript
-interface IPromptTemplate {
+interface PromptTemplate {
   id: string;
   name: string;
   description: string;
+  template: string;
   systemPrompt?: string;
-  template?: string;
+  tags?: string[];
+  llmConfig?: LLMConfig;
   variables?: string[];
 }
 ```
+
+### Internationalization
+- Paraglide.js integration
+- Middleware for locale detection
+- Translated UI components
 
 ## Development Features
 - TypeScript support
 - ESLint configuration
 - Network-enabled development mode
-- Multiple deployment targets
+- Multiple deployment targets (Netlify, Vercel, Firebase)
+- GitHub Actions for maintenance
 
 ## Project Structure
 ```
@@ -82,10 +97,18 @@ interface IPromptTemplate {
 ├── src/
 │   ├── components/    # UI components
 │   ├── content/       # MDX content
+│   │   ├── blog/      # Blog posts
+│   │   ├── projects/  # Project showcases
+│   │   └── legal/     # Legal documents
 │   ├── layouts/       # Page layouts
-│   ├── lib/          # Core logic
-│   ├── pages/        # Routes
-│   └── styles/       # Global styles
+│   ├── lib/           # Core logic
+│   │   ├── ai/        # AI integration
+│   │   └── appStore.ts # State management
+│   ├── pages/         # Routes
+│   │   └── api/       # API endpoints
+│   ├── paraglide/     # i18n
+│   └── styles/        # Global styles
+└── public/            # Static assets
 ```
 
 ## State Flow
@@ -95,9 +118,16 @@ interface IPromptTemplate {
 4. UI reacts to state changes
 5. Persistence handled automatically
 
+## API Integration
+- OpenRouter for LLM model access
+- API proxy to secure credentials
+- Dynamic model selection
+- Template-based prompt system
+
 ## Deployment
 - Multi-platform support
-  - Netlify
+  - Netlify (primary)
   - Vercel
   - Firebase
 - Environment-specific configurations
+- Database synchronization tools

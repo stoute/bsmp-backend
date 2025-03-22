@@ -1,6 +1,8 @@
 ---
 import { cn } from "@lib/utils";
-import { LINKS_DEV } from "@consts";
+import { LINKS_ADMIN } from "@consts";
+// Import the message functions for translations
+import { login, logout, profile, settings } from "@paraglide/messages";
 ---
 
 <div class="user-menu-container relative">
@@ -42,7 +44,7 @@ import { LINKS_DEV } from "@consts";
       id="auth-link"
       class="block px-4 py-2 text-sm text-current hover:bg-black/5 dark:hover:bg-white/20"
     >
-      Login
+      {login()}
     </a>
 
     <!-- Admin links container -->
@@ -60,7 +62,7 @@ import { LINKS_DEV } from "@consts";
   }
 </style>
 
-<script define:vars={{ LINKS_DEV }}>
+<script define:vars={{ LINKS_ADMIN, login, logout }}>
   function initializeUserMenu() {
     const userButton = document.getElementById("user-button");
     const userDropdown = document.getElementById("user-dropdown");
@@ -120,8 +122,9 @@ import { LINKS_DEV } from "@consts";
       // Update the auth link based on login status
       if (authLink) {
         if (loggedInStatus) {
-          // User is logged in - show logout option
-          authLink.textContent = "Logout";
+          // User is logged in - show logout option with translated text
+          authLink.textContent =
+            typeof logout === "function" ? logout() : "Logout";
           authLink.href = "#";
           authLink.onclick = async (e) => {
             e.preventDefault();
@@ -129,8 +132,9 @@ import { LINKS_DEV } from "@consts";
             userDropdown?.classList.add("hidden");
           };
         } else {
-          // User is not logged in - show login option
-          authLink.textContent = "Login";
+          // User is not logged in - show login option with translated text
+          authLink.textContent =
+            typeof login === "function" ? login() : "Login";
           authLink.href = "/auth/login";
           authLink.onclick = null;
         }
@@ -147,13 +151,28 @@ import { LINKS_DEV } from "@consts";
           adminLinks.innerHTML = ""; // Clear existing links
           adminLinks.classList.remove("hidden");
 
-          // Add LINKS_DEV links
-          LINKS_DEV.forEach((link) => {
+          // Add LINKS_ADMIN links
+          LINKS_ADMIN.forEach((link) => {
             const linkElement = document.createElement("a");
             linkElement.href = link.HREF;
             linkElement.className =
               "block px-4 py-2 text-sm text-current hover:bg-black/5 dark:hover:bg-white/20";
-            linkElement.textContent = link.TEXT;
+
+            // Use the translated text if available
+            // This assumes your message keys match the TEXT values in lowercase
+            const messageKey = link.TEXT.toLowerCase();
+            try {
+              // Try to get translation from window object (where paraglide puts them)
+              const translationFn = window[messageKey];
+              linkElement.textContent =
+                typeof translationFn === "function"
+                  ? translationFn()
+                  : link.TEXT;
+            } catch (e) {
+              // Fallback to original text if translation not available
+              linkElement.textContent = link.TEXT;
+            }
+
             adminLinks.appendChild(linkElement);
           });
         } else {
@@ -165,6 +184,9 @@ import { LINKS_DEV } from "@consts";
 
     // Update on login state changes
     window.addEventListener("login-state-changed", updateUserMenu);
+
+    // Add this listener for login events from login.astro
+    window.addEventListener("login-success", updateUserMenu);
 
     // Update on storage events (for cross-tab synchronization)
     window.addEventListener("storage", (event) => {
