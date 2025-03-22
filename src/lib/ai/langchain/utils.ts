@@ -46,19 +46,42 @@ export function serializeMessageFromJSON(jsonData) {
 
 // Function to deserialize a BaseMessage object to JSON
 export function deserializeMessageToJSON(message) {
+  // Check if message is null or undefined
+  if (!message) {
+    console.warn("Attempted to deserialize null or undefined message");
+    return null;
+  }
+  // Check if it's already a plain object with a type property
+  if (typeof message === "object" && !message.getType && message.type) {
+    console.log("Message is already in JSON format:", message);
+    return message;
+  }
+
   // Determine message type
   let type;
+  if (message.additional_kwargs?.type) {
+    type = message.additional_kwargs.type;
+  }
   if (message instanceof HumanMessage) {
     type = "human";
   } else if (message instanceof AIMessage) {
     type = "ai";
   } else if (message instanceof SystemMessage) {
     type = "system";
-  } else if (message instanceof BaseMessage) {
+    // } else if (message instanceof BaseMessage) {
+    // fixme:
     // For custom message types, use the _getType method or fall back to a default
-    type = message._getType?.() || "base";
+    // type = message.getType?.() || message.additional_kwargs?.type;
+    // type = message.additional_kwargs?.type;
+    // type = "ai";
   } else {
-    throw new Error("Unknown message instance type");
+    console.error("Unknown message type:", message);
+    // Return a safe default instead of throwing an error
+    return {
+      type: type,
+      content: String(message.content || ""),
+      additional_kwargs: message.additional_kwargs || {},
+    };
   }
 
   // Create JSON object with common properties
@@ -74,6 +97,9 @@ export function deserializeMessageToJSON(message) {
   ) {
     jsonData.additional_kwargs = message.additional_kwargs;
   }
+  if (message.metadata) {
+    jsonData.metadata = message.metadata;
+  }
 
   if (message._example === true) {
     jsonData.example = true;
@@ -88,7 +114,21 @@ export function serializeMessagesFromJSON(jsonData) {
 }
 // Function to deserialize an array of messages
 export function deserializeMessagesToJSON(messages) {
-  return messages.map((msg) => deserializeMessageToJSON(msg));
+  if (!Array.isArray(messages)) {
+    console.warn("deserializeMessagesToJSON received non-array:", messages);
+    return [];
+  }
+
+  return messages
+    .map((msg) => {
+      try {
+        return deserializeMessageToJSON(msg);
+      } catch (err) {
+        console.error("Error deserializing message:", msg, err);
+        return null;
+      }
+    })
+    .filter(Boolean); // Remove any null results
 }
 
 // Example usage

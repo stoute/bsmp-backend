@@ -189,7 +189,6 @@ class ChatManager {
     }
   }
 
-  // fixme:
   private async saveState() {
     const serializedMessages = chatMessageParser.processMessages(this.messages);
     const currentChat = appState.get().currentChat;
@@ -204,30 +203,34 @@ class ChatManager {
       templateId: this.template?.id,
       template: this.template,
     };
+
+    // First prepare the state for local storage
     const chatState: Partial<ChatSessionModel> = {
       messages: serializedMessages,
       metadata,
     };
-    // POST or PUT to database
 
+    // POST or PUT to database
     const method = currentChat?.id ? "PUT" : "POST";
     let url = `${appState.get().apiBaseUrl}/sessions/index.json`;
     if (method === "PUT") url = url.replace("index", currentChat.id);
-    // fixme: hard coded logic ?
+
     if (this.messages.length > 2) {
-      const serializedMessages = deserializeMessagesToJSON(this.messages);
-      const body = {
+      // Create a separate API-ready object with properly serialized messages
+      const jsonMessages = deserializeMessagesToJSON(this.messages);
+      const apiBody = {
         ...chatState,
-        messages: serializedMessages,
-        metadata: { ...metadata, template: undefined },
+        messages: jsonMessages, // Use the JSON-serialized messages for API
+        metadata: { ...metadata, template: this.template },
       };
+
       try {
         const response = await fetch(url, {
           method: method,
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(body),
+          body: JSON.stringify(apiBody), // Send the API-ready body
         });
 
         if (!response.ok) {
@@ -267,11 +270,8 @@ class ChatManager {
   private async restoreState() {
     const savedChat = appState.get().currentChat;
     if (!savedChat) return;
-    console.log("Restoring state: ", savedChat);
 
     // Check if we have a model in the saved chat metadata
-    console.log("meta", savedChat.metadata);
-    // console.log('additional_kwargs',savedChat.additional_kwargs);
     if (savedChat.metadata && savedChat.metadata.model) {
       this.model = savedChat.metadata.model;
       appState.setKey("selectedModel", savedChat.metadata.model);
@@ -292,7 +292,6 @@ class ChatManager {
           chatMessageParser.processMessage(msg, this.template?.id);
           // console.log(msg?.kwargs);
         });
-        console.log("Restored messages: ", restoredMessages);
         // await this.llm.invoke(restoredMessages);
         this.messages = restoredMessages;
       }

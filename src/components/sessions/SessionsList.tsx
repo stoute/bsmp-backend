@@ -13,6 +13,7 @@ import { Separator } from "@components/ui/separator";
 import { appState } from "@lib/appStore";
 import { useAppService } from "@lib/hooks/useAppService.ts";
 import { cn } from "@lib/utils";
+import { serializeMessageFromJSON } from "@lib/ai/langchain/utils";
 
 interface ChatSession {
   id: string;
@@ -72,12 +73,20 @@ export default function SessionsList() {
 
   const handleLoad = async (id: string) => {
     try {
-      const response = await fetch(
-        appState.get().apiBaseUrl + `/sessions/${id}.json`,
-      );
+      const response = await fetch(`/api/sessions/${id}.json`);
       if (!response.ok) throw new Error("Failed to load session");
       const session = await response.json();
-      // Implement your session loading logic here
+
+      console.log(session);
+
+      // Convert plain message objects back to BaseMessage instances
+      if (session.messages && Array.isArray(session.messages)) {
+        session.messages = session.messages
+          .map((msg) => (msg ? serializeMessageFromJSON(msg) : null))
+          .filter(Boolean);
+      }
+
+      // Update app state with properly formatted messages
       appState.setKey("currentChat", session);
       appState.setKey("selectedModel", session.metadata?.model);
       appState.setKey("selectedTemplateId", session.metadata?.template?.id);
