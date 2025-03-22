@@ -75,7 +75,7 @@ export function deserializeMessageToJSON(message) {
     // type = message.additional_kwargs?.type;
     // type = "ai";
   } else {
-    console.error("Unknown message type:", message);
+    //console.error("Unknown message type:", message);
     // Return a safe default instead of throwing an error
     return {
       type: type,

@@ -1,6 +1,10 @@
 import { ChatOpenAI } from "@langchain/openai";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
-import { HumanMessage, SystemMessage } from "@langchain/core/messages";
+import {
+  HumanMessage,
+  SystemMessage,
+  AIMessage,
+} from "@langchain/core/messages";
 import type { Message } from "@lib/ai/types";
 import { appService } from "@lib/appService.ts";
 import { appState, openRouterModels } from "@lib/appStore";
@@ -104,7 +108,7 @@ class ChatManager {
       this.messages.push(processedMessage);
 
       // Use chatMessageParser to filter and process messages
-      const validMessages = chatMessageParser.processMessages(
+      let validMessages = chatMessageParser.processMessages(
         this.messages,
         this.template?.id,
       );
@@ -113,7 +117,73 @@ class ChatManager {
       if (validMessages.length === 0) {
         throw new Error("No valid messages to process");
       }
-      // Invoke the LLM
+
+      // Sanitize messages before sending to LLM
+      validMessages = validMessages
+        .map((msg) => {
+          // Handle template description messages
+          // if (
+          //   msg.additional_kwargs?.type === "ai-template-description" ||
+          //   (msg.additional_kwargs?.template && typeof msg.content === "string")
+          // ) {
+          //   // Skip template description messages
+          //   return null;
+          // }
+
+          // Ensure we have proper message instances
+          if (
+            msg instanceof HumanMessage ||
+            msg instanceof AIMessage ||
+            msg instanceof SystemMessage
+          ) {
+            return msg;
+          }
+
+          // Convert plain objects to proper message instances
+          try {
+            const type =
+              msg.getType?.() ||
+              (typeof msg.additional_kwargs?.type === "string"
+                ? msg.additional_kwargs.type
+                : null) ||
+              (msg.role === "user"
+                ? "human"
+                : msg.role === "assistant"
+                  ? "ai"
+                  : msg.role === "system"
+                    ? "system"
+                    : null);
+
+            const content =
+              typeof msg.content === "string"
+                ? msg.content
+                : typeof msg.content === "object"
+                  ? JSON.stringify(msg.content)
+                  : String(msg.content || "");
+
+            switch (type) {
+              case "human":
+                return new HumanMessage(content);
+              case "ai":
+                return new AIMessage(content);
+              case "system":
+                return new SystemMessage(content);
+              default:
+                console.warn("Skipping message with unknown type:", type, msg);
+                return null;
+            }
+          } catch (error) {
+            console.error("Error converting message:", error, msg);
+            return null;
+          }
+        })
+        .filter(Boolean); // Remove null messages
+
+      if (validMessages.length === 0) {
+        throw new Error("No valid messages after sanitization");
+      }
+
+      // Invoke the LLM with sanitized messages
       const response = await this.llm.invoke(validMessages);
       if (response) {
         const processedResponse = chatMessageParser.processMessage(
