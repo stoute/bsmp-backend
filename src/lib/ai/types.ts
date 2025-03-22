@@ -6,7 +6,8 @@ export type PromptTemplate = PromptTemplateModel & {};
 export type OpenRouterResponse = OpenRouterResponseModel;
 
 export type Message = BaseMessage & {
-  // role: "system" | "user" | "assistant" | "ai"; // Role of the message sender
-  timestamp: string; // ISO 8601 timestamp when the message was sent
+  /** @deprecated Use message.additional_kwargs.timestamp instead */
+  timestamp?: string; // ISO 8601 timestamp when the message was sent
+  /** @deprecated Use message.additional_kwargs.metadata instead */
   metadata?: Record<string, any>; // Optional metadata for the message (e.g., token usage)
 };

@@ -7,23 +7,56 @@ import {
 
 // Function to serialize a BaseMessage object from JSON
 export function serializeMessageFromJSON(jsonData) {
+  if (!jsonData) {
+    console.warn("Attempted to serialize null or undefined message");
+    return null;
+  }
+
   // Check the message type from the JSON
   const { type, content, additional_kwargs = {}, example = false } = jsonData;
 
+  // Handle messages that are already instances of BaseMessage classes
+  if (
+    jsonData instanceof HumanMessage ||
+    jsonData instanceof AIMessage ||
+    jsonData instanceof SystemMessage
+  ) {
+    return jsonData;
+  }
+
+  // Determine message type if not explicitly provided
+  let messageType = type;
+  if (!messageType) {
+    if (jsonData.role === "user") {
+      messageType = "human";
+    } else if (jsonData.role === "assistant") {
+      messageType = "ai";
+    } else if (jsonData.role === "system") {
+      messageType = "system";
+    } else {
+      // Default to AI message if type cannot be determined
+      console.warn("Unknown message type, defaulting to AI message:", jsonData);
+      messageType = "ai";
+    }
+  }
+
   // Create the appropriate message based on type
   let message;
-  switch (type) {
+  switch (messageType) {
     case "human":
-      message = new HumanMessage({ content });
+      message = new HumanMessage({ content: content || "" });
       break;
     case "ai":
-      message = new AIMessage({ content, additional_kwargs });
+      message = new AIMessage({ content: content || "", additional_kwargs });
       break;
     case "system":
-      message = new SystemMessage({ content });
+      message = new SystemMessage({ content: content || "" });
       break;
     default:
-      throw new Error(`Unknown message type: ${type}`);
+      console.warn(
+        `Unrecognized message type: ${messageType}, defaulting to AI message`,
+      );
+      message = new AIMessage({ content: content || "" });
   }
 
   // Handle example flag if needed
@@ -108,6 +141,7 @@ export function deserializeMessageToJSON(message) {
 export function serializeMessagesFromJSON(jsonData) {
   return jsonData.map((msg) => serializeMessageFromJSON(msg));
 }
+
 // Function to deserialize an array of messages
 export function deserializeMessagesToJSON(messages) {
   if (!Array.isArray(messages)) {

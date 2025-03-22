@@ -21,7 +21,11 @@ import { chatMessageParser } from "@lib/ChatMessageParser";
 import { promptTemplateParser } from "@lib/PromptTemplateParser";
 import { defaultLLMConfig } from "@lib/ai/llm";
 import type { ChatSessionModel, PromptTemplateModel } from "@db/models";
-import { deserializeMessagesToJSON } from "@lib/ai/langchain/utils";
+import {
+  deserializeMessagesToJSON,
+  serializeMessageFromJSON,
+  serializeMessagesFromJSON,
+} from "@lib/ai/langchain/utils";
 
 class ChatManager {
   private static instance: ChatManager;
@@ -119,68 +123,19 @@ class ChatManager {
       }
 
       // Sanitize messages before sending to LLM
-      validMessages = validMessages
-        .map((msg) => {
-          // Handle template description messages
-          // if (
-          //   msg.additional_kwargs?.type === "ai-template-description" ||
-          //   (msg.additional_kwargs?.template && typeof msg.content === "string")
-          // ) {
-          //   // Skip template description messages
-          //   return null;
-          // }
+      try {
+        // Use the existing utility function to handle message serialization
+        validMessages = serializeMessagesFromJSON(validMessages);
 
-          // Ensure we have proper message instances
-          if (
-            msg instanceof HumanMessage ||
-            msg instanceof AIMessage ||
-            msg instanceof SystemMessage
-          ) {
-            return msg;
-          }
+        // Filter out any null or invalid messages
+        validMessages = validMessages.filter(Boolean);
 
-          // Convert plain objects to proper message instances
-          try {
-            const type =
-              msg.getType?.() ||
-              (typeof msg.additional_kwargs?.type === "string"
-                ? msg.additional_kwargs.type
-                : null) ||
-              (msg.role === "user"
-                ? "human"
-                : msg.role === "assistant"
-                  ? "ai"
-                  : msg.role === "system"
-                    ? "system"
-                    : null);
-
-            const content =
-              typeof msg.content === "string"
-                ? msg.content
-                : typeof msg.content === "object"
-                  ? JSON.stringify(msg.content)
-                  : String(msg.content || "");
-
-            switch (type) {
-              case "human":
-                return new HumanMessage(content);
-              case "ai":
-                return new AIMessage(content);
-              case "system":
-                return new SystemMessage(content);
-              default:
-                console.warn("Skipping message with unknown type:", type, msg);
-                return null;
-            }
-          } catch (error) {
-            console.error("Error converting message:", error, msg);
-            return null;
-          }
-        })
-        .filter(Boolean); // Remove null messages
-
-      if (validMessages.length === 0) {
-        throw new Error("No valid messages after sanitization");
+        if (validMessages.length === 0) {
+          throw new Error("No valid messages after sanitization");
+        }
+      } catch (error) {
+        console.error("Error sanitizing messages:", error);
+        throw new Error("Failed to process messages: " + error.message);
       }
 
       // Invoke the LLM with sanitized messages
