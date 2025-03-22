@@ -271,7 +271,7 @@ class ChatManager {
       topic,
       model: this.model,
       templateId: this.template?.id,
-      template: this.template,
+      // template: this.template,
     };
 
     // First prepare the state for local storage
@@ -291,7 +291,7 @@ class ChatManager {
       const apiBody = {
         ...chatState,
         messages: jsonMessages, // Use the JSON-serialized messages for API
-        metadata: { ...metadata, template: this.template },
+        metadata,
       };
 
       try {
@@ -350,9 +350,14 @@ class ChatManager {
       this.model = appState.get().selectedModel;
     }
 
-    if (savedChat?.metadata?.template) {
-      appState.setKey("selectedTemplateId", savedChat.metadata.template.id);
-      this.template = savedChat.metadata.template;
+    // if (savedChat?.metadata?.template) {
+    //   appState.setKey("selectedTemplateId", savedChat.metadata.templateId);
+    //   this.template = savedChat.metadata.template;
+    // }
+    if (savedChat?.metadata?.templateId) {
+      appState.setKey("selectedTemplateId", savedChat.metadata.templateId);
+      //this.newChat(savedChat.metadata.templateId);
+      // this.template = savedChat.metadata.template;
     }
 
     if (savedChat?.messages && Array.isArray(savedChat.messages)) {
