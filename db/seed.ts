@@ -1,22 +1,9 @@
 import { db, PromptTemplate, User, Comment, Author } from "astro:db";
-import { defaultLLMConfig } from "../src/lib/ai/llm";
-import { TEMPLATE_TAGS } from "../src/lib/ai/prompt-templates/constants";
-import templates from "./seed-templates.json";
 import { registerUser } from "../src/lib/utils/dbUtils";
-
-const formatSeedTemplates = (templates: any) => {
-  templates.forEach((template: any) => {
-    template.model = null;
-    template.context = null;
-    if (!template.llm_settings) {
-      template.llm_settings = JSON.stringify(defaultLLMConfig);
-      template.tags = JSON.stringify(template.tags || [TEMPLATE_TAGS[0]]);
-    }
-  });
-  return templates;
-};
+import { getProductionTemplates } from "./seed-fetcher";
 
 export default async function () {
+  const templates = await getProductionTemplates();
   // @ts-ignore
   const adminEmail = import.meta.env.PUBLIC_ADMIN_EMAIL;
   // set some development user accounts
@@ -25,7 +12,8 @@ export default async function () {
   await registerUser("editor@bsmp.nl", "binnen", "editor");
   await registerUser("moderator@bsmp.nl", "binnen", "moderator");
 
-  await db.insert(PromptTemplate).values(formatSeedTemplates(templates));
+  await db.insert(PromptTemplate).values(templates);
+  // await db.insert(PromptTemplate).values(formatSeedTemplates(templates));
 
   await db.insert(Author).values([
     { id: 1, name: "Kasim" },

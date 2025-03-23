@@ -7,23 +7,55 @@ import {
 
 // Function to serialize a BaseMessage object from JSON
 export function serializeMessageFromJSON(jsonData) {
+  if (!jsonData) {
+    console.warn("Attempted to serialize null or undefined message");
+    return null;
+  }
   // Check the message type from the JSON
   const { type, content, additional_kwargs = {}, example = false } = jsonData;
 
+  // Handle messages that are already instances of BaseMessage classes
+  if (
+    jsonData instanceof HumanMessage ||
+    jsonData instanceof AIMessage ||
+    jsonData instanceof SystemMessage
+  ) {
+    return jsonData;
+  }
+
+  // Determine message type if not explicitly provided
+  let messageType = type;
+  if (!messageType) {
+    if (jsonData.role === "user") {
+      messageType = "human";
+    } else if (jsonData.role === "assistant") {
+      messageType = "ai";
+    } else if (jsonData.role === "system") {
+      messageType = "system";
+    } else {
+      // Default to AI message if type cannot be determined
+      console.warn("Unknown message type, defaulting to AI message:", jsonData);
+      messageType = "ai";
+    }
+  }
+
   // Create the appropriate message based on type
   let message;
-  switch (type) {
+  switch (messageType) {
     case "human":
-      message = new HumanMessage({ content });
+      message = new HumanMessage({ content: content || "" });
       break;
     case "ai":
-      message = new AIMessage({ content, additional_kwargs });
+      message = new AIMessage({ content: content || "", additional_kwargs });
       break;
     case "system":
-      message = new SystemMessage({ content });
+      message = new SystemMessage({ content: content || "" });
       break;
     default:
-      throw new Error(`Unknown message type: ${type}`);
+      console.warn(
+        `Unrecognized message type: ${messageType}, defaulting to AI message`,
+      );
+      message = new AIMessage({ content: content || "" });
   }
 
   // Handle example flag if needed
@@ -46,15 +78,8 @@ export function serializeMessageFromJSON(jsonData) {
 
 // Function to deserialize a BaseMessage object to JSON
 export function deserializeMessageToJSON(message) {
-  if (!message) {
-    console.warn("Attempted to deserialize null or undefined message");
-    return null;
-  }
-  // Check if it's already a plain object with a type property
-  if (typeof message === "object" && !message.getType && message.type) {
-    console.log("Message is already in JSON format:", message);
-    return message;
-  }
+  if (!message) return null;
+
   // Determine message type
   let type;
   if (message instanceof HumanMessage) {
@@ -64,50 +89,49 @@ export function deserializeMessageToJSON(message) {
   } else if (message instanceof SystemMessage) {
     type = "system";
   } else if (message instanceof BaseMessage) {
-    type = "ai";
-    // fixme:
-    // For custom message types, use the _getType method or fall back to a default
-    // type = message.getType?.() || message.additional_kwargs?.type;
-    // type = message.additional_kwargs?.type;
-    // type = "ai";
+    type = message._getType?.() || "ai";
   } else {
-    //console.warn("Unknown message type:", message);
-    // Return a safe default instead of throwing an error
     return {
       type: "ai",
       content: String(message.content || ""),
       additional_kwargs: message.additional_kwargs || {},
-      metadata: message.metadata || {},
     };
   }
-  console.log("type", type);
 
-  // Create JSON object with common properties
-  const jsonData = {
+  // Create a standardized JSON representation
+  const result = {
     type,
     content: message.content,
+    additional_kwargs: { ...message.additional_kwargs },
   };
-  // Add additional properties if they exist
-  if (
-    message.additional_kwargs &&
-    Object.keys(message.additional_kwargs).length > 0
-  ) {
-    jsonData.additional_kwargs = message.additional_kwargs;
-  }
-  if (message.metadata) {
-    jsonData.metadata = message.metadata;
-  }
-  if (message._example === true) {
-    jsonData.example = true;
-  }
 
-  return jsonData;
+  // Move deprecated metadata into additional_kwargs if it exists
+  // if (message.metadata) {
+  //   console.warn(
+  //     "Using deprecated message.metadata - please use additional_kwargs.metadata instead",
+  //   );
+  //   result.additional_kwargs.metadata = {
+  //     ...result.additional_kwargs.metadata,
+  //     ...message.metadata,
+  //   };
+  // }
+  //
+  // // Move deprecated timestamp into additional_kwargs if it exists
+  // if (message.timestamp) {
+  //   console.warn(
+  //     "Using deprecated message.timestamp - please use additional_kwargs.timestamp instead",
+  //   );
+  //   result.additional_kwargs.timestamp = message.timestamp;
+  // }
+
+  return result;
 }
 
 // Function to serialize an array of messages
 export function serializeMessagesFromJSON(jsonData) {
   return jsonData.map((msg) => serializeMessageFromJSON(msg));
 }
+
 // Function to deserialize an array of messages
 export function deserializeMessagesToJSON(messages) {
   if (!Array.isArray(messages)) {

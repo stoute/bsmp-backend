@@ -4,7 +4,7 @@ import PromptTemplateEditor from "@components/prompt-templates/PromptTemplateEdi
 import { appState } from "@lib/appStore";
 import type { PromptTemplate } from "@lib/ai/types";
 import { useAppService } from "@lib/hooks/useAppService";
-import { PromptTemplateFactory } from "@lib/ai/prompt-templates/PromptTemplateFactory.ts";
+import { PromptTemplateFactory } from "@lib/prompt-template/PromptTemplateFactory.ts";
 
 interface PromptTemplatesProps {
   initialTemplate?: PromptTemplate;
