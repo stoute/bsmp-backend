@@ -637,6 +637,29 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
                                 />
                               </div>
                               <div className="max-h-[300px] overflow-y-auto">
+                                {/* Add option to reset model selection */}
+                                <div
+                                  className={cn(
+                                    "hover:bg-accent hover:text-accent-foreground relative flex cursor-default items-center rounded-sm border-b border-zinc-200 px-2 py-1.5 text-sm outline-none select-none dark:border-zinc-700",
+                                    !field.value &&
+                                      "bg-accent text-accent-foreground",
+                                  )}
+                                  onClick={() => {
+                                    field.onChange("");
+                                    setOpen(false);
+                                  }}
+                                >
+                                  <Check
+                                    className={cn(
+                                      "mr-2 h-4 w-4",
+                                      !field.value
+                                        ? "opacity-100"
+                                        : "opacity-0",
+                                    )}
+                                  />
+                                  No model selected (use default)
+                                </div>
+
                                 {filteredModels.length === 0 ? (
                                   <div className="text-muted-foreground relative flex cursor-default items-center rounded-sm px-2 py-1.5 text-sm select-none">
                                     No models found.
