@@ -11,7 +11,7 @@ export const defaultLLMConfig: ChatOpenAI = {
   //base_url: "/api/ai-proxy", // Base URL for the API endpoint (proxy or custom server)
   timeout: 30000, // Timeout period in milliseconds (default: 30 seconds)
   // organization: "org-123456", // OpenAI organization ID (optional)
-  model: "google/gemini-2.0-flash-lite-001", // The model to use (e.g., "gpt-3.5-turbo", "gpt-4")
+  model: "", // The model to use (e.g., "gpt-3.5-turbo", "gpt-4")
 
   // Output Control
   temperature: 0.7, // Controls randomness in output (higher = more creative, lower = more deterministic)
