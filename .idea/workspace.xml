@@ -5,12 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8cf7e9a9-1ddf-43bf-8ddd-96d96e27722b" name="Changes" comment="fix: auth login POST">
-      <change afterPath="$PROJECT_DIR$/src/components/lib/utils.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/AugmentWebviewStateStore.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/AugmentWebviewStateStore.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pnpm-lock.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pnpm-lock.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/prompt-templates/PromptTemplateEditor.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/prompt-templates/PromptTemplateEditor.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/ui/slider.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/slider.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
