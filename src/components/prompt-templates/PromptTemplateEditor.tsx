@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -29,7 +29,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@components/ui/card.tsx";
-import { Alert, AlertDescription, AlertTitle } from "@components/ui/alert.tsx";
 import { Badge } from "@components/ui/badge.tsx";
 import { Separator } from "@components/ui/separator.tsx";
 import {
@@ -74,6 +73,29 @@ import {
   template_variable_placeholder,
   template_add_variable,
 } from "../../paraglide/messages";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@components/ui/collapsible";
+import { Slider } from "@components/ui/slider";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@components/ui/select";
+import { ChevronDown } from "lucide-react";
+import { openRouterModels } from "@lib/appStore";
+import { Search } from "lucide-react";
+import { Check, ChevronsUpDown } from "lucide-react";
+import { cn } from "@lib/utils";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@components/ui/popover";
 
 // Define the form schema using zod
 const formSchema = z.object({
@@ -85,6 +107,13 @@ const formSchema = z.object({
   variables: z.array(z.string()).optional().default([]),
   created_at: z.string().optional(),
   updated_at: z.string().optional(),
+  llmConfig: z
+    .object({
+      model: z.string(),
+      temperature: z.number().min(0).max(1),
+      maxTokens: z.number().min(1).max(4096),
+    })
+    .optional(),
 });
 
 // Create a persistent store for the form state
@@ -121,6 +150,10 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
   const [variableInput, setVariableInput] = useState("");
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const { appService } = useAppService();
+  const formRef = useRef<HTMLFormElement>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [open, setOpen] = useState(false);
+  const models = useStore(openRouterModels);
 
   // Get the current stored state
   const storedState = useStore(templateEditorState);
@@ -131,7 +164,17 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
 
     // Create a complete template with all required fields
     const defaultTemplate = PromptTemplateFactory.createDefault();
-    return { ...defaultTemplate, ...template };
+
+    // Ensure llmConfig has default values if missing
+    const mergedTemplate = { ...defaultTemplate, ...template };
+    mergedTemplate.llmConfig = {
+      model: "google/gemini-2.0-flash-lite-001",
+      temperature: 0.7,
+      maxTokens: 256,
+      ...mergedTemplate.llmConfig,
+    };
+
+    return mergedTemplate;
   };
 
   // Get stored template or create a complete one
@@ -141,7 +184,6 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
     }
     return getCompleteTemplate(promptTemplate);
   };
-  
 
   // Initialize form with complete values
   const form = useForm<z.infer<typeof formSchema>>({
@@ -383,6 +425,15 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
     if (onCancel) onCancel();
   };
 
+  // Create a filtered models function
+  const filteredModels = useMemo(() => {
+    if (!searchQuery) return models.models || [];
+    const query = searchQuery.toLowerCase();
+    return (models.models || []).filter((model) =>
+      (model.name?.toLowerCase() || model.id.toLowerCase()).includes(query),
+    );
+  }, [models.models, searchQuery]);
+
   return (
     <>
       <Card className="w-full">
@@ -393,7 +444,14 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
         </CardHeader>
         <CardContent>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <form
+              ref={formRef}
+              onSubmit={(e) => {
+                e.preventDefault();
+                form.handleSubmit(onSubmit)(e);
+              }}
+              className="space-y-6"
+            >
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <FormField
                   control={form.control}
@@ -532,6 +590,147 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
               </div>
 
               <Separator />
+
+              <Collapsible defaultOpen className="w-full">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-medium">LLM Configuration</h3>
+                  <CollapsibleTrigger>
+                    <ChevronDown className="h-4 w-4" />
+                  </CollapsibleTrigger>
+                </div>
+                <CollapsibleContent className="mt-2 space-y-4">
+                  <FormField
+                    control={form.control}
+                    name="llmConfig.model"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Model</FormLabel>
+                        <Popover open={open} onOpenChange={setOpen}>
+                          <PopoverTrigger asChild>
+                            <Button
+                              variant="outline"
+                              role="combobox"
+                              aria-expanded={open}
+                              className="w-full justify-between border-zinc-200 bg-white dark:border-zinc-700 dark:bg-zinc-900"
+                            >
+                              {field.value
+                                ? (models.models || []).find(
+                                    (model) => model.id === field.value,
+                                  )?.name ||
+                                  field.value.split("/")[1] ||
+                                  field.value
+                                : "Select model"}
+                              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-full border-zinc-200 bg-white p-0 dark:border-zinc-700 dark:bg-zinc-900">
+                            <div className="flex flex-col">
+                              <div className="flex items-center border-b border-zinc-200 px-3 dark:border-zinc-700">
+                                <Search className="h-4 w-4 shrink-0 opacity-50" />
+                                <input
+                                  className="placeholder:text-muted-foreground flex h-10 w-full rounded-md bg-white py-3 text-sm outline-none disabled:cursor-not-allowed disabled:opacity-50 dark:bg-zinc-900"
+                                  placeholder="Search models..."
+                                  value={searchQuery}
+                                  onChange={(e) =>
+                                    setSearchQuery(e.target.value)
+                                  }
+                                />
+                              </div>
+                              <div className="max-h-[300px] overflow-y-auto">
+                                {filteredModels.length === 0 ? (
+                                  <div className="text-muted-foreground relative flex cursor-default items-center rounded-sm px-2 py-1.5 text-sm select-none">
+                                    No models found.
+                                  </div>
+                                ) : (
+                                  filteredModels.map((model) => (
+                                    <div
+                                      key={model.id}
+                                      className={cn(
+                                        "hover:bg-accent hover:text-accent-foreground relative flex cursor-default items-center rounded-sm px-2 py-1.5 text-sm outline-none select-none",
+                                        field.value === model.id &&
+                                          "bg-accent text-accent-foreground",
+                                      )}
+                                      onClick={() => {
+                                        field.onChange(model.id);
+                                        setOpen(false);
+                                      }}
+                                    >
+                                      <Check
+                                        className={cn(
+                                          "mr-2 h-4 w-4",
+                                          field.value === model.id
+                                            ? "opacity-100"
+                                            : "opacity-0",
+                                        )}
+                                      />
+                                      {model.name || model.id.split("/")[1]}
+                                    </div>
+                                  ))
+                                )}
+                              </div>
+                            </div>
+                          </PopoverContent>
+                        </Popover>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="llmConfig.temperature"
+                    render={({ field }) => (
+                      <FormItem className="py-2">
+                        <FormLabel>
+                          Temperature: {field.value?.toFixed(2)}
+                        </FormLabel>
+                        <FormControl>
+                          <Slider
+                            min={0}
+                            max={1}
+                            step={0.01}
+                            value={[field.value || 0.7]}
+                            onValueChange={(values) =>
+                              field.onChange(values[0])
+                            }
+                            className="py-4"
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          Controls randomness (0 = deterministic, 1 = creative)
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="llmConfig.maxTokens"
+                    render={({ field }) => (
+                      <FormItem className="py-2">
+                        <FormLabel>Max Tokens: {field.value}</FormLabel>
+                        <FormControl>
+                          <Slider
+                            min={1}
+                            max={4096}
+                            step={1}
+                            value={[field.value || 256]}
+                            onValueChange={(values) =>
+                              field.onChange(values[0])
+                            }
+                            className="py-4"
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          Maximum number of tokens to generate
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </CollapsibleContent>
+              </Collapsible>
 
               {appService?.getUser()?.role === "admin" && (
                 <div className="crud-buttons flex justify-between">

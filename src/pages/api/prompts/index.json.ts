@@ -34,8 +34,16 @@ export async function POST({ request }: { request: Request }) {
   try {
     const requestBody = await request.json();
     // Validate the request body against the PromptTemplate interface.
-    const { name, description, systemPrompt, template, variables, model } =
-      requestBody;
+    const {
+      name,
+      description,
+      systemPrompt,
+      template,
+      context,
+      llmConfig,
+      variables,
+      tags,
+    } = requestBody;
     if (!name) {
       // Remove template check
       return new Response(
@@ -60,8 +68,8 @@ export async function POST({ request }: { request: Request }) {
       description: description || "",
       systemPrompt: systemPrompt || "",
       template,
-      model,
       variables: variables || [],
+      llmConfig: llmConfig, // Ensure llmConfig is included
       created_at: now,
       updated_at: now,
     };
