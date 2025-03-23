@@ -87,7 +87,7 @@ export default function SessionsList() {
       }
 
       // Update app state with properly formatted messages
-      appState.setKey("currentChat", session);
+      appState.setKey("currentChatSession", session);
       appState.setKey("selectedModel", session.metadata?.model);
       appState.setKey("selectedTemplateId", session.metadata?.templateId);
       window.location.href = "/chat";

@@ -118,10 +118,10 @@ export default function ChatControls() {
 
     fetchTemplates().then(() => {
       if (initialLoadRef.current) {
-        const currentChat = appState.get().currentChat;
+        const currentChatSession = appState.get().currentChatSession;
         const storedTemplateId = appState.get().selectedTemplateId;
 
-        if (!currentChat?.messages?.length && storedTemplateId) {
+        if (!currentChatSession?.messages?.length && storedTemplateId) {
           handleTemplateChange(storedTemplateId);
         }
         initialLoadRef.current = false;

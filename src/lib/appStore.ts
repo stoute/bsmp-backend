@@ -12,9 +12,9 @@ export type AppState = {
   selectedModel?: string;
   selectedTemplate?: PromptTemplate;
   selectedTemplateId?: string;
-  currentChat?: ChatSessionModel;
-  currentSession?: ChatSessionModel;
-  currentSessionId?: string;
+  // currentChat?: ChatSessionModel;
+  currentChatSession?: ChatSessionModel;
+  currentChatSessionId?: string;
   currentUser?: User;
 };
 
@@ -26,9 +26,11 @@ export const appState = persistentMap<AppState>(
     environment: undefined as any,
     selectedModel: undefined,
     selectedTemplateId: undefined,
-    currentChat: undefined,
-    currentSession: undefined,
-    currentSessionId: undefined,
+    // deprecated
+    // currentChat: undefined,
+    // use this instead
+    currentChatSession: undefined,
+    currentChatSessionId: undefined,
     currentUser: undefined,
   },
   {

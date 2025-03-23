@@ -89,7 +89,7 @@ export function deserializeMessageToJSON(message) {
   } else if (message instanceof SystemMessage) {
     type = "system";
   } else if (message instanceof BaseMessage) {
-    type = message._getType?.() || "ai";
+    type = message.getType?.() || "ai";
   } else {
     return {
       type: "ai",
