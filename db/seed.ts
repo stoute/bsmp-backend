@@ -1,6 +1,6 @@
 import { db, PromptTemplate, User, Comment, Author } from "astro:db";
 import { defaultLLMConfig } from "../src/lib/ai/llm";
-import { TEMPLATE_TAGS } from "../src/lib/ai/prompt-templates/constants";
+import { TEMPLATE_TAGS } from "../src/lib/prompt-template/constants";
 import templates from "./seed-templates.json";
 import { registerUser } from "../src/lib/utils/dbUtils";
 

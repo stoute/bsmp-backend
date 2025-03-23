@@ -7,7 +7,19 @@
     <list default="true" id="8cf7e9a9-1ddf-43bf-8ddd-96d96e27722b" name="Changes" comment="fix: auth login POST">
       <change beforePath="$PROJECT_DIR$/.idea/AugmentWebviewStateStore.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/AugmentWebviewStateStore.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/db/seed.ts" beforeDir="false" afterPath="$PROJECT_DIR$/db/seed.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/chat/ChatControls.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/chat/ChatControls.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/prompt-templates/PromptTemplateEditor.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/prompt-templates/PromptTemplateEditor.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/prompt-templates/PromptTemplates.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/prompt-templates/PromptTemplates.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/ChatManager.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/ChatManager.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/ChatMessageParser.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/ChatMessageParser.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/PromptTemplateParser.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/prompt-template/PromptTemplateParser.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/lib/ai/langchain/utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/ai/langchain/utils.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/ai/prompt-templates/PromptTemplateFactory.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/prompt-template/PromptTemplateFactory.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/ai/prompt-templates/constants.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/prompt-template/constants.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/ai/prompt-templates/parsers/conversation-chain.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/prompt-template/parsers/conversation-chain.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/ai/prompt-templates/preset-templates.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/prompt-template/preset-templates.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/ai/prompt-templates/template-parser.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/prompt-template/template-parser-deprecated.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -94,11 +106,11 @@
       <recent name="$PROJECT_DIR$/src/lib/utils" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/lib" />
       <recent name="$PROJECT_DIR$/src/lib/ai/prompt-templates" />
       <recent name="$PROJECT_DIR$/src/lib/ai" />
       <recent name="$PROJECT_DIR$/db" />
       <recent name="$PROJECT_DIR$/public" />
-      <recent name="$PROJECT_DIR$/src-design" />
     </key>
   </component>
   <component name="RunManager" selected="npm.dev:network">
@@ -154,11 +166,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="npm.db-push-remote" />
         <item itemvalue="npm.dev:network" />
         <item itemvalue="npm.build" />
         <item itemvalue="npm.----build" />
         <item itemvalue="npm.---build" />
-        <item itemvalue="npm.db-push-remote" />
       </list>
     </recent_temporary>
   </component>

@@ -4,9 +4,9 @@ import {
   SystemMessagePromptTemplate,
   HumanMessagePromptTemplate,
 } from "@langchain/core/prompts";
-import type { Message, PromptTemplate } from "@lib/ai/types";
-import { chatMessageParser } from "./ChatMessageParser";
-import { type chatManager } from "./ChatManager";
+import type { Message, PromptTemplate } from "@lib/ai/types.ts";
+import { chatMessageParser } from "../ChatMessageParser.ts";
+import { type chatManager } from "../ChatManager.ts";
 import { AIMessage, SystemMessage } from "@langchain/core/messages";
 import { DEFAULT_SYSTEM_MESSAGE } from "@consts.ts";
 

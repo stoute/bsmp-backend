@@ -11,7 +11,6 @@ export function serializeMessageFromJSON(jsonData) {
     console.warn("Attempted to serialize null or undefined message");
     return null;
   }
-
   // Check the message type from the JSON
   const { type, content, additional_kwargs = {}, example = false } = jsonData;
 
@@ -107,23 +106,23 @@ export function deserializeMessageToJSON(message) {
   };
 
   // Move deprecated metadata into additional_kwargs if it exists
-  if (message.metadata) {
-    console.warn(
-      "Using deprecated message.metadata - please use additional_kwargs.metadata instead",
-    );
-    result.additional_kwargs.metadata = {
-      ...result.additional_kwargs.metadata,
-      ...message.metadata,
-    };
-  }
-
-  // Move deprecated timestamp into additional_kwargs if it exists
-  if (message.timestamp) {
-    console.warn(
-      "Using deprecated message.timestamp - please use additional_kwargs.timestamp instead",
-    );
-    result.additional_kwargs.timestamp = message.timestamp;
-  }
+  // if (message.metadata) {
+  //   console.warn(
+  //     "Using deprecated message.metadata - please use additional_kwargs.metadata instead",
+  //   );
+  //   result.additional_kwargs.metadata = {
+  //     ...result.additional_kwargs.metadata,
+  //     ...message.metadata,
+  //   };
+  // }
+  //
+  // // Move deprecated timestamp into additional_kwargs if it exists
+  // if (message.timestamp) {
+  //   console.warn(
+  //     "Using deprecated message.timestamp - please use additional_kwargs.timestamp instead",
+  //   );
+  //   result.additional_kwargs.timestamp = message.timestamp;
+  // }
 
   return result;
 }

@@ -1,4 +1,4 @@
-import { type PromptTemplate } from "@lib/ai/types";
+import { type PromptTemplate } from "@lib/ai/types.ts";
 import {
   ChatPromptTemplate,
   SystemMessagePromptTemplate,
@@ -7,7 +7,7 @@ import {
 import { SystemMessage, HumanMessage } from "@langchain/core/messages";
 import { LLMChain } from "langchain/chains";
 import { ChatOpenAI } from "@langchain/openai";
-import { defaultLLMConfig } from "../llm";
+import { defaultLLMConfig } from "../ai/llm.ts";
 
 /**
  * Singleton class for parsing PromptTemplates into LangChain objects

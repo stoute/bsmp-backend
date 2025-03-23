@@ -66,6 +66,14 @@ export class ChatMessageParser {
   // Process a single message
   public processMessage(message: Message, templateId?: string): Message | null {
     if (!message) return null;
+
+    // Add a timestamp if not present
+    message.additional_kwargs = {
+      ...(message.additional_kwargs || {}),
+      timestamp:
+        message.additional_kwargs?.timestamp || new Date().toISOString(),
+    };
+
     if (typeof message.getType === "function") {
       message.additional_kwargs = {
         ...message.additional_kwargs,
@@ -94,12 +102,6 @@ export class ChatMessageParser {
     for (const filter of this.messageFilters) {
       if (!filter(message)) return null;
     }
-    // console.log("");
-    // console.log("processMessage() => ", message);
-    // console.log("msg.getType() => ", message.getType());
-    // console.log("msgadditional_kwargs => ", message.additional_kwargs);
-    // console.log("msg.role => ", message.role);
-    // console.log("");
     return message;
   }
 

@@ -43,7 +43,7 @@ import {
   AlertDialogAction,
 } from "@components/ui/alert-dialog.tsx";
 import { useAppService } from "@lib/hooks/useAppService.ts";
-import { PromptTemplateFactory } from "@lib/ai/prompt-templates/PromptTemplateFactory";
+import { PromptTemplateFactory } from "@lib/prompt-template/PromptTemplateFactory";
 import {
   template_name,
   template_description,
@@ -125,11 +125,6 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
   // Get the current stored state
   const storedState = useStore(templateEditorState);
 
-  // Log the incoming template data for debugging
-  useEffect(() => {
-    console.log("Prompt template received:", promptTemplate);
-  }, [promptTemplate]);
-
   // Create a complete template object by merging with defaults
   const getCompleteTemplate = (template) => {
     if (!template) return PromptTemplateFactory.createDefault();
@@ -142,12 +137,11 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
   // Get stored template or create a complete one
   const getInitialValues = () => {
     if (promptTemplate?.id && storedState[promptTemplate.id]) {
-      // Log the stored state for debugging
-      console.log("Using stored state:", storedState[promptTemplate.id]);
       return getCompleteTemplate(storedState[promptTemplate.id]);
     }
     return getCompleteTemplate(promptTemplate);
   };
+  
 
   // Initialize form with complete values
   const form = useForm<z.infer<typeof formSchema>>({
@@ -162,7 +156,6 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
   useEffect(() => {
     if (promptTemplate) {
       const values = getInitialValues();
-      console.log("Resetting form with values:", values);
       form.reset(values);
     }
   }, [promptTemplate?.id]);

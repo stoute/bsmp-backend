@@ -1,6 +1,6 @@
-import * as presetTemplates from "./preset-templates";
+import * as presetTemplates from "./preset-templates.ts";
 import { type PromptTemplate } from "@lib/ai/types.ts";
-import { defaultLLMConfig } from "../llm.ts";
+import { defaultLLMConfig } from "../ai/llm.ts";
 
 const environment = import.meta.env.DEV ? "development" : "production";
 

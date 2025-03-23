@@ -17,7 +17,7 @@ import { DEFAULT_MODEL } from "@/consts";
 import {
   DEFAULT_TEMPLATE_ID,
   PRESET_TEMPLATES,
-} from "@lib/ai/prompt-templates/constants.ts";
+} from "@lib/prompt-template/constants.ts";
 import {
   Popover,
   PopoverContent,

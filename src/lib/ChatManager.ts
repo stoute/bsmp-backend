@@ -16,9 +16,9 @@ import {
 import {
   DEFAULT_TEMPLATE_ID,
   PRESET_TEMPLATES,
-} from "@lib/ai/prompt-templates/constants.ts";
+} from "@lib/prompt-template/constants.ts";
 import { chatMessageParser } from "@lib/ChatMessageParser";
-import { promptTemplateParser } from "@lib/PromptTemplateParser";
+import { promptTemplateParser } from "@lib/prompt-template/PromptTemplateParser.ts";
 import { defaultLLMConfig } from "@lib/ai/llm";
 import type { ChatSessionModel, PromptTemplateModel } from "@db/models";
 import {
@@ -226,7 +226,6 @@ class ChatManager {
       topic,
       model: this.model,
       templateId: this.template?.id,
-      // template: this.template,
     };
 
     // First prepare the state for local storage
@@ -305,14 +304,8 @@ class ChatManager {
       this.model = appState.get().selectedModel;
     }
 
-    // if (savedChat?.metadata?.template) {
-    //   appState.setKey("selectedTemplateId", savedChat.metadata.templateId);
-    //   this.template = savedChat.metadata.template;
-    // }
     if (savedChat?.metadata?.templateId) {
       appState.setKey("selectedTemplateId", savedChat.metadata.templateId);
-      //this.newChat(savedChat.metadata.templateId);
-      // this.template = savedChat.metadata.template;
     }
 
     if (savedChat?.messages && Array.isArray(savedChat.messages)) {
