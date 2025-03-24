@@ -1,5 +1,6 @@
 import { proxyFetchHandler } from "./utils";
-import { type ChatOpenAI } from "@langchain/openai";
+// import { type ChatOpenAI } from "@langchain/openai";
+import { type ChatOpenRouterAI as ChatOpenAI } from "./open-router";
 import { toSnakeCase } from "@lib/utils";
 
 export const defaultLLMConfig: ChatOpenAI = {
@@ -8,6 +9,8 @@ export const defaultLLMConfig: ChatOpenAI = {
   configuration: {
     fetch: proxyFetchHandler,
   },
+  output_format: "text",
+  // output_format: "text",
   //base_url: "/api/ai-proxy", // Base URL for the API endpoint (proxy or custom server)
   timeout: 30000, // Timeout period in milliseconds (default: 30 seconds)
   // organization: "org-123456", // OpenAI organization ID (optional)

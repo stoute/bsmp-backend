@@ -49,7 +49,10 @@ export class PromptTemplateParser {
 
   // Render a template
   public async renderTemplate(template: PromptTemplate) {
-    let sessionMessages: Message[] = appState.get().currentChatSession.messages;
+    let sessionMessages: Message[] = [];
+    if (appState.get().currentChatSession)
+      sessionMessages = appState.get().currentChatSession.messages;
+
     const sanitizedSystemPrompt = this.sanitizeTemplateContent(
       template.systemPrompt || DEFAULT_SYSTEM_MESSAGE,
     );
@@ -71,10 +74,6 @@ export class PromptTemplateParser {
     console.log("renderTemplate");
     console.log("sessionMessages", sessionMessages);
     console.log("");
-
-    // let messages: Message[] = [systemMessage, descriptionMessage];
-
-    // this.chatManager.setMessages(messages);
     this.chatManager.setMessages(sessionMessages);
   }
 

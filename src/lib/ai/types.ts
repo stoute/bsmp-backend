@@ -1,9 +1,11 @@
 import type { BaseMessage } from "@langchain/core/messages";
 import type { PromptTemplateModel } from "@db/models";
-import type { OpenRouterResponse as OpenRouterResponseModel } from "@lib/ai/open-router.ts";
+import type { OpenRouterResponse as OpenRouterResponseModel } from "./open-router";
+import type { ChatOpenRouterAI } from "./open-router";
 
 export type PromptTemplate = PromptTemplateModel & {};
 export type OpenRouterResponse = OpenRouterResponseModel;
+export type ChatOpenRouterAI = ChatOpenRouterAI;
 
 export type Message = BaseMessage & {
   /** @deprecated Use message.additional_kwargs.timestamp instead */

@@ -88,6 +88,7 @@ import {
 } from "@components/ui/select";
 import { ChevronDown } from "lucide-react";
 import { openRouterModels } from "@lib/appStore";
+import { TEMPLATE_TAGS } from "@lib/prompt-template/constants";
 import { Search } from "lucide-react";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@lib/utils";

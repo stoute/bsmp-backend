@@ -219,10 +219,11 @@ class ChatManager {
     let topic = "Chat template: " + this.template?.name;
     if (serializedMessages.length > 2)
       topic =
-        "Topic: " + serializedMessages[1]?.content.slice(0, 60 - 3) + "...";
+        "Topic: " + serializedMessages[2]?.content.slice(0, 60 - 3) + "...";
     const metadata = {
       topic,
       model: this.model,
+      template: this.template,
       templateId: this.template?.id,
     };
 
@@ -275,26 +276,36 @@ class ChatManager {
     }
   }
 
-  private async restoreState() {
+  public async restoreState() {
     const savedChatSessionId = appState.get().currentChatSessionId;
-    const templateId = appState.get().selectedTemplateId;
+    let templateId = appState.get().selectedTemplateId;
+    if (!savedChatSessionId) {
+      await this.newChat(DEFAULT_TEMPLATE_ID);
+      return;
+    }
 
-    let template: PromptTemplateModel = undefined;
-    let session: ChatSessionModel = undefined;
+    let template: PromptTemplateModel;
+    let session: ChatSessionModel;
 
     // Fetch the session from the database
     if (savedChatSessionId) {
       session = await this.getSession(savedChatSessionId);
+      template = session?.metadata?.template;
+      appState.setKey("selectedTemplate", template.id);
+      appState.setKey("currentChatSession", session);
     }
-    // Check if we have a template in the saved chat metadata
+    // Check if we have a template in the saved chat session metadata
     if (session?.metadata?.template) {
       template = session?.metadata?.template;
-    } else {
-      if (!templateId) {
-        templateId = DEFAULT_TEMPLATE_ID;
-      }
-      template = await this.getTemplate(templateId);
+      templateId = template.id;
     }
+    // if (!templateId) {
+    //   templateId = DEFAULT_TEMPLATE_ID;
+    // }
+    // if (!template) {
+    //   template = await this.getTemplate(templateId);
+    // }
+    // template = await this.getTemplate(templateId);
 
     // Check if we have a model in the saved chat metadata
     if (session?.metadata && session?.metadata.model) {
@@ -350,7 +361,6 @@ class ChatManager {
     if (!response.ok) throw new Error("Failed to load session");
     const session = await response.json();
     console.log("session", session);
-    appState.setKey("currentChatSession", session);
     // Convert plain message objects back to BaseMessage instances
     const restoredMessages = serializeMessagesFromJSON(session.messages);
     if (restoredMessages.length > 0) {

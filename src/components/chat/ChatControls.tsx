@@ -185,17 +185,8 @@ export default function ChatControls() {
   }, []);
 
   const handleTemplateChange = useCallback(async (templateId: string) => {
-    try {
-      setSelectedTemplateId(templateId); // Update local state immediately
-      appState.setKey("selectedTemplateId", templateId);
-      await chatManager.newChat(templateId);
-    } catch (err) {
-      console.error("Error fetching template:", err);
-      // Revert to previous template ID on error
-      setSelectedTemplateId(
-        appState.get().selectedTemplateId || DEFAULT_TEMPLATE_ID,
-      );
-    }
+    setSelectedTemplateId(templateId); // Update local state immediately
+    await chatManager.newChat(templateId);
   }, []);
 
   if (!isReady) return null;
