@@ -63,7 +63,7 @@ export default function Chat() {
   useEffect(() => {
     if (!isReady) return;
 
-    const savedChat = state.currentChat;
+    const savedChat = state.currentChatSession;
     isRestoringRef.current = savedChat?.messages?.length > 0;
     setMessages(chatManager.getMessages());
   }, [isReady]);
@@ -72,7 +72,7 @@ export default function Chat() {
     setTimeout(() => {
       setMessages(chatManager.getMessages());
     }, 100);
-  }, [state.currentChat?.messages]);
+  }, [state.currentChatSession?.messages]);
 
   // Handle scroll behavior when messages change
   useEffect(() => {

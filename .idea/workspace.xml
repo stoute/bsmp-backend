@@ -7,10 +7,16 @@
     <list default="true" id="8cf7e9a9-1ddf-43bf-8ddd-96d96e27722b" name="Changes" comment="fix: auth login POST">
       <change beforePath="$PROJECT_DIR$/.idea/AugmentWebviewStateStore.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/AugmentWebviewStateStore.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/Header.astro" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Header.astro" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/chat/ChatControls.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/chat/ChatControls.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/prompt-templates/PromptTemplateEditor.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/prompt-templates/PromptTemplateEditor.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/ui/slider.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/slider.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/sessions/SessionsList.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/chat/SessionsList.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/ChatManager.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/ChatManager.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/lib/ai/llm.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/ai/llm.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/api/prompts/index.json.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/api/prompts/index.json.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/ai/open-router.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/ai/open-router.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/ai/types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/ai/types.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/prompt-template/PromptTemplateParser.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/prompt-template/PromptTemplateParser.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/prompt-template/constants.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/prompt-template/constants.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -52,7 +58,7 @@
   "keyToString": {
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "develop-llm-config-form",
+    "git-widget-placeholder": "develop-fix",
     "last_opened_file_path": "/Users/bobstoute/Git/@bsmp/bsmp-backend/src/components/lib",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -98,11 +104,11 @@
       <recent name="$PROJECT_DIR$/src/lib/utils" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/components/chat" />
       <recent name="$PROJECT_DIR$/src/lib" />
       <recent name="$PROJECT_DIR$/src/lib/ai/prompt-templates" />
       <recent name="$PROJECT_DIR$/src/lib/ai" />
       <recent name="$PROJECT_DIR$/db" />
-      <recent name="$PROJECT_DIR$/public" />
     </key>
   </component>
   <component name="RunManager" selected="npm.dev:network">

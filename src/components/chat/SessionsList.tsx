@@ -6,14 +6,15 @@ import {
   DialogHeader,
   DialogTitle,
   DialogDescription,
-} from "@components/ui/dialog";
-import { Button } from "@components/ui/button";
-import { ScrollArea } from "@components/ui/scroll-area";
-import { Separator } from "@components/ui/separator";
-import { appState } from "@lib/appStore";
+} from "@components/ui/dialog.tsx";
+import { Button } from "@components/ui/button.tsx";
+import { ScrollArea } from "@components/ui/scroll-area.tsx";
+import { Separator } from "@components/ui/separator.tsx";
+import { appState } from "@lib/appStore.ts";
 import { useAppService } from "@lib/hooks/useAppService.ts";
-import { cn } from "@lib/utils";
-import { deserializeMessageToJSON } from "@lib/ai/langchain/utils";
+import { chatManager } from "@lib/ChatManager";
+import { cn } from "@lib/utils.ts";
+import { deserializeMessageToJSON } from "@lib/ai/langchain/utils.ts";
 
 interface ChatSession {
   id: string;
@@ -36,9 +37,7 @@ export default function SessionsList() {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(
-        appState.get().apiBaseUrl + "/sessions/list.json",
-      );
+      const response = await fetch("/api/sessions/list.json");
       if (!response.ok) throw new Error("Failed to fetch sessions");
       const data = await response.json();
       setSessions(data);
@@ -57,12 +56,9 @@ export default function SessionsList() {
 
   const handleDelete = async (id: string) => {
     try {
-      const response = await fetch(
-        appState.get().apiBaseUrl + `/sessions/${id}.json`,
-        {
-          method: "DELETE",
-        },
-      );
+      const response = await fetch(`/api/sessions/${id}.json`, {
+        method: "DELETE",
+      });
       if (!response.ok) throw new Error("Failed to delete session");
       await fetchSessions(); // Refresh the list
     } catch (err) {
@@ -73,24 +69,13 @@ export default function SessionsList() {
 
   const handleLoad = async (id: string) => {
     try {
-      const response = await fetch(`/api/sessions/${id}.json`);
-      if (!response.ok) throw new Error("Failed to load session");
-      const session = await response.json();
-
-      console.log(session);
-
-      // Convert plain message objects back to BaseMessage instances
-      if (session.messages && Array.isArray(session.messages)) {
-        session.messages = session.messages
-          .map((msg) => (msg ? deserializeMessageToJSON(msg) : null))
-          .filter(Boolean);
+      appState.setKey("currentChatSessionId", id);
+      // Check if we're already on the chat page and reload if needed
+      if (window.location.pathname === "/chat") {
+        chatManager.restoreState();
+      } else {
+        window.location.href = "/chat";
       }
-
-      // Update app state with properly formatted messages
-      appState.setKey("currentChat", session);
-      appState.setKey("selectedModel", session.metadata?.model);
-      appState.setKey("selectedTemplateId", session.metadata?.templateId);
-      window.location.href = "/chat";
       setOpen(false);
     } catch (err) {
       console.error("Error loading session:", err);

@@ -9,6 +9,7 @@ import { chatMessageParser } from "../ChatMessageParser.ts";
 import { type chatManager } from "../ChatManager.ts";
 import { AIMessage, SystemMessage } from "@langchain/core/messages";
 import { DEFAULT_SYSTEM_MESSAGE } from "@consts.ts";
+import { appState } from "../appStore.ts";
 
 type TemplateProcessor = (template: PromptTemplate) => PromptTemplate;
 
@@ -48,7 +49,10 @@ export class PromptTemplateParser {
 
   // Render a template
   public async renderTemplate(template: PromptTemplate) {
-    // Create system message
+    let sessionMessages: Message[] = [];
+    if (appState.get().currentChatSession)
+      sessionMessages = appState.get().currentChatSession.messages;
+
     const sanitizedSystemPrompt = this.sanitizeTemplateContent(
       template.systemPrompt || DEFAULT_SYSTEM_MESSAGE,
     );
@@ -64,8 +68,13 @@ export class PromptTemplateParser {
         },
       });
     }
-    let messages: Message[] = [systemMessage, descriptionMessage];
-    this.chatManager.setMessages(messages);
+    sessionMessages[0] = systemMessage;
+    sessionMessages[1] = descriptionMessage;
+
+    console.log("renderTemplate");
+    console.log("sessionMessages", sessionMessages);
+    console.log("");
+    this.chatManager.setMessages(sessionMessages);
   }
 
   // Create a ChatPromptTemplate from PromptTemplate

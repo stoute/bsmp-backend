@@ -29,13 +29,12 @@ export const TEMPLATE_TAGS = [
   "prompt-generator",
   "prompt-optimizer",
   "prompt-refiner",
-  "prompt-writer",
   "system-prompt-generator",
   "conversation-chain-generator",
   "image-prompt-generator",
   "video-prompt-generator",
   "explainer",
-  "roleplay-character",
+  "role-play-character",
 ];
 export const TEMPLATE_TAGS_FUTURE = [
   "code-assistant",
