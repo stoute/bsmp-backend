@@ -58,11 +58,9 @@ class ChatManager {
   }
 
   public async init(template?: PromptTemplateModel) {
-    console.log("chatManager.init", template);
     if (template) {
       await this.setTemplate(template);
     } else {
-      // todo: load default template
       const template = await this.getTemplate(DEFAULT_TEMPLATE_ID);
       await this.setTemplate(template);
     }
@@ -237,7 +235,7 @@ class ChatManager {
       metadata,
     };
 
-    // POST or PUT to database
+    // POST or PUT sessio to database
     const method = currentChat?.id ? "PUT" : "POST";
     let url = `${appState.get().apiBaseUrl}/sessions/index.json`;
     if (method === "PUT") url = url.replace("index", currentChat.id);
@@ -250,51 +248,30 @@ class ChatManager {
         metadata,
       };
 
-      try {
-        const response = await fetch(url, {
-          method: method,
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(apiBody),
-        });
+      const response = await fetch(url, {
+        method: method,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(apiBody),
+      });
 
-        if (!response.ok) {
-          throw new Error(
-            `Failed to update chat session: ${response.status} ${response.statusText}`,
-          );
-        }
-
-        // Read the response body ONCE and store it
-        const responseText = await response.text();
-
-        if (!responseText) {
-          console.warn("Empty response received from server");
-          appState.setKey("currentChatSession", chatState);
-          return;
-        }
-
-        try {
-          const updatedSession = JSON.parse(responseText);
-          appState.setKey("currentChatSession", updatedSession);
-          appState.setKey("currentChatSessionId", updatedSession.id);
-        } catch (parseError) {
-          console.error("Error parsing response:", parseError);
-          console.warn("Response text:", responseText);
-          // Still update local state even if parsing fails
-          appState.setKey("currentChatSession", chatState);
-          appState.setKey("currentChatSessionId", chatState.id);
-        }
-      } catch (error) {
-        console.error("Error saving chat state:", error);
-        // Still update local state even if server update fails
+      if (!response.ok) {
+        throw new Error(
+          `Failed to update chat session: ${response.status} ${response.statusText}`,
+        );
+      }
+      // Read the response body ONCE and store it
+      const responseText = await response.text();
+      if (!responseText) {
+        console.warn("Empty response received from server");
         appState.setKey("currentChatSession", chatState);
         appState.setKey("currentChatSessionId", chatState.id);
+        return;
       }
-    } else {
-      // No existing session ID, just update local state
-      appState.setKey("currentChatSession", chatState);
-      appState.setKey("currentChatSessionId", chatState.id);
+      const updatedSession = JSON.parse(responseText);
+      appState.setKey("currentChatSession", updatedSession);
+      appState.setKey("currentChatSessionId", updatedSession.id);
     }
   }
 
@@ -330,7 +307,7 @@ class ChatManager {
       await this.init(template);
       return;
     }
-    // await this.init();
+    await this.init();
   }
 
   private setupStateSubscription() {
@@ -347,9 +324,7 @@ class ChatManager {
     });
   }
 
-  private async getTemplate(
-    templateId: string,
-  ): PromptTemplateModel | undefined {
+  private async getTemplate(templateId: string): Promise<PromptTemplateModel> {
     let template: PromptTemplateModel = undefined;
     // Check if the template is a preset template
     Object.values(PRESET_TEMPLATES).forEach((presetTemplate) => {
@@ -369,7 +344,7 @@ class ChatManager {
     return template;
   }
 
-  private async getSession(sessionId: string): ChatSessionModel | undefined {
+  private async getSession(sessionId: string): Promise<ChatSessionModel> {
     console.log("getSession", sessionId);
     const response = await fetch(`/api/sessions/${sessionId}.json`);
     if (!response.ok) throw new Error("Failed to load session");
