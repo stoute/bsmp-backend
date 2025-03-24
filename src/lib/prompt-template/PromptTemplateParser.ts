@@ -68,6 +68,10 @@ export class PromptTemplateParser {
     sessionMessages[0] = systemMessage;
     sessionMessages[1] = descriptionMessage;
 
+    console.log("renderTemplate");
+    console.log("sessionMessages", sessionMessages);
+    console.log("");
+
     // let messages: Message[] = [systemMessage, descriptionMessage];
 
     // this.chatManager.setMessages(messages);

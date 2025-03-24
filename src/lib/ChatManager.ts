@@ -23,10 +23,10 @@ import { promptTemplateParser } from "@lib/prompt-template/PromptTemplateParser.
 import { defaultLLMConfig } from "@lib/ai/llm";
 import type { ChatSessionModel, PromptTemplateModel } from "@db/models";
 import {
+  deserializeMessageToJSON,
   deserializeMessagesToJSON,
   serializeMessageFromJSON,
   serializeMessagesFromJSON,
-  deserializeMessageToJSON,
 } from "@lib/ai/langchain/utils";
 
 class ChatManager {
@@ -55,20 +55,16 @@ class ChatManager {
     this.setLLM({ ...defaultLLMConfig, model: this.model });
     this.setupStateSubscription();
     this.restoreState();
-    if (!appState.get().currentChatSession) {
-      this.newChat(DEFAULT_TEMPLATE_ID);
-    }
-    console.log("ChatManager initialized");
   }
 
   public async init(template?: PromptTemplateModel) {
-    // await this.restoreState();
-    console.log("init", template);
+    console.log("chatManager.init", template);
     if (template) {
       await this.setTemplate(template);
     } else {
-      appState.setKey("selectedTemplateId", DEFAULT_TEMPLATE_ID);
-      this.messages = [new SystemMessage(DEFAULT_SYSTEM_MESSAGE)];
+      // todo: load default template
+      const template = await this.getTemplate(DEFAULT_TEMPLATE_ID);
+      await this.setTemplate(template);
     }
   }
 
@@ -222,14 +218,13 @@ class ChatManager {
     const serializedMessages = chatMessageParser.processMessages(this.messages);
     const currentChat = appState.get().currentChatSession;
 
-    let topic = "Template: " + this.template?.name;
+    let topic = "Chat template: " + this.template?.name;
     if (serializedMessages.length > 2)
       topic =
         "Topic: " + serializedMessages[1]?.content.slice(0, 60 - 3) + "...";
     const metadata = {
       topic,
       model: this.model,
-      template: this.template,
       templateId: this.template?.id,
     };
 
@@ -263,43 +258,43 @@ class ChatManager {
           },
           body: JSON.stringify(apiBody),
         });
-        if (response.ok) {
-          const session = await response.json();
-          appState.setKey("currentChatSession", session);
-          appState.setKey("currentChatSessionId", session.id);
-          appState.setKey("selectedTemplateId", this.template?.id);
-        }
+
         if (!response.ok) {
           throw new Error(
             `Failed to update chat session: ${response.status} ${response.statusText}`,
           );
         }
 
-        // Check if response has content before parsing
-        const text = await response.text();
-        if (!text) {
+        // Read the response body ONCE and store it
+        const responseText = await response.text();
+
+        if (!responseText) {
           console.warn("Empty response received from server");
           appState.setKey("currentChatSession", chatState);
           return;
         }
 
         try {
-          const updatedSession = JSON.parse(text);
+          const updatedSession = JSON.parse(responseText);
           appState.setKey("currentChatSession", updatedSession);
+          appState.setKey("currentChatSessionId", updatedSession.id);
         } catch (parseError) {
           console.error("Error parsing response:", parseError);
-          console.warn("Response text:", text);
+          console.warn("Response text:", responseText);
           // Still update local state even if parsing fails
           appState.setKey("currentChatSession", chatState);
+          appState.setKey("currentChatSessionId", chatState.id);
         }
       } catch (error) {
         console.error("Error saving chat state:", error);
         // Still update local state even if server update fails
         appState.setKey("currentChatSession", chatState);
+        appState.setKey("currentChatSessionId", chatState.id);
       }
     } else {
       // No existing session ID, just update local state
       appState.setKey("currentChatSession", chatState);
+      appState.setKey("currentChatSessionId", chatState.id);
     }
   }
 
@@ -312,53 +307,30 @@ class ChatManager {
 
     // Fetch the session from the database
     if (savedChatSessionId) {
-      const response = await fetch(`/api/sessions/${savedChatSessionId}.json`);
-      if (!response.ok) throw new Error("Failed to load session");
-      session = await response.json();
-      appState.setKey("currentChatSession", session);
-      // Convert plain message objects back to BaseMessage instances
-      if (session.messages && Array.isArray(session.messages)) {
-        session.messages = session.messages
-          .map((msg) => (msg ? deserializeMessageToJSON(msg) : null))
-          .filter(Boolean);
-      }
+      session = await this.getSession(savedChatSessionId);
     }
+    // Check if we have a template in the saved chat metadata
     if (session?.metadata?.template) {
       template = session?.metadata?.template;
     } else {
       if (!templateId) {
         templateId = DEFAULT_TEMPLATE_ID;
       }
-      template = this.getTemplate(templateId);
+      template = await this.getTemplate(templateId);
     }
 
     // Check if we have a model in the saved chat metadata
     if (session?.metadata && session?.metadata.model) {
-      this.model = session.metadata.model;
-      appState.setKey("selectedModel", session.metadata.model);
+      this.updateModel(session.metadata.model);
     } else if (appState.get().selectedModel) {
-      // If no model in saved chat but we have one in appState, use that
-      this.model = appState.get().selectedModel;
+      this.updateModel(appState.get().selectedModel);
     }
 
-    if (session?.messages && Array.isArray(session.messages)) {
-      try {
-        // Convert JSON messages to BaseMessage instances
-        const restoredMessages = serializeMessagesFromJSON(session.messages);
-        if (restoredMessages.length > 0) {
-          restoredMessages.forEach((msg) => {
-            chatMessageParser.processMessage(msg, this.template?.id);
-          });
-          this.setMessages(restoredMessages);
-        }
-        if (template) {
-          await this.init(template);
-        }
-      } catch (error) {
-        console.error("Error restoring chat messages:", error);
-        this.messages = [];
-      }
+    if (template) {
+      await this.init(template);
+      return;
     }
+    // await this.init();
   }
 
   private setupStateSubscription() {
@@ -395,6 +367,25 @@ class ChatManager {
       template = await response.json();
     }
     return template;
+  }
+
+  private async getSession(sessionId: string): ChatSessionModel | undefined {
+    console.log("getSession", sessionId);
+    const response = await fetch(`/api/sessions/${sessionId}.json`);
+    if (!response.ok) throw new Error("Failed to load session");
+    const session = await response.json();
+    console.log("session", session);
+    appState.setKey("currentChatSession", session);
+    // Convert plain message objects back to BaseMessage instances
+    const restoredMessages = serializeMessagesFromJSON(session.messages);
+    if (restoredMessages.length > 0) {
+      restoredMessages.forEach((msg) => {
+        chatMessageParser.processMessage(msg, this.template?.id);
+      });
+      session.messages = restoredMessages;
+      this.setMessages(session.messages);
+    }
+    return session;
   }
 
   private updateModel(newModel: string) {
