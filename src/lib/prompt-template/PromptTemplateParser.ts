@@ -9,6 +9,7 @@ import { chatMessageParser } from "../ChatMessageParser.ts";
 import { type chatManager } from "../ChatManager.ts";
 import { AIMessage, SystemMessage } from "@langchain/core/messages";
 import { DEFAULT_SYSTEM_MESSAGE } from "@consts.ts";
+import { appState } from "../appStore.ts";
 
 type TemplateProcessor = (template: PromptTemplate) => PromptTemplate;
 
@@ -48,8 +49,7 @@ export class PromptTemplateParser {
 
   // Render a template
   public async renderTemplate(template: PromptTemplate) {
-    // Create system message
-    let sessionMessages: Message[] = this.chatManager.getMessages();
+    let sessionMessages: Message[] = appState.get().currentChatSession.messages;
     const sanitizedSystemPrompt = this.sanitizeTemplateContent(
       template.systemPrompt || DEFAULT_SYSTEM_MESSAGE,
     );

@@ -358,7 +358,6 @@ class ChatManager {
         chatMessageParser.processMessage(msg, this.template?.id);
       });
       session.messages = restoredMessages;
-      this.setMessages(session.messages);
     }
     return session;
   }
