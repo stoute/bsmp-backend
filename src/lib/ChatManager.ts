@@ -266,10 +266,12 @@ class ChatManager {
       const responseText = await response.text();
       if (!responseText) {
         console.warn("Empty response received from server");
+        // revert to localStorage state
         appState.setKey("currentChatSession", chatState);
         appState.setKey("currentChatSessionId", chatState.id);
         return;
       }
+      // Parse the response body and update the state
       const updatedSession = JSON.parse(responseText);
       appState.setKey("currentChatSession", updatedSession);
       appState.setKey("currentChatSessionId", updatedSession.id);
@@ -278,9 +280,9 @@ class ChatManager {
 
   public async restoreState() {
     const savedChatSessionId = appState.get().currentChatSessionId;
-    let templateId = appState.get().selectedTemplateId;
     if (!savedChatSessionId) {
-      await this.newChat(DEFAULT_TEMPLATE_ID);
+      // await this.newChat(DEFAULT_TEMPLATE_ID);
+      await this.init();
       return;
     }
 
@@ -297,7 +299,6 @@ class ChatManager {
     // Check if we have a template in the saved chat session metadata
     if (session?.metadata?.template) {
       template = session?.metadata?.template;
-      templateId = template.id;
     }
     // if (!templateId) {
     //   templateId = DEFAULT_TEMPLATE_ID;
@@ -318,7 +319,7 @@ class ChatManager {
       await this.init(template);
       return;
     }
-    await this.init();
+    // await this.init();
   }
 
   private setupStateSubscription() {
