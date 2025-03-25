@@ -10,10 +10,8 @@ export const DEFAULT_SYSTEM_MESSAGE = "You are a helpful assistant.";
 
 export const LLM_MODELS = [
   "google/gemini-2.0-flash-lite-001",
-  // "google/gemini-2.0-flash-001",
-  "openai/gpt-3.5-turbo",
   "openai/gpt-4o-mini",
-  "deepseek/deepseek-r1-distill-llama-8b",
+  "openai/gpt-3.5-turbo",
   // uncensored
   "perplexity/sonar-reasoning",
   "thedrummer/unslopnemo-12b",

@@ -37,7 +37,9 @@ export default function SessionsList() {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch("/api/sessions/list.json");
+      // Add cache buster to prevent caching
+      const cacheBuster = `?_=${Date.now()}`;
+      const response = await fetch(`/api/sessions/list.json${cacheBuster}`);
       if (!response.ok) throw new Error("Failed to fetch sessions");
       const data = await response.json();
       // Sort sessions by updated_at in descending order (newest first)
@@ -60,7 +62,9 @@ export default function SessionsList() {
 
   const handleDelete = async (id: string) => {
     try {
-      const response = await fetch(`/api/sessions/${id}.json`, {
+      // Add cache buster to prevent caching
+      const cacheBuster = `?_=${Date.now()}`;
+      const response = await fetch(`/api/sessions/${id}.json${cacheBuster}`, {
         method: "DELETE",
       });
       if (!response.ok) throw new Error("Failed to delete session");

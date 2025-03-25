@@ -9,6 +9,7 @@ dist/
 
 # editor-specific files
 .idea/
+.vscode/
 
 # dependencies
 node_modules/
