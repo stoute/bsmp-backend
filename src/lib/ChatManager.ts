@@ -387,12 +387,6 @@ class ChatManager {
     this.llmConfig = session.metadata.llmConfig;
     this.updateModel(session.metadata.model);
     this.currentChatSession = session;
-    // Check if we have a model in the saved chat metadata
-    if (session?.metadata && session?.metadata.model) {
-      this.updateModel(session.metadata.model);
-    } else if (appState.get().selectedModel) {
-      this.updateModel(appState.get().selectedModel);
-    }
     appState.setKey("currentChatSession", session);
     // appState.setKey("selectedTemplateId", template.id);
     await this.init(template);
