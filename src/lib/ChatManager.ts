@@ -74,7 +74,7 @@ class ChatManager {
     if (template) {
       await this.setTemplate(template);
     } else {
-      appState.setKey("selectedTemplateId", DEFAULT_TEMPLATE_ID);
+      // appState.setKey("selectedTemplateId", DEFAULT_TEMPLATE_ID);
       const template = await this.getTemplate(DEFAULT_TEMPLATE_ID);
       await this.setTemplate(template);
     }
@@ -211,7 +211,7 @@ class ChatManager {
         };
         appState.setKey("currentChatSession", chatState);
         appState.setKey("selectedTemplate", template);
-        appState.setKey("selectedTemplateId", template.id);
+        //appState.setKey("selectedTemplateId", template.id);
         await this.init(template);
         return;
       } catch (error) {
@@ -308,6 +308,18 @@ class ChatManager {
       ) {
         this.updateModel(state.selectedModel);
       }
+
+      // Start a new chat when selectedTemplateId changes
+      if (
+        state.selectedTemplateId &&
+        this.template?.id !== state.selectedTemplateId
+      ) {
+        console.log(
+          "Template ID changed in appState, starting new chat with:",
+          state.selectedTemplateId,
+        );
+        this.newChat(state.selectedTemplateId);
+      }
     });
   }
 
@@ -364,7 +376,7 @@ class ChatManager {
       this.updateModel(appState.get().selectedModel);
     }
     appState.setKey("currentChatSession", session);
-    appState.setKey("selectedTemplateId", template.id);
+    // appState.setKey("selectedTemplateId", template.id);
     await this.init(template);
   }
 

@@ -188,6 +188,7 @@ export default function ChatControls() {
 
   const handleTemplateChange = useCallback(async (templateId: string) => {
     setSelectedTemplateId(templateId); // Update local state immediately
+    appState.setKey("selectedTemplateId", templateId); // Directly update app state
     await chatManager.newChat(templateId);
   }, []);
 
