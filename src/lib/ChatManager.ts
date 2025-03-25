@@ -23,9 +23,7 @@ import { promptTemplateParser } from "@lib/prompt-template/PromptTemplateParser.
 import { defaultLLMConfig } from "@lib/ai/llm";
 import type { ChatSessionModel, PromptTemplateModel } from "@db/models";
 import {
-  deserializeMessageToJSON,
   deserializeMessagesToJSON,
-  serializeMessageFromJSON,
   serializeMessagesFromJSON,
 } from "@lib/ai/langchain/utils";
 
@@ -71,17 +69,21 @@ class ChatManager {
       if (!template) {
         throw new Error("Template is required");
       }
-      // fixme: parse template llmConfig overrides
+      // Apply template llmConfig overrides
       if (template.llmConfig) {
-        // console.log("template.llmConfig", template.llmConfig);
-        this.setLLM({ ...this.llmConfig, ...template.llmConfig });
+        console.log("");
+        const llmConfig = { ...this.llmConfig, ...template.llmConfig };
         if (
           template.llmConfig.model &&
+          template.llmConfig.model !== "" &&
           template.llmConfig.model !== this.model
         ) {
           this.updateModel(template.llmConfig.model);
+        } else {
+          this.setLLM(llmConfig);
         }
       }
+
       // Process the template
       this.template = promptTemplateParser.processTemplate(template);
       // todo: implement chatPromptTemplate
@@ -126,7 +128,7 @@ class ChatManager {
         this.messages,
         this.template?.id,
       );
-      console.log("validMessages", validMessages);
+      // console.log("validMessages", validMessages);
 
       if (validMessages.length === 0) {
         throw new Error("No valid messages to process");
@@ -181,6 +183,7 @@ class ChatManager {
     await this.clearMessages();
     this.cleanupSubscriptions();
     appState.setKey("currentChatSession", undefined);
+    appState.setKey("currentChatSessionId", undefined);
     // define template
     let template: PromptTemplateModel = undefined;
     if (templateId) {
@@ -189,7 +192,6 @@ class ChatManager {
 
         // Convert messages to JSON format for storage
         const jsonMessages = deserializeMessagesToJSON(this.messages);
-
         const chatState: Partial<ChatSessionModel> = {
           messages: jsonMessages,
           metadata: {
@@ -281,7 +283,6 @@ class ChatManager {
   public async restoreState() {
     const savedChatSessionId = appState.get().currentChatSessionId;
     if (!savedChatSessionId) {
-      // await this.newChat(DEFAULT_TEMPLATE_ID);
       await this.init();
       return;
     }
@@ -290,24 +291,23 @@ class ChatManager {
     let session: ChatSessionModel;
 
     // Fetch the session from the database
-    if (savedChatSessionId) {
-      session = await this.getSession(savedChatSessionId);
-      template = session?.metadata?.template;
-      appState.setKey("selectedTemplate", template.id);
-      appState.setKey("currentChatSession", session);
+    session = await this.getSession(savedChatSessionId);
+    template = session?.metadata?.template;
+
+    // Force new chat if template is different after prompt template editor
+    if (template.id !== appState.get().selectedTemplateId) {
+      console.log("Force new chat");
+      await this.newChat(appState.get().selectedTemplateId);
+      return;
     }
+
+    appState.setKey("selectedTemplate", template.id);
+    appState.setKey("currentChatSession", session);
+
     // Check if we have a template in the saved chat session metadata
     if (session?.metadata?.template) {
       template = session?.metadata?.template;
     }
-    // if (!templateId) {
-    //   templateId = DEFAULT_TEMPLATE_ID;
-    // }
-    // if (!template) {
-    //   template = await this.getTemplate(templateId);
-    // }
-    // template = await this.getTemplate(templateId);
-
     // Check if we have a model in the saved chat metadata
     if (session?.metadata && session?.metadata.model) {
       this.updateModel(session.metadata.model);
@@ -341,13 +341,15 @@ class ChatManager {
     // Check if the template is a preset template
     Object.values(PRESET_TEMPLATES).forEach((presetTemplate) => {
       if (presetTemplate.id === templateId) {
-        console.log("is preset template:", templateId);
         template = { ...presetTemplate, llmConfig: this.llmConfig };
       }
     });
     if (!template) {
-      // Fetch the template from the database
-      const response = await fetch(`/api/prompts/${templateId}.json`);
+      // Fetch the template from the database with cache busting
+      const cacheBuster = new Date().getTime();
+      const response = await fetch(
+        `/api/prompts/${templateId}.json?t=${cacheBuster}`,
+      );
       if (!response.ok) {
         throw new Error(`Failed to fetch template: ${response.statusText}`);
       }
@@ -358,7 +360,10 @@ class ChatManager {
 
   private async getSession(sessionId: string): Promise<ChatSessionModel> {
     console.log("getSession", sessionId);
-    const response = await fetch(`/api/sessions/${sessionId}.json`);
+    const cacheBuster = new Date().getTime();
+    const response = await fetch(
+      `/api/sessions/${sessionId}.json?t=${cacheBuster}`,
+    );
     if (!response.ok) throw new Error("Failed to load session");
     const session = await response.json();
     console.log("session", session);
@@ -383,9 +388,6 @@ class ChatManager {
 
   public async setLLM(config: ChatOpenAI) {
     this.llmConfig = config;
-    // if (config.model !== this.model) {
-    //   this.updateModel(config.model);
-    // }
     this.llm = new ChatOpenAI(this.llmConfig);
     promptTemplateParser.llm = this.llm;
   }

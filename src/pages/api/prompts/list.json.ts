@@ -12,6 +12,7 @@ export async function GET() {
         id: PromptTemplate.id,
         name: PromptTemplate.name,
         description: PromptTemplate.description,
+        llmConfig: PromptTemplate.llmConfig,
         created: PromptTemplate.created_at,
         updated: PromptTemplate.updated_at,
       })

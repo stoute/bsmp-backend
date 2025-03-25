@@ -4,7 +4,7 @@ import { type ChatOpenAI } from "@langchain/openai";
 
 // Open Router Request type
 // Definitions of subtypes are below
-export type ChatOpenRouterAI = ChatOpenAI & {
+export type ChatOpenRouter = ChatOpenAI & {
   // Either "messages" or "prompt" is required
   messages?: Message[];
   prompt?: string;

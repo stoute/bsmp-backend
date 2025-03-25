@@ -89,7 +89,9 @@ export default function ChatControls() {
       setLoading(true);
       setError(null);
       try {
-        const response = await fetch(`/api/prompts/list.json`);
+        // Add cache buster to prevent stale data
+        const cacheBuster = new Date().getTime();
+        const response = await fetch(`/api/prompts/list.json?t=${cacheBuster}`);
         if (!response.ok) {
           throw new Error("Failed to fetch templates");
         }
@@ -188,6 +190,19 @@ export default function ChatControls() {
     setSelectedTemplateId(templateId); // Update local state immediately
     await chatManager.newChat(templateId);
   }, []);
+
+  useEffect(() => {
+    if (!selectedTemplateId || templates.length === 0) return;
+
+    templates.forEach((template) => {
+      if (
+        template.id === selectedTemplateId &&
+        template.llmConfig?.model !== ""
+      ) {
+        appState.setKey("selectedModel", template.llmConfig?.model);
+      }
+    });
+  }, [selectedTemplateId, templates]);
 
   if (!isReady) return null;
 

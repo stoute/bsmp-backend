@@ -62,6 +62,8 @@ const PromptTemplateList = forwardRef<
         throw new Error("Failed to fetch prompt templates");
       }
       const data = await response.json();
+      // Sort templates by updated_at in descending order (newest first)
+      data.sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime());
       setPromptTemplates(data);
 
       // Handle template selection based on app state

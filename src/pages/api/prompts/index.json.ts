@@ -33,21 +33,11 @@ export async function GET() {
 export async function POST({ request }: { request: Request }) {
   try {
     const requestBody = await request.json();
-    // Validate the request body against the PromptTemplate interface.
-    const {
-      name,
-      description,
-      systemPrompt,
-      template,
-      context,
-      llmConfig,
-      variables,
-      tags,
-    } = requestBody;
-    if (!name) {
-      // Remove template check
+
+    // Only validate that name is present as it's the only required field
+    if (!requestBody.name) {
       return new Response(
-        JSON.stringify({ message: "Missing required fields" }),
+        JSON.stringify({ message: "Name is required" }),
         {
           status: 400,
           headers: {
@@ -57,19 +47,14 @@ export async function POST({ request }: { request: Request }) {
       );
     }
 
-    // Automatically generate a UUID for the id field and set created_at and updated_at to the current ISO datetime.
+    // Generate UUID and timestamps
     const id = uuid();
     const now = new Date().toISOString();
 
-    // todo: use PromptTemplateFactory here
+    // Create a new prompt template with all properties from requestBody
     const newPrompt: PromptTemplateModel = {
       id,
-      name,
-      description: description || "",
-      systemPrompt: systemPrompt || "",
-      template,
-      variables: variables || [],
-      llmConfig: llmConfig, // Ensure llmConfig is included
+      ...requestBody,
       created_at: now,
       updated_at: now,
     };

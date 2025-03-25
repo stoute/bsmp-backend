@@ -1,4 +1,5 @@
 import { type ChatOpenAI } from "@langchain/openai";
+import { type ChatOpenRouterAI } from "@/lib/ai/types";
 
 export interface PromptTemplateModel {
   id: string;
@@ -9,7 +10,7 @@ export interface PromptTemplateModel {
   context?: string;
   variables?: string[];
   tags?: string[];
-  llmConfig?: ChatOpenAI;
+  llmConfig?: ChatOpenRouterAI;
   created_at?: string;
   updated_at?: string;
 }

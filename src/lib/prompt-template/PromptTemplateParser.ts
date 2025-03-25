@@ -71,9 +71,6 @@ export class PromptTemplateParser {
     sessionMessages[0] = systemMessage;
     sessionMessages[1] = descriptionMessage;
 
-    console.log("renderTemplate");
-    console.log("sessionMessages", sessionMessages);
-    console.log("");
     this.chatManager.setMessages(sessionMessages);
   }
 

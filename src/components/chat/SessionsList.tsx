@@ -40,6 +40,10 @@ export default function SessionsList() {
       const response = await fetch("/api/sessions/list.json");
       if (!response.ok) throw new Error("Failed to fetch sessions");
       const data = await response.json();
+      // Sort sessions by updated_at in descending order (newest first)
+      data.sort(
+        (a, b) => new Date(b.updated).getTime() - new Date(a.updated).getTime(),
+      );
       setSessions(data);
     } catch (err) {
       console.error("Error fetching sessions:", err);

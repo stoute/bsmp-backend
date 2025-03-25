@@ -116,7 +116,12 @@ export default function Chat() {
   }, []);
 
   if (!isReady) {
-    return <div className={styles.loading}>{chat_loading()}</div>;
+    // Use client:only to prevent hydration mismatch
+    return (
+      <div className={styles.loading} suppressHydrationWarning>
+        {chat_loading()}
+      </div>
+    );
   }
 
   return (

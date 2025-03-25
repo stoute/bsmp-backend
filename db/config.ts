@@ -1,8 +1,4 @@
 import { defineDb, defineTable, column } from "astro:db";
-import { DEFAULT_MODEL } from "../src/consts";
-import { defaultLLMConfig } from "../src/lib/ai/llm";
-
-const llmSettings = { ...defaultLLMConfig, model: DEFAULT_MODEL };
 
 const PromptTemplate = defineTable({
   columns: {
@@ -16,7 +12,7 @@ const PromptTemplate = defineTable({
     tags: column.json({ optional: true }),
     llmConfig: column.json({
       optional: true,
-      default: JSON.stringify(llmSettings),
+      default: JSON.stringify({}),
     }),
     created_at: column.text(),
     updated_at: column.text(),

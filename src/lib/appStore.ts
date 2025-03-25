@@ -12,7 +12,6 @@ export type AppState = {
   selectedModel?: string;
   selectedTemplate?: PromptTemplate;
   selectedTemplateId?: string;
-  // currentChat?: ChatSessionModel;
   currentChatSession?: ChatSessionModel;
   currentChatSessionId?: string;
   currentUser?: User;
@@ -26,9 +25,6 @@ export const appState = persistentMap<AppState>(
     environment: undefined as any,
     selectedModel: undefined,
     selectedTemplateId: undefined,
-    // deprecated
-    // currentChat: undefined,
-    // use this instead
     currentChatSession: undefined,
     currentChatSessionId: undefined,
     currentUser: undefined,
@@ -48,7 +44,6 @@ export const openRouterModels = persistentMap<OpenRouterModelIndex>(
   },
 );
 
-// export const chatManager = atom<ChatManager | null>(null);
 export const templateList = atom([]);
 
 // USER

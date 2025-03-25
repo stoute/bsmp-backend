@@ -2,7 +2,7 @@ export const prerender = false;
 
 import { v4 as uuid } from "uuid";
 import { PromptTemplate, db, eq, and } from "astro:db";
-import type { PromptTemplate } from "@types";
+import type { PromptTemplateModel } from "@/db/models";
 
 // GET /api/prompts/[id]: Retrieves a specific prompt template by its id.
 export async function GET({ params }: { params: { id: string } }) {
@@ -58,11 +58,8 @@ export async function PUT({
     const { id } = params;
     const requestBody = await request.json();
 
-    // Validate the request body against a partial PromptTemplate interface (all fields optional).
-    const { name, description, systemPrompt, template, variables } =
-      requestBody;
-
-    if (!name && !description && !systemPrompt && !template && !variables) {
+    // Check if the request body contains any fields to update
+    if (Object.keys(requestBody).length === 0) {
       return new Response(JSON.stringify({ message: "No fields to update" }), {
         status: 400,
         headers: {
@@ -74,14 +71,20 @@ export async function PUT({
     // Set updated_at to the current ISO datetime.
     const now = new Date().toISOString();
 
-    const updatedPrompt: Partial<PromptTemplate> = {
-      name,
-      description,
-      systemPrompt,
-      template,
-      variables,
+    // Create updatedPrompt object with all fields from requestBody
+    const updatedPrompt: Partial<PromptTemplateModel> = {
+      ...requestBody,
       updated_at: now,
     };
+
+    // Remove id from updatedPrompt if present (shouldn't be updated)
+    if ('id' in updatedPrompt) {
+      delete updatedPrompt.id;
+    }
+    // Don't override created_at if present
+    if ('created_at' in updatedPrompt) {
+      delete updatedPrompt.created_at;
+    }
 
     // Update the prompt template in the database.
     const result = await db
