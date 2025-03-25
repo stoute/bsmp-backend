@@ -40,6 +40,7 @@ class ChatManager {
   public template?: PromptTemplateModel;
   public messages: Message[] = [];
   public llmConfig: ChatOpenAI = defaultLLMConfig;
+  private _saveStateDebounceTimer: NodeJS.Timeout | null = null;
 
   private constructor() {
     promptTemplateParser.chatManager = this;
@@ -71,12 +72,17 @@ class ChatManager {
   }
 
   public async init(template?: PromptTemplateModel) {
-    if (template) {
-      await this.setTemplate(template);
-    } else {
-      // appState.setKey("selectedTemplateId", DEFAULT_TEMPLATE_ID);
-      const template = await this.getTemplate(DEFAULT_TEMPLATE_ID);
-      await this.setTemplate(template);
+    this.isInitializing = true;
+    try {
+      if (template) {
+        await this.setTemplate(template);
+      } else {
+        // appState.setKey("selectedTemplateId", DEFAULT_TEMPLATE_ID);
+        const template = await this.getTemplate(DEFAULT_TEMPLATE_ID);
+        await this.setTemplate(template);
+      }
+    } finally {
+      this.isInitializing = false;
     }
   }
 
@@ -166,7 +172,7 @@ class ChatManager {
         if (processedResponse) {
           this.messages.push(processedResponse);
           // Save state only after we've received and processed the LLM response
-          await this.saveState(true);
+          await this.saveState(true); // Force update here
         }
       }
       return response;
@@ -226,57 +232,67 @@ class ChatManager {
     const serializedMessages = chatMessageParser.processMessages(this.messages);
     const currentChat = appState.get().currentChatSession;
 
-    // todo: make flexible
-    // Only make API calls if we have meaningful content
+    // Don't save empty or nearly empty chats unless forced
     if (this.messages?.length < 3 && !forceUpdate) {
       return;
     }
 
-    let topic = "Chat: " + this.template?.name;
-    if (serializedMessages.length > 2)
-      topic =
-        "Topic: " + serializedMessages[2]?.content.slice(0, 60 - 3) + "...";
-
-    // Convert messages to JSON format for storage
-    const jsonMessages = deserializeMessagesToJSON(serializedMessages);
-    // POST or PUT session to database
-    const method = currentChat?.id ? "PUT" : "POST";
-    let url = `${appState.get().apiBaseUrl}/sessions/index.json`;
-    if (method === "PUT") url = url.replace("index", currentChat.id);
-    const requestBody = {
-      messages: jsonMessages,
-      metadata: {
-        topic,
-        model: this.model,
-        template: this.template,
-        templateId: this.template?.id,
-        llmConfig: this.llmConfig,
-      },
-    };
-    const response = await fetch(url, {
-      method: method,
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(requestBody),
-    });
-
-    if (!response.ok) {
-      throw new Error(
-        `Failed to update chat session: ${response.status} ${response.statusText}`,
-      );
+    // Add debouncing to prevent rapid successive saves
+    if (this._saveStateDebounceTimer) {
+      clearTimeout(this._saveStateDebounceTimer);
     }
-    // Read the response body ONCE and store it
-    const responseText = await response.text();
-    if (!responseText) {
-      console.warn("Empty response received from server");
-      return;
-    }
-    // Parse the response body and update the state
-    const updatedSession = JSON.parse(responseText);
-    this.currentChatSession = updatedSession;
-    appState.setKey("currentChatSession", updatedSession);
-    appState.setKey("currentChatSessionId", updatedSession.id);
+
+    this._saveStateDebounceTimer = setTimeout(async () => {
+      try {
+        let topic = "Chat: " + this.template?.name;
+        if (serializedMessages.length > 2)
+          topic =
+            "Topic: " + serializedMessages[2]?.content.slice(0, 60 - 3) + "...";
+
+        // Convert messages to JSON format for storage
+        const jsonMessages = deserializeMessagesToJSON(serializedMessages);
+        // POST or PUT session to database
+        const method = currentChat?.id ? "PUT" : "POST";
+        let url = `${appState.get().apiBaseUrl}/sessions/index.json`;
+        if (method === "PUT") url = url.replace("index", currentChat.id);
+        const requestBody = {
+          messages: jsonMessages,
+          metadata: {
+            topic,
+            model: this.model,
+            template: this.template,
+            templateId: this.template?.id,
+            llmConfig: this.llmConfig,
+          },
+        };
+        const response = await fetch(url, {
+          method: method,
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(requestBody),
+        });
+
+        if (!response.ok) {
+          throw new Error(
+            `Failed to update chat session: ${response.status} ${response.statusText}`,
+          );
+        }
+        // Read the response body ONCE and store it
+        const responseText = await response.text();
+        if (!responseText) {
+          console.warn("Empty response received from server");
+          return;
+        }
+        // Parse the response body and update the state
+        const updatedSession = JSON.parse(responseText);
+        this.currentChatSession = updatedSession;
+        appState.setKey("currentChatSession", updatedSession);
+        appState.setKey("currentChatSessionId", updatedSession.id);
+      } catch (error) {
+        console.error("Error saving chat state:", error);
+      }
+    }, 1000); // 1 second debounce
   }
 
   public async restoreState() {
@@ -309,10 +325,12 @@ class ChatManager {
         this.updateModel(state.selectedModel);
       }
 
-      // Start a new chat when selectedTemplateId changes
+      // Start a new chat when selectedTemplateId changes, but only if we have messages
+      // to avoid creating empty chats during initialization
       if (
         state.selectedTemplateId &&
-        this.template?.id !== state.selectedTemplateId
+        this.template?.id !== state.selectedTemplateId &&
+        this.isInitializing === false // Only respond to template changes after initialization
       ) {
         console.log(
           "Template ID changed in appState, starting new chat with:",
@@ -384,8 +402,8 @@ class ChatManager {
     this.model = newModel;
     this.setLLM({ ...this.llmConfig, model: newModel });
     appState.setKey("selectedModel", newModel);
-    //console.log("Updated model to: " + newModel);
-    this.saveState();
+    // Remove automatic saveState call here
+    // this.saveState();
   }
 
   public async setLLM(config: ChatOpenAI) {
