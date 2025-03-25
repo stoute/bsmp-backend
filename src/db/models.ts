@@ -23,6 +23,7 @@ export interface ChatSessionModel {
     model: string | null;
     template: any | null;
     templateId: string | null;
+    llmConfig?: ChatOpenRouterAI;
   };
   created_at: string;
   updated_at: string;

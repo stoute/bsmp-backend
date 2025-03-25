@@ -49,6 +49,10 @@ export class PromptTemplateParser {
 
   // Render a template
   public async renderTemplate(template: PromptTemplate) {
+    // todo: implement chatPromptTemplate
+    this.chatManager.chatPromptTemplate =
+      promptTemplateParser.createChatPromptTemplate(template);
+
     let sessionMessages: Message[] = [];
     if (appState.get().currentChatSession)
       sessionMessages = appState.get().currentChatSession.messages;
@@ -56,6 +60,7 @@ export class PromptTemplateParser {
     const sanitizedSystemPrompt = this.sanitizeTemplateContent(
       template.systemPrompt || DEFAULT_SYSTEM_MESSAGE,
     );
+    //
     const systemMessage = new SystemMessage(sanitizedSystemPrompt);
     // Create description message
     let descriptionMessage: AIMessage | undefined;
