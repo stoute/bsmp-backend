@@ -41,6 +41,7 @@ class ChatManager {
   public messages: Message[] = [];
   public llmConfig: ChatOpenAI = defaultLLMConfig;
   private _saveStateDebounceTimer: NodeJS.Timeout | null = null;
+  private _lastProcessedTemplateId: string | undefined = undefined;
 
   private constructor() {
     promptTemplateParser.chatManager = this;
@@ -189,6 +190,13 @@ class ChatManager {
     // Early return if running on server
     if (typeof window === "undefined") return;
 
+    // If we're already processing a template change with this ID, just return
+    if (templateId && templateId === this._lastProcessedTemplateId) {
+      console.log("Skipping duplicate template change request:", templateId);
+      return;
+    }
+
+    this._lastProcessedTemplateId = templateId;
     await this.clearMessages();
     appState.setKey("currentChatSession", undefined);
     appState.setKey("currentChatSessionId", undefined);
@@ -196,7 +204,6 @@ class ChatManager {
     if (!templateId) {
       templateId = DEFAULT_TEMPLATE_ID;
     }
-    // this.cleanupSubscriptions();
 
     // define template
     let template: PromptTemplateModel;
@@ -217,12 +224,10 @@ class ChatManager {
         };
         appState.setKey("currentChatSession", chatState);
         appState.setKey("selectedTemplate", template);
-        //appState.setKey("selectedTemplateId", template.id);
         await this.init(template);
         return;
       } catch (error) {
         console.error("Error in newChat:", error);
-        // Fall through to default initialization
         await this.init();
       }
     }
@@ -314,6 +319,9 @@ class ChatManager {
   }
 
   private setupStateSubscription() {
+    // Use a debounce mechanism for template changes
+    let templateChangeDebounceTimer: any = null;
+
     this.unsubscribe = appState.subscribe((state) => {
       // Only update model if it's different and not already being updated
       if (
@@ -332,11 +340,20 @@ class ChatManager {
         this.template?.id !== state.selectedTemplateId &&
         this.isInitializing === false // Only respond to template changes after initialization
       ) {
-        console.log(
-          "Template ID changed in appState, starting new chat with:",
-          state.selectedTemplateId,
-        );
-        this.newChat(state.selectedTemplateId);
+        // Clear any pending debounce timer
+        if (templateChangeDebounceTimer) {
+          clearTimeout(templateChangeDebounceTimer);
+        }
+
+        // Set a new debounce timer
+        templateChangeDebounceTimer = setTimeout(() => {
+          console.log(
+            "Template ID changed in appState, starting new chat with:",
+            state.selectedTemplateId,
+          );
+          this.newChat(state.selectedTemplateId);
+          templateChangeDebounceTimer = null;
+        }, 300); // 300ms debounce
       }
     });
   }
@@ -388,7 +405,6 @@ class ChatManager {
     this.updateModel(session.metadata.model);
     this.currentChatSession = session;
     appState.setKey("currentChatSession", session);
-    // appState.setKey("selectedTemplateId", template.id);
     await this.init(template);
   }
 
@@ -396,8 +412,6 @@ class ChatManager {
     this.model = newModel;
     this.setLLM({ ...this.llmConfig, model: newModel });
     appState.setKey("selectedModel", newModel);
-    // Remove automatic saveState call here
-    // this.saveState();
   }
 
   public async setLLM(config: ChatOpenAI) {
@@ -410,7 +424,6 @@ class ChatManager {
       baseURL: "/api/ai-proxy",
       apiKey: "NONE",
     };
-
     this.llm = new ChatOpenAI(this.llmConfig);
     promptTemplateParser.llm = this.llm;
   }
