@@ -17,6 +17,8 @@ const { title, description, colorMode = "system" } = Astro.props;
 const urlPath = Astro.url.pathname.split("/").filter(Boolean).join(" ");
 const { pathname } = Astro.url;
 const isChatPage = pathname === "/chat" || pathname.startsWith("/chat/");
+const isPromptsPage =
+  pathname === "/prompts" || pathname.startsWith("/prompts/");
 
 // Determine the class based on colorMode
 const getColorModeClass = () => {
@@ -47,7 +49,7 @@ const environment: string = import.meta.env.MODE;
     <main>
       <slot />
     </main>
-    {!isChatPage && <Footer />}
+    {!isChatPage && !isPromptsPage && <Footer />}
     <Toaster
       client:load
       position="bottom-center"

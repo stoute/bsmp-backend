@@ -29,6 +29,7 @@ import {
   no_templates_match_search,
   no_templates_found,
 } from "../../paraglide/messages";
+import styles from "./PromptTemplateList.module.css";
 
 interface PromptTemplateListProps {
   onSelect: (promptTemplate: PromptTemplate) => void;
@@ -63,7 +64,10 @@ const PromptTemplateList = forwardRef<
       }
       const data = await response.json();
       // Sort templates by updated_at in descending order (newest first)
-      data.sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime());
+      data.sort(
+        (a, b) =>
+          new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime(),
+      );
       setPromptTemplates(data);
 
       // Handle template selection based on app state
@@ -104,11 +108,11 @@ const PromptTemplateList = forwardRef<
   );
 
   return (
-    <Card className="flex h-full flex-col">
+    <Card className={styles.listContainer}>
       <CardHeader>
         <CardTitle>{template_list_title()}</CardTitle>
       </CardHeader>
-      <CardContent className="flex flex-1 flex-col gap-4">
+      <CardContent className="flex flex-1 flex-col gap-4 overflow-hidden">
         <div className="flex gap-2">
           <div className="relative flex-1">
             <Search className="text-muted-foreground absolute top-2.5 left-2 h-4 w-4" />
@@ -145,7 +149,9 @@ const PromptTemplateList = forwardRef<
           </div>
         )}
 
-        <ScrollArea className="flex-1 rounded-md border">
+        <ScrollArea
+          className={cn("flex-1 rounded-md border", styles.scrollArea)}
+        >
           {loading ? (
             <div className="flex items-center justify-center p-8">
               <Loader2 className="text-muted-foreground h-8 w-8 animate-spin" />
