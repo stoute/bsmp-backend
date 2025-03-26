@@ -49,34 +49,55 @@ export class PromptTemplateParser {
 
   // Render a template
   public async renderTemplate(template: PromptTemplate) {
-    // todo: implement chatPromptTemplate
+    // Create chat prompt template
     this.chatManager.chatPromptTemplate =
       promptTemplateParser.createChatPromptTemplate(template);
 
-    let sessionMessages: Message[] = [];
-    if (appState.get().currentChatSession)
-      sessionMessages = appState.get().currentChatSession.messages;
-
-    const sanitizedSystemPrompt = this.sanitizeTemplateContent(
-      template.systemPrompt || DEFAULT_SYSTEM_MESSAGE,
+    // Check if we have existing messages to preserve
+    const hasExistingMessages = this.chatManager.getMessages().length > 0;
+    console.log(
+      "[DEBUG renderTemplate] Has existing messages:",
+      hasExistingMessages,
     );
-    //
-    const systemMessage = new SystemMessage(sanitizedSystemPrompt);
-    // Create description message
-    let descriptionMessage: AIMessage | undefined;
-    if (template.description) {
-      descriptionMessage = new AIMessage({
-        content: template.description,
-        additional_kwargs: {
-          type: "ai-template-description",
-          template,
-        },
-      });
-    }
-    sessionMessages[0] = systemMessage;
-    sessionMessages[1] = descriptionMessage;
 
-    this.chatManager.setMessages(sessionMessages);
+    let sessionMessages: Message[] = [];
+
+    // Only create new messages if we don't have any or if they're just the default ones
+    if (hasExistingMessages || this.chatManager.getMessages().length <= 2) {
+      sessionMessages = this.chatManager.getMessages();
+
+      const sanitizedSystemPrompt = this.sanitizeTemplateContent(
+        template.systemPrompt || DEFAULT_SYSTEM_MESSAGE,
+      );
+
+      const systemMessage = new SystemMessage(sanitizedSystemPrompt);
+      // Create description message
+      let descriptionMessage: AIMessage | undefined;
+      if (template.description) {
+        descriptionMessage = new AIMessage({
+          content: template.description,
+          additional_kwargs: {
+            type: "ai-template-description",
+            template,
+          },
+        });
+      }
+
+      sessionMessages[0] = systemMessage;
+      sessionMessages[1] = descriptionMessage;
+
+      console.log("[DEBUG renderTemplate] Setting new messages");
+      this.chatManager.setMessages(sessionMessages);
+    } else {
+      console.log("[DEBUG renderTemplate] Preserving existing messages");
+      // Maybe just update the system message
+      const systemMessage = new SystemMessage(
+        this.sanitizeTemplateContent(
+          template.systemPrompt || DEFAULT_SYSTEM_MESSAGE,
+        ),
+      );
+      this.chatManager.replaceSystemMessage(systemMessage);
+    }
   }
 
   // Create a ChatPromptTemplate from PromptTemplate

@@ -77,6 +77,7 @@ class ChatManager {
     if (!template) {
       throw new Error("Template is required");
     }
+    console.log("Setting template:", template.id);
     try {
       // Apply template llmConfig
       if (template.llmConfig) {
@@ -95,18 +96,18 @@ class ChatManager {
         }
       }
 
-      // Process and define the template
-      this.template = promptTemplateParser.processTemplate(template);
-
-      // Render the template
-      await promptTemplateParser.renderTemplate(this.template);
-
-      // Render chat messages
+      //Render chat messages
       // if (appState.get().currentChatSession) {
       //   console.log("Rendering chat messages");
       //   console.log(appState.get().currentChatSession.messages);
       //   this.messages = appState.get().currentChatSession.messages;
       // }
+
+      // Process and define the template
+      this.template = promptTemplateParser.processTemplate(template);
+
+      // Render the template
+      await promptTemplateParser.renderTemplate(this.template);
 
       // Update the state
       this.cleanupSubscriptions();
@@ -238,9 +239,6 @@ class ChatManager {
 
   private saveState(forceUpdate = false) {
     // Don't save empty or nearly empty chats unless forced
-    if (this.messages?.length < 3 && !forceUpdate) {
-      return Promise.resolve();
-    }
 
     // Debounce saves
     if (this._saveStateDebounceTimer) {
@@ -262,6 +260,9 @@ class ChatManager {
               "Topic: " + serializedMessages[2]?.content.slice(0, 57) + "...";
           }
 
+          if (this.messages.length > 2 && !forceUpdate) {
+          }
+
           // Convert messages to JSON format for storage
           const jsonMessages = deserializeMessagesToJSON(serializedMessages);
 
@@ -281,32 +282,36 @@ class ChatManager {
             },
           };
 
-          const response = await fetch(url, {
-            method,
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(requestBody),
-          });
-          console.log("Saving chat state: ", requestBody.metadata.llmConfig);
+          if (this.messages.length > 2) {
+            // if (this.messages.length > 2 && !forceUpdate) {
+            const response = await fetch(url, {
+              method,
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(requestBody),
+            });
+            console.log("Saving chat state: ", requestBody.metadata.llmConfig);
 
-          if (!response.ok) {
-            throw new Error(
-              `Failed to update chat session: ${response.status} ${response.statusText}`,
-            );
-          }
+            if (!response.ok) {
+              throw new Error(
+                `Failed to update chat session: ${response.status} ${response.statusText}`,
+              );
+            }
 
-          const responseText = await response.text();
-          if (!responseText) {
-            console.warn("Empty response received from server");
+            const responseText = await response.text();
+            if (!responseText) {
+              console.warn("Empty response received from server");
+              resolve();
+              return;
+            }
+
+            // Update state with response
+            const updatedSession = JSON.parse(responseText);
+            this.currentChatSession = updatedSession;
+            appState.setKey("currentChatSession", updatedSession);
+            appState.setKey("currentChatSessionId", updatedSession.id);
+            console.log("Chat state saved successfully", updatedSession);
             resolve();
-            return;
           }
-
-          // Update state with response
-          const updatedSession = JSON.parse(responseText);
-          this.currentChatSession = updatedSession;
-          appState.setKey("currentChatSession", updatedSession);
-          appState.setKey("currentChatSessionId", updatedSession.id);
-          resolve();
         } catch (error) {
           console.error("Error saving chat state:", error);
           resolve();
@@ -317,14 +322,15 @@ class ChatManager {
 
   public async restoreState() {
     const currentTemplateId = appState.get().selectedTemplateId;
-    const savedChatSessionId = appState.get().currentChatSessionId;
-    if (!savedChatSessionId) {
+    const savedChatSession = appState.get().currentChatSession;
+    console.log("restoring state", savedChatSession);
+    if (!savedChatSession) {
       await this.newChat(currentTemplateId);
       return;
     }
 
     try {
-      await this.getSession(savedChatSessionId);
+      await this.getSession(savedChatSession.id);
       // Check if template ID changed
       // if (this.template?.id !== currentTemplateId) {
       //   console.log("Template ID changed, starting new chat");

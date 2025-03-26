@@ -78,10 +78,9 @@ export default function SessionsList() {
   const handleLoad = async (id: string) => {
     try {
       appState.setKey("currentChatSessionId", id);
+      chatManager.restoreState();
       // Check if we're already on the chat page and reload if needed
       if (window.location.pathname === "/chat") {
-        chatManager.restoreState();
-      } else {
         window.location.href = "/chat";
       }
       setOpen(false);
