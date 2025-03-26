@@ -173,7 +173,8 @@ export default function ChatControls() {
 
   // Callbacks
   const handleNewChat = useCallback(() => {
-    chatManager.newChat(appState.get().selectedTemplateId);
+    // Pass true as second parameter to force a new chat regardless of template ID
+    chatManager.newChat(appState.get().selectedTemplateId, true);
   }, []);
 
   const handleModelChange = useCallback(async (model: string) => {
