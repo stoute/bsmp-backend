@@ -17,16 +17,30 @@ import {
   chat_send,
   chat_loading,
 } from "@paraglide/messages";
+import { Loader2 } from "lucide-react";
 
 export default function Chat() {
   const { appService, isReady } = useAppService();
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const isRestoringRef = useRef(false);
   const state = useStore(appState);
+  const [showLoader, setShowLoader] = useState(false);
 
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<BaseMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+
+  // Show loader after delay
+  useEffect(() => {
+    if (!isReady) {
+      const timer = setTimeout(() => {
+        setShowLoader(true);
+      }, 500);
+      return () => clearTimeout(timer);
+    } else {
+      setShowLoader(false);
+    }
+  }, [isReady]);
 
   // Memoize scroll functions to prevent recreation
   const scrollToBottom = useCallback(() => {
@@ -115,10 +129,13 @@ export default function Chat() {
   }, []);
 
   if (!isReady) {
-    // Use client:only to prevent hydration mismatch
     return (
-      <div className={styles.loading} suppressHydrationWarning>
-        {chat_loading()}
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          {showLoader && (
+            <Loader2 className="text-black-500 h-10 w-10 animate-spin opacity-50" />
+          )}
+        </div>
       </div>
     );
   }
