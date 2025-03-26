@@ -437,18 +437,18 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
 
   return (
     <>
-      <Card className="h-full rounded-none border-0 shadow-none">
-        <CardHeader className="px-6 py-4">
+      <Card className="flex h-full max-h-[calc(100vh-var(--header-height,64px))] flex-col overflow-auto rounded-none border-0 shadow-none">
+        <CardHeader className="flex-shrink-0 px-6 py-4">
           <CardTitle>
             {isNew ? template_create_new() : template_edit()}
           </CardTitle>
-          <CardDescription>
-            {isNew
-              ? "Create a new prompt template"
-              : "Edit your prompt template"}
-          </CardDescription>
+          {/*<CardDescription>*/}
+          {/*  {isNew*/}
+          {/*    ? "Create a new prompt template"*/}
+          {/*    : "Edit your prompt template"}*/}
+          {/*</CardDescription>*/}
         </CardHeader>
-        <CardContent className="max-h-[calc(100vh-var(--header-height,64px)-130px)] space-y-6 overflow-auto px-6 pb-8">
+        <CardContent className="flex-grow space-y-6 px-6 pb-8">
           <Form {...form}>
             <form
               ref={formRef}

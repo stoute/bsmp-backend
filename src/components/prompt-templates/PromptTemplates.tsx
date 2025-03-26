@@ -110,8 +110,8 @@ const PromptTemplates: React.FC<PromptTemplatesProps> = ({
   if (!isReady) return null;
 
   return (
-    <div className="fixed inset-0 w-full overflow-hidden">
-      <div className="absolute top-0 left-0 h-full w-full pt-[var(--header-height,64px)] md:w-1/3">
+    <div className="fixed top-[var(--header-height,64px)] right-0 bottom-0 left-0 w-full overflow-hidden border-t">
+      <div className="absolute top-0 left-0 h-full w-full md:w-1/3">
         <PromptTemplateList
           ref={listRef}
           dataUrl={apiEndPoint.replace("index", "list")}
@@ -120,7 +120,7 @@ const PromptTemplates: React.FC<PromptTemplatesProps> = ({
           selectedId={selectedId}
         />
       </div>
-      <div className="absolute top-0 right-0 h-full w-full overflow-auto pt-[var(--header-height,64px)] md:w-2/3">
+      <div className="absolute top-0 right-0 h-full w-full overflow-auto md:w-2/3">
         {selectedTemplate && (
           <PromptTemplateEditor
             key={selectedTemplate.id || "new"}
