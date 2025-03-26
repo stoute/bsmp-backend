@@ -80,7 +80,7 @@ export default function SessionsList() {
       appState.setKey("currentChatSessionId", id);
       chatManager.restoreState();
       // Check if we're already on the chat page and reload if needed
-      if (window.location.pathname === "/chat") {
+      if (window.location.pathname !== "/chat") {
         window.location.href = "/chat";
       }
       setOpen(false);
