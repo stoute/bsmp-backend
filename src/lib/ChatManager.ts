@@ -77,7 +77,6 @@ class ChatManager {
     if (!template) {
       throw new Error("Template is required");
     }
-    console.log("Setting template:", template.id);
     try {
       // Apply template llmConfig
       if (template.llmConfig) {

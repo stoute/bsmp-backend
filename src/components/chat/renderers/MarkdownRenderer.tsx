@@ -34,9 +34,9 @@ export const MarkdownRenderer: LLMOutputComponent = ({ blockMatch }) => {
             // If Shiki is not ready yet, show a basic pre block
             if (isLoading || !highlighter) {
               return (
-                <pre className="overflow-x-auto rounded-lg bg-zinc-100 p-4 dark:bg-zinc-800">
+                <span className="overflow-x-auto rounded-lg bg-zinc-100 p-4 dark:bg-zinc-800">
                   <code {...props}>{code}</code>
-                </pre>
+                </span>
               );
             }
 

@@ -392,7 +392,12 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
 
     const currentVariables = form.getValues("variables") || [];
     if (!currentVariables.includes(variableInput.trim())) {
-      form.setValue("variables", [...currentVariables, variableInput.trim()]);
+      const newVariables = [...currentVariables, variableInput.trim()];
+      form.setValue("variables", newVariables, {
+        shouldDirty: true,
+        shouldTouch: true,
+        shouldValidate: true,
+      });
     }
     setVariableInput("");
   };
@@ -400,10 +405,12 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
   // Handle removing a variable
   const removeVariable = (variable: string) => {
     const currentVariables = form.getValues("variables") || [];
-    form.setValue(
-      "variables",
-      currentVariables.filter((v) => v !== variable),
-    );
+    const newVariables = currentVariables.filter((v) => v !== variable);
+    form.setValue("variables", newVariables, {
+      shouldDirty: true,
+      shouldTouch: true,
+      shouldValidate: true,
+    });
   };
 
   // Handle cancel - restore initial state and clear stored state
