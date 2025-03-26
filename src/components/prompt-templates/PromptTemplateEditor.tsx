@@ -3,11 +3,11 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Trash2, Save, Plus, AlertCircle, Copy } from "lucide-react";
-import type { PromptTemplate } from "@lib/ai/types.ts";
 import { appState } from "@lib/appStore";
-import { toast } from "../../lib/toast";
+import { toast } from "@/lib/toast";
 import { persistentAtom } from "@nanostores/persistent";
 import { useStore } from "@nanostores/react";
+import type { PromptTemplate } from "@/lib/ai/types.ts";
 
 import {
   Form,
@@ -79,13 +79,6 @@ import {
   CollapsibleTrigger,
 } from "@components/ui/collapsible";
 import { Slider } from "@components/ui/slider";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@components/ui/select";
 import { ChevronDown } from "lucide-react";
 import { openRouterModels } from "@lib/appStore";
 import { TEMPLATE_TAGS } from "@lib/prompt-template/constants";

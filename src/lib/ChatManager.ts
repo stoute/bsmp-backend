@@ -1,19 +1,10 @@
 import { ChatOpenAI } from "@langchain/openai";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
-import {
-  HumanMessage,
-  SystemMessage,
-  AIMessage,
-  BaseMessage,
-} from "@langchain/core/messages";
+import { HumanMessage, SystemMessage } from "@langchain/core/messages";
 import type { Message } from "@lib/ai/types";
 import { appService } from "@lib/appService.ts";
-import { appState, openRouterModels } from "@lib/appStore";
-import {
-  DEFAULT_MODEL,
-  DEFAULT_MODEL_FREE,
-  DEFAULT_SYSTEM_MESSAGE,
-} from "@consts";
+import { appState } from "@lib/appStore";
+import { DEFAULT_MODEL, DEFAULT_MODEL_FREE } from "@consts";
 import {
   DEFAULT_TEMPLATE_ID,
   PRESET_TEMPLATES,
@@ -21,28 +12,29 @@ import {
 import { chatMessageParser } from "@lib/ChatMessageParser";
 import { promptTemplateParser } from "@lib/prompt-template/PromptTemplateParser.ts";
 import { defaultLLMConfig } from "@lib/ai/llm";
-import type { ChatSessionModel, PromptTemplateModel } from "@db/models";
 import {
   deserializeMessagesToJSON,
   serializeMessagesFromJSON,
 } from "@lib/ai/langchain/utils";
 import { proxyFetchHandler } from "@lib/ai/utils";
+import type { ChatSessionModel, PromptTemplateModel } from "@db/models";
 
 class ChatManager {
   private static instance: ChatManager;
-  private llm: ChatOpenAI;
   private isLoading: boolean = false;
-  public currentChatSession?: ChatSessionModel;
   private isInitializing: boolean = true;
-  public chatPromptTemplate?: ChatPromptTemplate;
   private model: string;
   private unsubscribe: (() => void) | null = null;
-  public template?: PromptTemplateModel;
-  public messages: Message[] = [];
-  public llmConfig: ChatOpenAI = defaultLLMConfig;
   private _saveStateDebounceTimer: NodeJS.Timeout | null = null;
   private _templateChangeDebounceTimer: NodeJS.Timeout | null = null;
   private _lastProcessedTemplateId: string | undefined = undefined;
+
+  public currentChatSession?: ChatSessionModel;
+  public chatPromptTemplate?: ChatPromptTemplate;
+  public template?: PromptTemplateModel;
+  public messages: Message[] = [];
+  public llm: ChatOpenAI;
+  public llmConfig: ChatOpenAI = defaultLLMConfig;
 
   private constructor() {
     promptTemplateParser.chatManager = this;
@@ -69,13 +61,6 @@ class ChatManager {
     this.restoreState();
   }
 
-  public static getInstance(): ChatManager {
-    if (!ChatManager.instance) {
-      ChatManager.instance = new ChatManager();
-    }
-    return ChatManager.instance;
-  }
-
   public async init(template?: PromptTemplateModel) {
     this.isInitializing = true;
     try {
@@ -92,7 +77,6 @@ class ChatManager {
     if (!template) {
       throw new Error("Template is required");
     }
-
     try {
       // Apply template llmConfig
       if (template.llmConfig) {
@@ -215,9 +199,9 @@ class ChatManager {
     templateId = templateId || DEFAULT_TEMPLATE_ID;
 
     try {
+      // Fetch the template
       const template = await this.getTemplate(templateId);
-
-      // Prepare chat state
+      // Prepare session state
       const jsonMessages = deserializeMessagesToJSON(this.messages);
       const chatState: Partial<ChatSessionModel> = {
         messages: jsonMessages,
@@ -229,7 +213,7 @@ class ChatManager {
           llmConfig: this.llmConfig,
         },
       };
-
+      // Update state
       appState.setKey("currentChatSession", chatState);
       appState.setKey("selectedTemplate", template);
       await this.init(template);
@@ -268,7 +252,7 @@ class ChatManager {
           // Convert messages to JSON format for storage
           const jsonMessages = deserializeMessagesToJSON(serializedMessages);
 
-          // Prepare request
+          // Prepare sessionrequest
           const method = currentChat?.id ? "PUT" : "POST";
           let url = `${appState.get().apiBaseUrl}/sessions/index.json`;
           if (method === "PUT") url = url.replace("index", currentChat.id);
@@ -328,7 +312,6 @@ class ChatManager {
 
     try {
       await this.getSession(savedChatSessionId);
-
       // Check if template ID changed
       if (this.template?.id !== currentTemplateId) {
         console.log("Template ID changed, starting new chat");
@@ -426,7 +409,8 @@ class ChatManager {
 
   private updateModel(newModel: string) {
     this.model = newModel;
-    this.setLLM({ ...this.llmConfig, model: newModel });
+    this.llmConfig.model = newModel;
+    this.setLLM(this.llmConfig);
     appState.setKey("selectedModel", newModel);
   }
 
@@ -484,8 +468,11 @@ class ChatManager {
     this.saveState();
   }
 
-  isProcessing(): boolean {
-    return this.isLoading;
+  public static getInstance(): ChatManager {
+    if (!ChatManager.instance) {
+      ChatManager.instance = new ChatManager();
+    }
+    return ChatManager.instance;
   }
 }
 

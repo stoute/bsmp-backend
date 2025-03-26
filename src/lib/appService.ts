@@ -4,7 +4,7 @@ import * as constants from "@consts";
 import { clearLocalStorage } from "@lib/utils.ts";
 import { API_BASE_URL_DEV, API_BASE_URL_PROD } from "@consts";
 import { migrateSeedTemplatesToRemote } from "@lib/utils/dbUtils";
-import { getOpenRouterModels } from "@lib/ai/open-router.ts";
+import { getOpenRouterModels } from "@lib/ai/utils";
 import { LLM_MODELS, DEFAULT_MODEL_FREE } from "@consts";
 import { type OpenRouterModel } from "@lib/ai/open-router";
 
