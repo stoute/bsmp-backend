@@ -437,13 +437,18 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
 
   return (
     <>
-      <Card className="w-full">
-        <CardHeader>
+      <Card className="h-full rounded-none border-0 shadow-none">
+        <CardHeader className="px-6 py-4">
           <CardTitle>
             {isNew ? template_create_new() : template_edit()}
           </CardTitle>
+          <CardDescription>
+            {isNew
+              ? "Create a new prompt template"
+              : "Edit your prompt template"}
+          </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="max-h-[calc(100vh-var(--header-height,64px)-130px)] space-y-6 overflow-auto px-6 pb-8">
           <Form {...form}>
             <form
               ref={formRef}
@@ -806,6 +811,9 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
             </form>
           </Form>
         </CardContent>
+        <CardFooter className="flex justify-between border-t px-6 py-4">
+          {/* Footer buttons remain the same */}
+        </CardFooter>
       </Card>
 
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>

@@ -108,11 +108,16 @@ const PromptTemplateList = forwardRef<
   );
 
   return (
-    <Card className={styles.listContainer}>
-      <CardHeader>
+    <Card
+      className={cn(
+        styles.listContainer,
+        "h-full rounded-none border-0 shadow-none",
+      )}
+    >
+      <CardHeader className="px-4 py-3">
         <CardTitle>{template_list_title()}</CardTitle>
       </CardHeader>
-      <CardContent className="flex flex-1 flex-col gap-4 overflow-hidden">
+      <CardContent className="flex flex-1 flex-col gap-4 overflow-hidden p-4 pt-0">
         <div className="flex gap-2">
           <div className="relative flex-1">
             <Search className="text-muted-foreground absolute top-2.5 left-2 h-4 w-4" />
@@ -149,9 +154,7 @@ const PromptTemplateList = forwardRef<
           </div>
         )}
 
-        <ScrollArea
-          className={cn("flex-1 rounded-md border", styles.scrollArea)}
-        >
+        <ScrollArea className={cn("flex-1 border", styles.scrollArea)}>
           {loading ? (
             <div className="flex items-center justify-center p-8">
               <Loader2 className="text-muted-foreground h-8 w-8 animate-spin" />
