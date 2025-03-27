@@ -11,7 +11,6 @@ import { Input } from "@components/ui/input.tsx";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@components/ui/card.tsx";
@@ -111,13 +110,13 @@ const PromptTemplateList = forwardRef<
     <Card
       className={cn(
         styles.listContainer,
-        "h-full rounded-none border-0 shadow-none",
+        "h-full rounded-none border-0 pb-0 shadow-none",
       )}
     >
       <CardHeader className="px-4 py-3 pr-0">
         <CardTitle>{template_list_title()}</CardTitle>
       </CardHeader>
-      <CardContent className="flex flex-1 flex-col gap-4 overflow-hidden p-4 pt-0 pr-0">
+      <CardContent className="flex flex-1 flex-col gap-4 overflow-hidden p-4 pt-0 pb-0">
         <div className="flex gap-2">
           <div className="relative flex-1">
             <Search className="text-muted-foreground absolute top-2.5 left-2 h-4 w-4" />
@@ -160,7 +159,7 @@ const PromptTemplateList = forwardRef<
               <Loader2 className="text-muted-foreground h-8 w-8 animate-spin" />
             </div>
           ) : (
-            <div className="p-1">
+            <div className="p-0:">
               {!loading && filteredTemplates.length === 0 ? (
                 <div className="text-muted-foreground p-4 text-center">
                   {searchTerm
