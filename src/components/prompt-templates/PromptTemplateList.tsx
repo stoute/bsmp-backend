@@ -113,7 +113,7 @@ const PromptTemplateList = forwardRef<
         "h-full rounded-none border-0 pb-0 shadow-none",
       )}
     >
-      <CardHeader className="px-4 py-3 pr-0">
+      <CardHeader className="px-4 py-4 pr-0">
         <CardTitle>{template_list_title()}</CardTitle>
       </CardHeader>
       <CardContent className="flex flex-1 flex-col gap-4 overflow-hidden p-4 pt-0 pb-0">
@@ -167,28 +167,26 @@ const PromptTemplateList = forwardRef<
                     : no_templates_found()}
                 </div>
               ) : (
-                <div className="space-y-1">
-                  {filteredTemplates.map((template) => (
+                <div className="space-y-0">
+                  {filteredTemplates.map((template, index) => (
                     <React.Fragment key={template.id}>
                       <button
                         onClick={() => onSelect(template)}
                         className={cn(
-                          "w-full rounded-md p-2 text-left transition-colors",
+                          "w-full p-2 text-left transition-colors",
                           "hover:bg-accent hover:text-accent-foreground",
                           selectedId === template.id
-                            ? [
-                                "bg-accent text-accent-foreground",
-                                "ring-accent ring-2",
-                                "shadow-sm",
-                              ]
+                            ? "text-accent-foreground bg-gray-200 shadow-sm dark:bg-gray-800"
                             : "text-accent-foreground",
+                          index !== filteredTemplates.length - 1 &&
+                            "border-b border-gray-200 dark:border-gray-700",
                         )}
                       >
                         <div className="flex flex-col gap-1">
                           <span
                             className={cn(
-                              "font-medium",
-                              selectedId === template.id && "font-semibold",
+                              "font-semibold",
+                              selectedId === template.id && "font-bold",
                             )}
                           >
                             {template.name}
@@ -207,7 +205,6 @@ const PromptTemplateList = forwardRef<
                           )}
                         </div>
                       </button>
-                      <Separator className="my-1" />
                     </React.Fragment>
                   ))}
                 </div>
