@@ -1,7 +1,5 @@
 /* Base styles for code blocks */
 pre {
-  /*margin: 1rem 0;*/
-  /*padding: 1rem;*/
   background: transparent;
   margin: 0.5rem 0  !important;
   padding: 0.5rem 0 !important;
@@ -9,9 +7,12 @@ pre {
   overflow-x: auto;
 }
 pre:has(code) {
-  padding: 1.5rem  1.5rem  1.5rem  0.2rem !important;
+  padding: 1.2rem !important;
 }
-
+/* chat code blocks fix*/
+.not-prose pre {
+  padding-left: 0.0rem !important;
+}
 
 code {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;

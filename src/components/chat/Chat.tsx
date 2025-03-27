@@ -10,12 +10,10 @@ import { MessageErrorBoundary } from "./MessageErrorBoundary";
 import type { PromptTemplate } from "@lib/ai/types";
 import styles from "./Chat.module.css";
 import { DescriptionRenderer } from "./renderers/DescriptionRenderer";
-// Import Paraglide messages
 import {
   chat_thinking,
   chat_ask_something,
   chat_send,
-  chat_loading,
 } from "@paraglide/messages";
 import { Loader2 } from "lucide-react";
 
@@ -256,13 +254,13 @@ const MessageContent = memo(({ message }: { message: any }) => {
   if (!content) return null;
 
   // custom description message
-  const template: PromptTemplate = message.additional_kwargs.template;
-  if (template?.description) {
+  const renderer: PromptTemplate = message.additional_kwargs?.renderer;
+  if (renderer === "DescriptionRenderer" && renderer) {
     return (
       <div className="prose dark:prose-invert max-w-none">
         <DescriptionRenderer
           blockMatch={{ output: content }}
-          template={template}
+          template={message.additional_kwargs?.template}
         />
       </div>
     );

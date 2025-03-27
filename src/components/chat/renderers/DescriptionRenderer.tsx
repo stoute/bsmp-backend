@@ -15,8 +15,9 @@ export const DescriptionRenderer: LLMOutputComponent<Props> = ({
   template,
 }) => {
   return (
-    <div className="animate-fade-in rounded-lg bg-zinc-100 p-4 dark:bg-zinc-800">
-      <div className="mb-3 flex items-center gap-3 border-b border-zinc-200 pb-3 dark:border-zinc-700">
+    // <div className="animate-fade-in rounded-lg bg-zinc-100 p-4 dark:bg-zinc-800">
+    <div className="custom-render DescriptionRenderer animate-fade-in">
+      <div className="mb-3 flex items-center gap-3 pb-0">
         <img
           src="/images/logo-light.svg"
           className="block h-6 w-auto dark:hidden"
@@ -27,11 +28,11 @@ export const DescriptionRenderer: LLMOutputComponent<Props> = ({
           className="hidden h-6 w-auto dark:block"
           alt="Logo Dark"
         />
-        <h4 className="font-medium text-zinc-800 dark:text-zinc-200">
+        <h4 className="font-bold text-zinc-800 dark:text-zinc-200">
           {template?.name}
         </h4>
       </div>
-      <div className="text-sm text-zinc-700 dark:text-zinc-300">
+      <div className="text-sm font-bold text-zinc-700 dark:text-zinc-300">
         {blockMatch.output}
       </div>
     </div>

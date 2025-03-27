@@ -1,0 +1,36 @@
+/* Style .ai when it contains .DescriptionRenderer */
+
+:body {
+    --custom-render-bg-color: rgb(228 228 231); /* zinc-200 */
+    --custom-render-bg-color-dark: rgb(39 39 42); /* zinc-800 */
+}
+
+.ai:has(:global(.custom-render)) {
+    @apply border;
+    background-color: var(--custom-render-bg-color);
+    /*@apply bg-zinc-100 dark:bg-zinc-800;*/
+    padding-top: 0.7rem;
+    /*background-color: rgb(254 226 226) !important; !* red-100 *!*/
+}
+:global(.dark) .ai:has(:global(.custom-render)) {
+    background-color: var(--custom-render-bg-color-dark);
+}
+
+.ai:has(:global(.DescriptionRenderer)) {
+    & img {
+        margin-top: 0.5rem;
+        margin-bottom: 0;
+    }
+    & h4 {
+        margin-top: 0.4rem;
+        margin-bottom: 0;
+    }
+}
+
+
+/* Target the DescriptionRenderer class when it's inside an .ai message */
+/*.ai :global(.DescriptionRenderer) {*/
+/*  border-radius: 6px;*/
+/*  padding: 0.5rem;*/
+/*  margin: -0.5rem;*/
+/*}*/

@@ -77,8 +77,11 @@ export class PromptTemplateParser {
         descriptionMessage = new AIMessage({
           content: template.description,
           additional_kwargs: {
-            type: "ai-template-description",
-            template,
+            renderer: "DescriptionRenderer",
+            template: {
+              name: template.name,
+              description: template.description,
+            },
           },
         });
       }

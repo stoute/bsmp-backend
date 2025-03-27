@@ -36,6 +36,14 @@ export const LINKS_AUTHENTICATED: Links = [
     TEXT: "Prompts", // This matches our message key "prompts"
     HREF: "/prompts",
   },
+  {
+    TEXT: "Projects", // This matches our message key "projects"
+    HREF: "/projects",
+  },
+  {
+    TEXT: "Blog", // This matches our message key "blog"
+    HREF: "/blog",
+  },
 ]; // Global
 export const LINKS_ADMIN: Links = [
   {
@@ -45,14 +53,6 @@ export const LINKS_ADMIN: Links = [
   {
     TEXT: "About", // This matches our message key "about"
     HREF: "/about",
-  },
-  {
-    TEXT: "Projects", // This matches our message key "projects"
-    HREF: "/projects",
-  },
-  {
-    TEXT: "Blog", // This matches our message key "blog"
-    HREF: "/blog",
   },
 ];
 // Global

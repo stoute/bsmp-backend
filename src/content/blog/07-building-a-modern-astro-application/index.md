@@ -12,8 +12,6 @@ tags:
 - AI-Assisted Development
 ---
 
-# Building a Modern Full-Stack Application with Astro
-
 When I set out to build this application, I had a clear vision: create a fast, feature-rich platform that combines modern web development with AI capabilities. Built on top of [Astro Sphere](https://github.com/markhorn-dev/astro-sphere), this project demonstrates how to create full-stack CRUD applications with Astro.
 
 ## Exploring AI-Assisted Development

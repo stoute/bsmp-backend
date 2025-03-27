@@ -34,7 +34,7 @@ export default {
           css: [
             {
               fontSize: rem(16),
-              lineHeight: round(28 / 16),
+              lineHeight: round(24 / 16),
               p: {
                 marginTop: em(20, 16),
                 marginBottom: em(20, 16),
@@ -51,27 +51,27 @@ export default {
                 paddingInlineStart: em(20, 20),
               },
               h1: {
-                fontSize: em(36, 16),
-                marginTop: "0",
-                marginBottom: em(32, 36),
+                fontSize: em(24, 16),
+                marginTop: em(24, 36),
+                marginBottom: em(24, 36),
                 lineHeight: round(40 / 36),
               },
               h2: {
-                fontSize: em(24, 16),
-                marginTop: em(48, 24),
-                marginBottom: em(24, 24),
-                lineHeight: round(32 / 24),
+                fontSize: em(20, 16),
+                marginTop: em(20, 24),
+                marginBottom: em(20, 24),
+                lineHeight: round(28 / 24),
               },
               h3: {
-                fontSize: em(20, 16),
-                marginTop: em(32, 20),
+                fontSize: em(18, 16),
+                marginTop: em(18, 20),
                 marginBottom: em(12, 20),
-                lineHeight: round(32 / 20),
+                lineHeight: round(24 / 20),
               },
               h4: {
-                marginTop: em(24, 16),
+                marginTop: em(16, 16),
                 marginBottom: em(8, 16),
-                lineHeight: round(24 / 16),
+                lineHeight: round(20 / 16),
               },
               img: {
                 marginTop: em(32, 16),
@@ -131,7 +131,6 @@ export default {
                 marginTop: em(4, 16),
                 marginBottom: em(4, 16),
               },
-
               "ol > li": {
                 paddingInlineStart: em(6, 16),
               },
@@ -291,5 +290,6 @@ export default {
       foreground: "black",
     },
   },
+  // prose class
   plugins: [require("@tailwindcss/typography")],
 };
