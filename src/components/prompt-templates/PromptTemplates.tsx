@@ -9,12 +9,11 @@ import { PromptTemplateFactory } from "@lib/prompt-template/PromptTemplateFactor
 interface PromptTemplatesProps {
   initialTemplate?: PromptTemplate;
 }
-const apiEndPoint = appState.get().apiBaseUrl + "/prompts/index.json";
+const apiEndPoint = "/api/prompts/index.json";
 
 const PromptTemplates: React.FC<PromptTemplatesProps> = ({
   initialTemplate,
 }) => {
-  // Move all useState declarations to the top
   const [selectedTemplate, setSelectedTemplate] = useState<
     PromptTemplate | undefined
   >(initialTemplate);

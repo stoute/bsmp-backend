@@ -2,7 +2,6 @@ import * as store from "@lib/appStore";
 import { type AppState, openRouterModels } from "@lib/appStore";
 import * as constants from "@consts";
 import { clearLocalStorage } from "@lib/utils.ts";
-import { API_BASE_URL_DEV, API_BASE_URL_PROD } from "@consts";
 import { migrateSeedTemplatesToRemote } from "@lib/utils/dbUtils";
 import { getOpenRouterModels } from "@lib/ai/utils";
 import { LLM_MODELS, DEFAULT_MODEL_FREE } from "@consts";
@@ -31,14 +30,9 @@ export class AppService {
 
   private constructor() {
     this.store.appState.setKey("environment", getEnvironment());
-    this.store.appState.setKey(
-      "apiBaseUrl",
-      getEnvironment() === "development" ? API_BASE_URL_DEV : API_BASE_URL_PROD,
-    );
-    // this.pushSeedTemplatesToRemote();
   }
 
-  // Called from BaseHead.astro
+  // Called on bootstrap from BaseHead.astro
   async init() {
     if (this.initialized) return;
     try {

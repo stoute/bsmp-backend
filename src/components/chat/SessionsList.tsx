@@ -10,26 +10,13 @@ import {
 import { Button } from "@components/ui/button.tsx";
 import { ScrollArea } from "@components/ui/scroll-area.tsx";
 import { Separator } from "@components/ui/separator.tsx";
-import { appState } from "@lib/appStore.ts";
-import { useAppService } from "@lib/hooks/useAppService.ts";
 import { chatManager } from "@lib/ChatManager";
 import { cn } from "@lib/utils.ts";
-import { deserializeMessageToJSON } from "@lib/ai/langchain/utils.ts";
-
-interface ChatSession {
-  id: string;
-  metadata: {
-    topic: string;
-    model?: string;
-    templateId?: string;
-  };
-  created: string;
-  updated: string;
-}
+import{ type ChatSessionModel } from "@db/models";
 
 export default function SessionsList() {
   const [open, setOpen] = useState(false);
-  const [sessions, setSessions] = useState<ChatSession[]>([]);
+  const [sessions, setSessions] = useState<ChatSessionModel[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -77,13 +64,16 @@ export default function SessionsList() {
 
   const handleLoad = async (id: string) => {
     try {
-      appState.setKey("currentChatSessionId", id);
-      chatManager.restoreState();
+      setOpen(false);
       // Check if we're already on the chat page and reload if needed
       if (window.location.pathname !== "/chat") {
+        await chatManager.restoreSession(id);
         window.location.href = "/chat";
+
+      } else {
+        await chatManager.restoreSession(id);
       }
-      setOpen(false);
+
     } catch (err) {
       console.error("Error loading session:", err);
       setError("Failed to load session");

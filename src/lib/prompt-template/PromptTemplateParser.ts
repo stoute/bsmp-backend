@@ -59,13 +59,12 @@ export class PromptTemplateParser {
       "[DEBUG renderTemplate] Has existing messages:",
       hasExistingMessages,
     );
-
     let sessionMessages: Message[] = [];
 
     // Only create new messages if we don't have any or if they're just the default ones
     if (hasExistingMessages || this.chatManager.getMessages().length <= 2) {
+    // if (hasExistingMessages) {
       sessionMessages = this.chatManager.getMessages();
-
       const sanitizedSystemPrompt = this.sanitizeTemplateContent(
         template.systemPrompt || DEFAULT_SYSTEM_MESSAGE,
       );
@@ -85,7 +84,6 @@ export class PromptTemplateParser {
           },
         });
       }
-
       sessionMessages[0] = systemMessage;
       sessionMessages[1] = descriptionMessage;
 

@@ -2,8 +2,8 @@
 :root {
   --human-bg-color: rgb(244 244 245); /* zinc-100 */
   --human-bg-color-dark: rgb(39 39 42); /* zinc-800 */
-  --custom-bg-color: rgb(228 228 231); /* zinc-200 */
-  --custom-bg-color-dark: rgb(39 39 42); /* zinc-800 */
+  --custom-bg-color: var(--color-zinc-100); /* zinc-200 */
+  --custom-bg-color-dark: var(--color-zinc-900); /* zinc-800 */
 }
 
 
@@ -52,9 +52,14 @@
   padding: 4px;
 }
 
+/* Hover effect for copy-button */
 .message button:hover {
-  background: var(--color-zinc-500);
+  background: var(--color-gray-200);
   border-radius: 4px;
+}
+
+:global(.dark) .message button:hover {
+  background: var(--color-gray-700);
 }
 
 .message.human button {
