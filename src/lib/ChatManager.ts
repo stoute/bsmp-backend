@@ -147,24 +147,44 @@ class ChatManager {
         throw new Error("Failed to process messages: " + error.message);
       }
 
-      console.log("validMessages", validMessages);
+      // After filtering, log each message to identify problematic ones
+      console.log('');
+      console.log("validMessages", validMessages.length);
+      validMessages.forEach((msg, index) => {
+        console.log(`Message ${index}:`, msg.getType());
+        // console.log(`Message ${index}:`, msg.content);
+        if(msg.getType() === "system") {
+          console.log(msg.additional_kwargs);
+          console.log(msg.content);
+        }
+        if (!msg || typeof msg !== 'object') {
+          console.error(`Invalid message at index ${index}:`, msg);
+        }
+      });
 
       // Invoke the LLM with sanitized messages
-      const response = await this.llm.invoke(validMessages);
-      console.log("response", response);
+      try {
+        const response = await this.llm.invoke(validMessages);
+        console.log("response", response);
 
-      if (response) {
-        const processedResponse = chatMessageParser.processMessage(
-          response,
-          this.template?.id,
-        );
-        if (processedResponse) {
-          this.messages.push(processedResponse);
-          await this.saveSession(true); // Force update
+        if (response) {
+          const processedResponse = chatMessageParser.processMessage(
+            response,
+            this.template?.id,
+          );
+          if (processedResponse) {
+            this.messages.push(processedResponse);
+            await this.saveSession(true); // Force update
+          }
         }
-      }
 
-      return response;
+        return response;
+      } catch (error) {
+        console.error("Error invoking LLM:", error);
+        console.error("Problem with validMessages:", JSON.stringify(validMessages, null, 2));
+        this.messages.pop(); // Remove the failed message
+        throw error;
+      }
     } catch (error) {
       console.error("Error in chat:", error);
       this.messages.pop(); // Remove the failed message
@@ -293,7 +313,6 @@ class ChatManager {
               llmConfig: this.llmConfig,
             },
           };
-          console.log(url);
           console.log("Saving session", requestBody);
 
           const response = await fetch(url, {
@@ -334,10 +353,6 @@ class ChatManager {
     const currentTemplateId = appState.get().selectedTemplateId;
     const savedChatSession = appState.get().currentChatSession;
     const savedChatSessionId = appState.get().currentChatSessionId;
-    console.log('');
-    console.log("restoring state");
-    console.log("savedChatSession", savedChatSession);
-    console.log("savedChatSessionId", savedChatSessionId);
     if (!savedChatSession || !savedChatSessionId) {
       await this.newChat(currentTemplateId);
       // return;
@@ -369,28 +384,29 @@ class ChatManager {
       }
 
       // Handle template changes with debouncing
-      // if (
-      //   state.selectedTemplateId &&
-      //   this.template?.id !== state.selectedTemplateId &&
-      //   !this.isInitializing
-      // ) {
-      //   if (this._templateChangeDebounceTimer) {
-      //     clearTimeout(this._templateChangeDebounceTimer);
-      //   }
-      //
-      //   this._templateChangeDebounceTimer = setTimeout(() => {
-      //     console.log(
-      //       "Template ID changed in appState, starting new chat with:",
-      //       state.selectedTemplateId,
-      //     );
-      //     if(state.selectedTemplateId === "new"){
-      //       // this.newChat();
-      //       return;
-      //     }
-      //    // this.newChat(state.selectedTemplateId);
-      //     this._templateChangeDebounceTimer = null;
-      //   }, 300);
-      // }
+      if (
+        state.selectedTemplateId &&
+        this.template?.id !== state.selectedTemplateId &&
+        !this.isInitializing
+      ) {
+        if (this._templateChangeDebounceTimer) {
+          clearTimeout(this._templateChangeDebounceTimer);
+        }
+
+        this._templateChangeDebounceTimer = setTimeout(() => {
+          console.log(
+            "Template ID changed in appState, starting new chat with:",
+            state.selectedTemplateId,
+          );
+          // Check if selectedTemplateId was changed
+          // by PromptTemplates component
+          if(state.selectedTemplateId !== this.template?.id){
+            this.newChat(state.selectedTemplateId);
+            return;
+          }
+          this._templateChangeDebounceTimer = null;
+        }, 300);
+      }
     });
   }
 

@@ -1,5 +1,5 @@
 import { type PromptTemplate } from "@lib/ai/types.ts";
-import { defaultLLMConfig } from "../ai/llm.ts";
+// import { defaultLLMConfig } from "../ai/llm.ts";
 
 // usage:
 // const defaultTemplate = PromptTemplateFactory.createDefault()
@@ -21,7 +21,7 @@ export class PromptTemplateFactory {
       context: "",
       variables: [],
       tags: [],
-      llmConfig: defaultLLMConfig,
+      llmConfig: {  },
       created_at: now,
       updated_at: now,
     };

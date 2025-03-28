@@ -3,10 +3,10 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Trash2, Save, Plus, AlertCircle, Copy } from "lucide-react";
-import { appState } from "@lib/appStore";
 import { toast } from "@/lib/toast";
-import { persistentAtom } from "@nanostores/persistent";
 import { useStore } from "@nanostores/react";
+import { persistentAtom } from "@nanostores/persistent";
+import {formSchemaPromptTemplateModel} from "@db/models";
 import type { PromptTemplate } from "@/lib/ai/types.ts";
 
 import {
@@ -91,25 +91,8 @@ import {
   PopoverTrigger,
 } from "@components/ui/popover";
 
-// Define the form schema using zod
-const formSchema = z.object({
-  id: z.string().optional(),
-  name: z.string().min(1, template_name_required()),
-  description: z.string().optional(),
-  systemPrompt: z.string().optional(),
-  template: z.string().optional(), // Remove min validation
-  variables: z.array(z.string()).optional().default([]),
-  created_at: z.string().optional(),
-  updated_at: z.string().optional(),
-  llmConfig: z
-    .object({
-      model: z.string(),
-      temperature: z.number().min(0).max(1),
-      maxTokens: z.number().min(1).max(4096),
-    })
-    .optional(),
-});
-
+// Define the form schema
+const formSchema = formSchemaPromptTemplateModel
 // Create a persistent store for the form state
 export const templateEditorState = persistentAtom<Record<string, any>>(
   "template-editor-state:",
@@ -161,13 +144,12 @@ const PromptTemplateEditor: React.FC<PromptTemplateEditorProps> = ({
 
     // Ensure llmConfig has default values if missing
     const mergedTemplate = { ...defaultTemplate, ...template };
-    mergedTemplate.llmConfig = {
-      model: "google/gemini-2.0-flash-lite-001",
-      temperature: 0.7,
-      maxTokens: 256,
-      ...mergedTemplate.llmConfig,
-    };
-
+    // mergedTemplate.llmConfig = {
+    //   model: "google/gemini-2.0-flash-lite-001",
+    //   temperature: 0.7,
+    //   maxTokens: 256,
+    //   ...mergedTemplate.llmConfig,
+    // };
     return mergedTemplate;
   };
 
