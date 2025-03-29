@@ -55,20 +55,15 @@ export class PromptTemplateParser {
 
     // Check if we have existing messages to preserve
     const hasExistingMessages = this.chatManager.getMessages().length > 0;
-    console.log(
-      "[DEBUG renderTemplate] Has existing messages:",
-      hasExistingMessages,
-    );
+
     let sessionMessages: Message[] = [];
 
     // Only create new messages if we don't have any or if they're just the default ones
     if (hasExistingMessages || this.chatManager.getMessages().length <= 2) {
-    // if (hasExistingMessages) {
       sessionMessages = this.chatManager.getMessages();
       const sanitizedSystemPrompt = this.sanitizeTemplateContent(
         template.systemPrompt || DEFAULT_SYSTEM_MESSAGE,
       );
-
       const systemMessage = new SystemMessage(sanitizedSystemPrompt);
       // Create description message
       let descriptionMessage: AIMessage | undefined;
@@ -86,11 +81,8 @@ export class PromptTemplateParser {
       }
       sessionMessages[0] = systemMessage;
       sessionMessages[1] = descriptionMessage;
-
-      console.log("[DEBUG renderTemplate] Setting new messages");
       this.chatManager.setMessages(sessionMessages);
     } else {
-      console.log("[DEBUG renderTemplate] Preserving existing messages");
       // Maybe just update the system message
       const systemMessage = new SystemMessage(
         this.sanitizeTemplateContent(

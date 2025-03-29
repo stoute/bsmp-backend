@@ -57,8 +57,11 @@ class ChatManager {
       apiKey: "NONE",
     });
 
-    this.setupStateSubscription();
-    this.restoreSession();
+    // Only set up subscriptions and restore session on the client side
+    if (typeof window !== 'undefined') {
+      this.setupStateSubscription();
+      this.restoreSession();
+    }
   }
 
   public async init(template?: PromptTemplateModel) {
@@ -129,7 +132,6 @@ class ChatManager {
         this.messages,
         this.template?.id,
       );
-
       if (!validMessages.length) {
         throw new Error("No valid messages to process");
       }
@@ -138,7 +140,6 @@ class ChatManager {
       try {
         validMessages =
           serializeMessagesFromJSON(validMessages).filter(Boolean);
-
         if (!validMessages.length) {
           throw new Error("No valid messages after sanitization");
         }
@@ -146,21 +147,6 @@ class ChatManager {
         console.error("Error sanitizing messages:", error);
         throw new Error("Failed to process messages: " + error.message);
       }
-
-      // After filtering, log each message to identify problematic ones
-      console.log('');
-      console.log("validMessages", validMessages.length);
-      validMessages.forEach((msg, index) => {
-        console.log(`Message ${index}:`, msg.getType());
-        // console.log(`Message ${index}:`, msg.content);
-        if(msg.getType() === "system") {
-          console.log(msg.additional_kwargs);
-          console.log(msg.content);
-        }
-        if (!msg || typeof msg !== 'object') {
-          console.error(`Invalid message at index ${index}:`, msg);
-        }
-      });
 
       // Invoke the LLM with sanitized messages
       try {
@@ -177,7 +163,6 @@ class ChatManager {
             await this.saveSession(true); // Force update
           }
         }
-
         return response;
       } catch (error) {
         console.error("Error invoking LLM:", error);
@@ -197,8 +182,6 @@ class ChatManager {
   async newChat(templateId?: string, forceNew: boolean = false) {
     // Early return if running on server
     if (typeof window === "undefined") return;
-
-    console.log("newChat", templateId);
 
     // If forceNew is true (plus button click), ignore duplicate processing check
     // Otherwise, check for duplicate processing
@@ -225,7 +208,7 @@ class ChatManager {
       // Fetch the template
       const template = await this.loadTemplate(templateId);
       const llmConfig = { defaultLLMConfig, ...template.llmConfig };
-      // Prepare session state
+      // Prepare chat session state
       const jsonMessages = deserializeMessagesToJSON(this.messages);
       const chatState: Partial<ChatSessionModel> = {
         messages: jsonMessages,
@@ -298,7 +281,7 @@ class ChatManager {
           // Convert messages to JSON format for storage
           const jsonMessages = deserializeMessagesToJSON(serializedMessages);
 
-          // Prepare session request
+          // Define session request
           const method = currentChat?.id ? "PUT" : "POST";
           let url = `/api/sessions/index.json`;
           if (method === "PUT") url = url.replace("index", currentChat.id);
@@ -313,7 +296,6 @@ class ChatManager {
               llmConfig: this.llmConfig,
             },
           };
-          console.log("Saving session", requestBody);
 
           const response = await fetch(url, {
             method,
