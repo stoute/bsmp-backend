@@ -300,7 +300,7 @@ class ChatManager {
 
           // Prepare session request
           const method = currentChat?.id ? "PUT" : "POST";
-          let url = `api/sessions/index.json`;
+          let url = `/api/sessions/index.json`;
           if (method === "PUT") url = url.replace("index", currentChat.id);
 
           const requestBody = {
