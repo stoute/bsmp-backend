@@ -44,6 +44,10 @@ export const LINKS_AUTHENTICATED: Links = [
     TEXT: "Blog", // This matches our message key "blog"
     HREF: "/blog",
   },
+  {
+    TEXT: "Dev",
+    HREF: "/development",
+  },
 ]; // Global
 export const LINKS_ADMIN: Links = [
   {

@@ -63,3 +63,49 @@ export function clearLocalStorage(reloadPage: boolean = false): void {
     console.log("Local storage cleared successfully");
   }
 }
+
+export async function getEnvironmentVariable(name: string, defaultValue: string = "NONE"): Promise<string> {
+  // When running in Astro
+  if (typeof import.meta !== 'undefined' && import.meta.env) {
+    console.log(`Using Astro env loader for ${name}`);
+    console.log(import.meta.env);
+    return import.meta.env[name] || defaultValue;
+  }
+
+  // When running directly with Node.js
+  if (typeof process !== 'undefined') {
+    try {
+      // Try to load from Astro's .env files using Vite
+      const viteModule = await import('vite');
+      const pathModule = await import('path');
+      const { loadEnv } = viteModule;
+      const path = pathModule.default;
+
+      // Find project root
+      const projectRoot = path.resolve(process.cwd());
+
+      // Load environment variables from Astro's .env files
+      const env = loadEnv('', projectRoot, '');
+      if (env[name]) return env[name];
+
+      console.log(`Using Vite env loader for ${name}`);
+    } catch (e) {
+      console.warn("Could not load Vite env, falling back to dotenv");
+
+      try {
+        // Try to load from .env file using dotenv
+        const dotenvModule = await import('dotenv');
+        dotenvModule.config();
+        if (process.env[name]) return process.env[name];
+      } catch (dotenvError) {
+        console.warn("Could not load dotenv, falling back to process.env");
+      }
+    }
+
+    // Fallback to process.env
+    return process.env[name] || defaultValue;
+  }
+
+  console.warn(`Unknown environment, could not retrieve ${name}`);
+  return defaultValue;
+}

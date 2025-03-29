@@ -1,0 +1,83 @@
+---
+export const prerender = true;
+
+import PageLayout from "@layouts/PageLayout.astro";
+import BottomLayout from "@layouts/BottomLayout.astro";
+---
+
+<PageLayout title="Development" description="Development tools and parsers">
+  <BottomLayout>
+  <div class="pt-12 container mx-auto p-4">
+    <div class="grid gap-6">
+      <div class="card bg-card p-6 rounded-lg shadow-sm">
+        <h2 class="text-2xl font-semibold mb-4">Prompt Template Parsers</h2>
+        <div class="flex flex-wrap gap-2">
+          <button id="run-structured-output" class="btn bg-primary text-primary-foreground hover:bg-primary/90 px-4 py-2 rounded">
+            Run Structured Output Example
+          </button>
+          <button id="run-conversation-chain" class="btn bg-primary text-primary-foreground hover:bg-primary/90 px-4 py-2 rounded">
+            Run Conversation Chain
+          </button>
+        </div>
+        <div id="parser-output" class="bg-muted p-4 rounded-lg min-h-[200px] mb-4 font-mono text-sm whitespace-pre-wrap"></div>
+      </div>
+    </div>
+  </div>
+  </BottomLayout>
+</PageLayout>
+
+<script>
+  // Import browser-compatible versions of the parsers
+  import { runStructuredOutputExample } from "../../lib/prompt-template/parsers/structured-output";
+  import { runConversationChain } from "../../lib/prompt-template/parsers/conversation-chain";
+
+  // Get DOM elements
+  const outputEl = document.getElementById("parser-output");
+  const structuredOutputBtn = document.getElementById("run-structured-output");
+  const conversationChainBtn = document.getElementById("run-conversation-chain");
+
+  // Create a logger function that outputs to the DOM
+  const log = (message) => {
+    if (outputEl) {
+      outputEl.textContent += message + "\n";
+      // Auto-scroll to bottom
+      outputEl.scrollTop = outputEl.scrollHeight;
+    }
+  };
+
+  // Clear output function
+  const clearOutput = () => {
+    if (outputEl) {
+      outputEl.textContent = "";
+    }
+  };
+
+  // Add event listeners
+  if (structuredOutputBtn) {
+    structuredOutputBtn.addEventListener("click", async () => {
+      clearOutput();
+      log("Running Structured Output Example...");
+      try {
+        const result = await runStructuredOutputExample();
+        log(JSON.stringify(result, null, 2));
+      } catch (error) {
+        log(`Error: ${error.message}`);
+        console.error(error);
+      }
+    });
+  }
+
+  if (conversationChainBtn) {
+    conversationChainBtn.addEventListener("click", async () => {
+      clearOutput();
+      log("Running Conversation Chain...");
+      try {
+        const result = await runConversationChain();
+        log(JSON.stringify(result, null, 2));
+      } catch (error) {
+        log(`Error: ${error.message}`);
+        console.error(error);
+      }
+    });
+  }
+</script>
