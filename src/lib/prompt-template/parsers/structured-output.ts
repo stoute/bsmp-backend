@@ -9,7 +9,7 @@ export async function runStructuredOutputExample() {
     // Get API key
     const OPENAI_API_KEY = await getEnvironmentVariable('PUBLIC_OPENAI_API_KEY');
 
-    console.log('OPENAI_API_KEY:', OPENAI_API_KEY);
+    // console.log('OPENAI_API_KEY:', OPENAI_API_KEY);
 
     // Initialize the language model
     const llm = new OpenAI({
